@@ -10,7 +10,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Envision-UI app is running!');
+    expect(page.getTitleText()).toEqual('Staffing-UI app is running!');
   });
 
   afterEach(async () => {
