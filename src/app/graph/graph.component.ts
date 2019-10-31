@@ -16,17 +16,23 @@ interface HourlyDetail {
   numberOfShiftEnding?: number;
 }
 
-class Hero {
-
-  constructor(
-    public id?: number,
-    public roleDescription?: string,
-    public patientsCoveredPerHr?: string,
-    public cost?: number
-  ) { }
-
+class Shifts {
+  shiftLength: number =0;
+  startTime: number =0;
+  endTime: number =0;
+  physicians: number =0;
+  apps: number =0;
+  scribes: number =0;
+  day:string;
 }
 
+class Model{
+  patientsPerHour: number;
+  capacity: Array<number>;
+  cost: number;
+  name: String;
+ expressions: Array<String>
+}
 
 Boost(Highcharts);
 noData(Highcharts);
@@ -42,12 +48,15 @@ noData(Highcharts);
 export class GraphComponent implements OnInit {
 
   Arr = Array;
-
-  hourlyDetailData : HourlyDetail[];
-  displayedColumns: string[] = ['No Of Physicians', 'expected Pts/Hr', 'capacity Pts/Hr'];
+  hourlyDetailData: HourlyDetail[];
+  map = new Map();
+  shiftList: Shifts[];
+  filteredShiftList: Shifts[];
+  shiftSlots: object[];
   dataSource: any[];
-  days: number[] = [0,1,2,3,4,5,6];
-  model: object[] = [
+  daysOfWeek : string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  days: number[] = [0, 1, 2, 3, 4, 5, 6];
+  model: Model[] = [
     {
       "patientsPerHour": 1.2,
       "capacity": [1.0, 0.83, 0.67],
@@ -86,19 +95,19 @@ export class GraphComponent implements OnInit {
       }
     },
     {
-     headerName: 'Price',  
-    valueGetter: function (params) {
-      return params.data.cost ;
-    },
-    valueSetter: function (params) {
-      if (params.data.cost !== params.newValue) {
-        params.data.cost = params.newValue;
-        return true;
-      } else {
-        return false;
-      }
-    },
-   }
+      headerName: 'Price',
+      valueGetter: function (params) {
+        return params.data.cost;
+      },
+      valueSetter: function (params) {
+        if (params.data.cost !== params.newValue) {
+          params.data.cost = params.newValue;
+          return true;
+        } else {
+          return false;
+        }
+      },
+    }
   ];
 
   defaultColDef = {
@@ -106,36 +115,90 @@ export class GraphComponent implements OnInit {
     resizable: true
   }
 
-  
-  filterDetails(filterVal: any) {
-      
-      let data = this.hourlyDetailData.slice(filterVal*24 , (parseInt(filterVal)+1)*24)
-        this.createGraph( data );
-    ;
-}
-  gridOptions = {
-    defaultColDef: {
-      editable: true,
-      resizable: true
-    },
-    columnDefs: this.columnDefs,
-    onGridReady: function (params) {
-      params.api.sizeColumnsToFit();
-    },
-    onRowEditingStarted: function (event) {
-      console.log('never called - not doing row editing');
-    },
-    onRowEditingStopped: function (event) {
-      console.log('never called - not doing row editing');
-    },
+  clear(){
+    this.filteredShiftList = [];
+    this.hourlyDetailData =[];
+  }
 
-  };
+  filterDetails(filterVal: any) {
+    if(filterVal == -1){
+      this.filteredShiftList = this.shiftList;
+      this.createGraph(this.hourlyDetailData);
+
+      return; 
+    }
+    this.filteredShiftList = this.shiftList.filter(a=>a.day == this.daysOfWeek[filterVal])
+    let data = this.hourlyDetailData.slice(filterVal * 24, (parseInt(filterVal) + 1) * 24)
+    this.createGraph(data);
+    ;
+  }
 
   submitted = false;
 
+  createNewShift(startTime:number, shiftLength:number){
+    let shift = new Shifts();
+    shift.startTime = startTime%24;
+    shift.endTime = (startTime+shiftLength)%24;
+    shift.day = this.daysOfWeek[Math.floor(startTime/24)];
+    shift.shiftLength = shiftLength;
+    return shift;
+  }
+  processData() {
+    this.map = new Map();
+    this.shiftSlots.forEach((shiftSlot, index) => {
+      for (let key of Object.keys(shiftSlot)) {
+         let shift = new Shifts();
+        if (shiftSlot[key].physicianStart > 0) {
+          if (this.map.has(index + "to" + key)) {
+            shift = this.map.get(index + "to" + key);
+            shift.physicians += shiftSlot[key].physicianStart;
+          }
+          else {
+             shift = this.createNewShift(index, parseInt(key));
+            shift.physicians = shiftSlot[key].physicianStart;
+          }
+          this.map.set(index + "to" + key, shift)
+        }
+        if (shiftSlot[key].appStart > 0) {
+          if (this.map.has(index + "to" + key)) {
+            shift = this.map.get(index + "to" + key);
+            shift.apps += shiftSlot[key].appStart;
+          }
+          else {
+            shift =  this.createNewShift(index, parseInt(key))
+            shift.apps = shiftSlot[key].appStart;
+          }
+          this.map.set(index + "to" + key, shift)
+        }
+        if (shiftSlot[key].scribeStart > 0) {
+          if (this.map.has(index + "to" + key)) {
+             shift = this.map.get(index + "to" + key);
+            shift.scribes += shiftSlot[key].scribeStart;
+            ;
+          }
+          else {
+             shift =  this.createNewShift(index, parseInt(key))
+            shift.scribes = shiftSlot[key].scribeStart;
+            
+          }
+          this.map.set(index + "to" + key, shift)
+        }
+       
+      }
+
+    })
+    return Array.from(this.map.values());
+  }
+
+  calculateCapacity(){
+    for(let i=1;i<this.model.length;i++){
+      this.model[i].capacity[0] = this.model[i].patientsPerHour/this.model[0].patientsPerHour;
+      this.model[i].capacity[1] = this.model[i].capacity[0] * this.model[0].capacity[1];
+      this.model[i].capacity[2] = this.model[i].capacity[0] * this.model[0].capacity[2];
+    }
+  }
   onSubmit() {
     this.submitted = true;
-    console.log(this.model)
     const apiLink = 'http://localhost:8080/Staffing/api/shiftPlan';
     let httpHeaders = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -143,11 +206,17 @@ export class GraphComponent implements OnInit {
     let options = {
       headers: httpHeaders
     };
+    this.calculateCapacity();
+    console.log(this.model);
     this.http.post<HourlyDetail[]>(apiLink, this.model, options)
       .toPromise()
       .then(data => {
-        this.hourlyDetailData = data;
-        this.createGraph(data);
+        this.hourlyDetailData = data.hourlyDetail;
+        this.shiftSlots = data.clinicianHourCount;
+        this.shiftList = this.processData();
+        this.filteredShiftList = this.shiftList;
+        console.log(this.shiftList);
+        this.createGraph(this.hourlyDetailData);
       },
         error => {
           console.log('Something went wrong.');
@@ -218,14 +287,14 @@ export class GraphComponent implements OnInit {
     this.dataSource = data; //.slice(0,24);
     this.options.series = [
       {
-        name: 'Expected Workloap',
+        name: 'Expected Workload',
         color: 'rgba(0,0,217,1)',
         data: expectedWorkLoadArray,
         pointPadding: 0.3,
         pointPlacement: -0.2
       },
       {
-        name: 'Serving Capacity',
+        name: 'Covered Workload',
         color: 'rgba(255,165,0,1)',
         data: capacityWorkLoadArray,
         pointPadding: 0.4,
@@ -235,16 +304,21 @@ export class GraphComponent implements OnInit {
     Highcharts.chart('container', this.options);
   }
 
+
+  shiftColumnDef = [
+    { headerName: 'Day', field: 'day' },
+    { headerName: 'Start Time', field: 'startTime' },
+    { headerName: 'End Time', field: 'endTime' },
+    { headerName: 'Shift Duration', field: 'shiftLength' },
+    { headerName: 'Physician Count', field: 'physicians' },
+    { headerName: 'APP count', field: 'apps' },
+    { headerName: 'Scribe count', field: 'scribes' },
+  ];
+
   ngOnInit() {
     // Highcharts.chart('container', this.options);    
   }
 
-  getApiResponse(url) {
-    return this.http.get(url, {})
-      .toPromise().then(res => {
-        return res;
-      });
-  }
 }
 
 
