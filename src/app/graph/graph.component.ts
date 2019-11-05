@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ColDef } from 'ag-grid-community';
 
 declare var require: any;
 let Boost = require('highcharts/modules/boost');
@@ -8,14 +9,38 @@ let noData = require('highcharts/modules/no-data-to-display');
 let More = require('highcharts/highcharts-more');
 
 interface HourlyDetail {
-  hour?: string;
+  hour?: number;
   capacityWorkLoad?: number;
   expectedWorkLoad?: number;
   numberOfPhysicians?: number;
+  numberOfAPPs?: number;
+  numberOfScribes?: number;
   numberOfShiftBeginning?: number;
   numberOfShiftEnding?: number;
+  totalCoverage?:number;
+  percentPhysician ? :number ;
+  expectedPatientsPerProvider?:number;
+  coveredPatientsPerProvider?:number;
 }
 
+interface Detail{
+  physicianStart?:number;
+  physicianEnd?:number;
+  appStart?:number;
+  appEnd?:number;
+  scribeStart?:number;
+  scribeEnd?:number;
+}
+
+
+export class TransposedRow {
+  header: string;
+  [index: string]: string;
+}
+class response{
+  hourlyDetail: HourlyDetail[];
+  clinicianHourCount : Map<number, Detail> [];
+}
 class Shifts {
   shiftLength: number =0;
   startTime: number =0;
@@ -49,6 +74,7 @@ export class GraphComponent implements OnInit {
 
   Arr = Array;
   hourlyDetailData: HourlyDetail[];
+  filteredHourlyData: HourlyDetail[];
   map = new Map();
   shiftList: Shifts[];
   filteredShiftList: Shifts[];
@@ -56,6 +82,10 @@ export class GraphComponent implements OnInit {
   dataSource: any[];
   daysOfWeek : string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   days: number[] = [0, 1, 2, 3, 4, 5, 6];
+  transposedData: TransposedRow[];
+  filteredTransposedData : TransposedRow[];
+  transposedColumnDef: Array<any>
+
   model: Model[] = [
     {
       "patientsPerHour": 1.2,
@@ -69,7 +99,7 @@ export class GraphComponent implements OnInit {
       "capacity": [0.6, 0.5, 0.4],
       "cost": 65,
       "name": "app",
-      "expressions": ["1 * m"]
+      "expressions": ["2 * m"]
     },
     {
       "patientsPerHour": 0.37,
@@ -117,22 +147,45 @@ export class GraphComponent implements OnInit {
 
   clear(){
     this.filteredShiftList = [];
+    
     this.hourlyDetailData =[];
   }
 
   filterDetails(filterVal: any) {
     if(filterVal == -1){
       this.filteredShiftList = this.shiftList;
+      this.filteredTransposedData = this.transposedData;
+      console.log(this.transposedData);
       this.createGraph(this.hourlyDetailData);
+      
 
       return; 
     }
+    this.filteredHourlyData = this.hourlyDetailData.slice(filterVal * 24, (parseInt(filterVal) + 1) * 24);
+    this.createColumnData(filterVal*24);
     this.filteredShiftList = this.shiftList.filter(a=>a.day == this.daysOfWeek[filterVal])
-    let data = this.hourlyDetailData.slice(filterVal * 24, (parseInt(filterVal) + 1) * 24)
-    this.createGraph(data);
+    this.filteredTransposedData=[];
+   
+    this.transposedData.forEach(transposedRow=>{
+      let newRow = this.filterList(filterVal*24,  (parseInt(filterVal) + 1) * 24, transposedRow);
+      newRow["header"]=transposedRow["header"];
+      this.filteredTransposedData.push(newRow);
+
+    })
+    console.log(this.filteredTransposedData);
+   
+    this.createGraph(this.filteredHourlyData);
     ;
   }
 
+
+  filterList(startIndex:number, endIndex:number, dataArray: Object){
+    let newArray = new TransposedRow;
+    for(let i=startIndex;i<endIndex;i++){
+      newArray[i-startIndex]=dataArray[i];
+    }
+    return newArray;
+  }
   submitted = false;
 
   createNewShift(startTime:number, shiftLength:number){
@@ -144,6 +197,17 @@ export class GraphComponent implements OnInit {
     return shift;
   }
   processData() {
+    this.hourlyDetailData.forEach(detail=>{
+      detail.expectedWorkLoad = detail.expectedWorkLoad*this.model[0].patientsPerHour;
+      detail.capacityWorkLoad = detail.capacityWorkLoad*this.model[0].patientsPerHour;
+      detail.totalCoverage = detail.numberOfAPPs+detail.numberOfPhysicians+detail.numberOfScribes;
+      detail.capacityWorkLoad = Math.round(detail.capacityWorkLoad *100)/100;
+      detail.expectedWorkLoad = Math.round(detail.expectedWorkLoad*100)/100;
+      detail.percentPhysician = Math.round(detail.numberOfPhysicians/detail.totalCoverage *100)/100;
+      detail.expectedPatientsPerProvider = Math.round( detail.expectedWorkLoad/detail.totalCoverage*100)/100;
+      detail.coveredPatientsPerProvider = Math.round(detail.capacityWorkLoad/detail.totalCoverage*100)/100;
+    })
+    this.filteredHourlyData = this.hourlyDetailData;
     this.map = new Map();
     this.shiftSlots.forEach((shiftSlot, index) => {
       for (let key of Object.keys(shiftSlot)) {
@@ -187,9 +251,49 @@ export class GraphComponent implements OnInit {
       }
 
     })
+    this.createColumnData(0);
+    this.transposeData();
+    //console.log(this.transposedData, this.transposedColumnDef);
     return Array.from(this.map.values());
   }
 
+  createColumnData(startIndex:number){
+    this.transposedColumnDef = [
+      {
+        headerName: '',
+        field: 'header',
+        cellStyle: { 'font-size': 'large' },
+        pinned: 'left',
+        width : 300
+      }
+    ];
+  
+    this.transposedColumnDef.push(...this.filteredHourlyData.map(translation => {
+      return {
+        headerName: (translation.hour-startIndex)+"",
+        field: (translation.hour-startIndex).toString(),
+       width : 75
+      };
+     }));
+  }
+  transposeData(){
+      // use map, spread, and push to populate the rest of the columns
+    this.transposedData = this.coverageColumnDef
+      .filter((_, index) => index > 0) // we don't show first column - it's the header
+      .map(data => {
+        const lowerLang = data.headerName.toLowerCase();
+        // add a special column for the header name
+        const columnValues = {
+          header: data.headerName,
+        };
+        // use forEach to populate the row from the root data
+        this.hourlyDetailData.forEach(translation => {
+          columnValues[translation.hour] = translation[data.field];
+        });
+        return columnValues;
+      });
+  }
+  
   calculateCapacity(){
     for(let i=1;i<this.model.length;i++){
       this.model[i].capacity[0] = this.model[i].patientsPerHour/this.model[0].patientsPerHour;
@@ -207,15 +311,14 @@ export class GraphComponent implements OnInit {
       headers: httpHeaders
     };
     this.calculateCapacity();
-    console.log(this.model);
-    this.http.post<HourlyDetail[]>(apiLink, this.model, options)
+    this.http.post<response>(apiLink, this.model, options)
       .toPromise()
       .then(data => {
         this.hourlyDetailData = data.hourlyDetail;
         this.shiftSlots = data.clinicianHourCount;
         this.shiftList = this.processData();
         this.filteredShiftList = this.shiftList;
-        console.log(this.shiftList);
+        this.filteredTransposedData = this.transposedData;
         this.createGraph(this.hourlyDetailData);
       },
         error => {
@@ -279,6 +382,9 @@ export class GraphComponent implements OnInit {
   }
 
 
+
+
+
   constructor(private http: HttpClient) { }
 
   private createGraph(data: HourlyDetail[]) {
@@ -305,6 +411,10 @@ export class GraphComponent implements OnInit {
   }
 
 
+
+
+
+
   shiftColumnDef = [
     { headerName: 'Day', field: 'day' },
     { headerName: 'Start Time', field: 'startTime' },
@@ -315,6 +425,25 @@ export class GraphComponent implements OnInit {
     { headerName: 'Scribe count', field: 'scribes' },
   ];
 
+
+  coverageColumnDef = [
+    { headerName: 'Hour', field: 'hour' },
+    { headerName: 'Physician Coverage', field: 'numberOfPhysicians' },
+    { headerName: 'APP Coverage', field: 'numberOfAPPs' },
+    { headerName: 'Scribe Coverage', field: 'numberOfScribes' },
+    { headerName: 'Total Coverage', field: 'totalCoverage' },
+    { headerName: 'Percent Physician ', field: 'percentPhysician' },
+    { headerName: 'Expected Patient Arriving', field: 'expectedWorkLoad' },
+    { headerName: 'Covered Patient Arriving', field: 'capacityWorkLoad' },
+    { headerName: 'Expected Patient Per Provider', field: 'expectedPatientsPerProvider' },
+    { headerName: 'Covered Patient Per Provider', field: 'coveredPatientsPerProvider' },
+    
+        
+  ];
+
+
+  
+  
   ngOnInit() {
     // Highcharts.chart('container', this.options);    
   }

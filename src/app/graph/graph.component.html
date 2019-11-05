@@ -8,7 +8,7 @@
         </form>
     </div>
 
-    <div [hidden]="!hourlyDetailData" style=" position: absolute;top: 35vh;width: 95%; padding: 10vh">
+    <div [hidden]="!filteredHourlyData" style=" position: absolute;top: 35vh;width: 100%; padding: 2.5vw">
         <div style="height: 5vh;">
             <label>Days </label>
             <select (change)="filterDetails($event.target.value)">
@@ -18,12 +18,18 @@
                 </option>
             </select>
         </div>
-        <div id="container" style="width:100%;height: 52vh;position: absolute;"></div>
-        <div *ngIf="filteredShiftList" style="top: 60vh; position: relative;">
-            <label>Shifts Summary</label>
-            <ag-grid-angular style="width: 90vw;height: 40vh;" class="ag-theme-balham" [rowData]="filteredShiftList" [columnDefs]="shiftColumnDef">
+        <div id="container" style="width:90%;height: 52vh;position: absolute;"></div>
+        <div *ngIf="filteredHourlyData" style="top: 60vh; position: relative;width:100%">
+            <label>Coverage Summary</label>
+            <ag-grid-angular style="height: 40vh;" class="ag-theme-balham" [rowData]="filteredTransposedData" [columnDefs]="transposedColumnDef">
             </ag-grid-angular>
         </div>
+        <div *ngIf="filteredShiftList" style="top: 60vh; position: relative;width:100%">
+            <label>Shifts Summary</label>
+            <ag-grid-angular style="width:100%;height:40vh;" class="ag-theme-balham" [rowData]="filteredShiftList" [columnDefs]="shiftColumnDef">
+            </ag-grid-angular>
+        </div>
+
     </div>
 
 </div>
