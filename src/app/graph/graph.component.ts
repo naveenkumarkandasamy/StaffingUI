@@ -49,12 +49,14 @@ export class GraphComponent implements OnInit {
 
   filterDetails(filterVal: any) {
     if(filterVal == -1){
+     
       this.filteredShiftList = this.shiftList;
-      this.filteredTransposedData = this.transposedData;
-      console.log(this.transposedData);
-      this.createGraph(this.hourlyDetailData);
       
-
+     
+     this.filteredHourlyData = this.hourlyDetailData;
+     this.createColumnData(0);
+     this.filteredTransposedData = this.transposedData;
+      this.createGraph(this.hourlyDetailData);
       return; 
     }
     this.filteredHourlyData = this.hourlyDetailData.slice(filterVal * 24, (parseInt(filterVal) + 1) * 24);
@@ -100,7 +102,7 @@ export class GraphComponent implements OnInit {
       detail.percentPhysician = Math.round(detail.numberOfPhysicians/detail.totalCoverage *100)/100;
       detail.expectedPatientsPerProvider = Math.round( detail.expectedWorkLoad/detail.totalCoverage*100)/100;
       detail.coveredPatientsPerProvider = Math.round(detail.capacityWorkLoad/detail.totalCoverage*100)/100;
-      detail.differnceBetweenCapacityAndWorkload = Math.round((detail.expectedWorkLoad-detail.capacityWorkLoad)*100)/100;
+      detail.differnceBetweenCapacityAndWorkload = Math.round((detail.capacityWorkLoad-detail.expectedWorkLoad)*100)/100;
     })
     this.filteredHourlyData = this.hourlyDetailData;
     this.map = new Map();
@@ -300,7 +302,7 @@ export class GraphComponent implements OnInit {
     { headerName: 'Difference ', field: 'differnceBetweenCapacityAndWorkload' },
     { headerName: 'Expected Patient Per Provider', field: 'expectedPatientsPerProvider' },
     { headerName: 'Covered Patient Per Provider', field: 'coveredPatientsPerProvider' },
-    
+    { headerName: 'Cost ', field: 'costPerHour' },
         
   ];
 
