@@ -2,62 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ColDef } from 'ag-grid-community';
+import {HourlyDetail, Detail, TransposedRow, response, Shifts, Model} from "../Models/app.types"
+import { DataService } from "../services/data.service"
+import {Location} from '@angular/common';
 
 declare var require: any;
 let Boost = require('highcharts/modules/boost');
 let noData = require('highcharts/modules/no-data-to-display');
 let More = require('highcharts/highcharts-more');
 
-interface HourlyDetail {
-  hour?: number;
-  capacityWorkLoad?: number;
-  expectedWorkLoad?: number;
-  numberOfPhysicians?: number;
-  numberOfAPPs?: number;
-  numberOfScribes?: number;
-  numberOfShiftBeginning?: number;
-  numberOfShiftEnding?: number;
-  totalCoverage?:number;
-  percentPhysician ? :number ;
-  expectedPatientsPerProvider?:number;
-  coveredPatientsPerProvider?:number;
-}
-
-interface Detail{
-  physicianStart?:number;
-  physicianEnd?:number;
-  appStart?:number;
-  appEnd?:number;
-  scribeStart?:number;
-  scribeEnd?:number;
-}
-
-
-export class TransposedRow {
-  header: string;
-  [index: string]: string;
-}
-class response{
-  hourlyDetail: HourlyDetail[];
-  clinicianHourCount : Map<number, Detail> [];
-}
-class Shifts {
-  shiftLength: number =0;
-  startTime: number =0;
-  endTime: number =0;
-  physicians: number =0;
-  apps: number =0;
-  scribes: number =0;
-  day:string;
-}
-
-class Model{
-  patientsPerHour: number;
-  capacity: Array<number>;
-  cost: number;
-  name: String;
- expressions: Array<String>
-}
 
 Boost(Highcharts);
 noData(Highcharts);
@@ -72,6 +25,8 @@ noData(Highcharts);
 })
 export class GraphComponent implements OnInit {
 
+  apiData:response;
+  message:string;
   Arr = Array;
   hourlyDetailData: HourlyDetail[];
   filteredHourlyData: HourlyDetail[];
@@ -86,69 +41,10 @@ export class GraphComponent implements OnInit {
   filteredTransposedData : TransposedRow[];
   transposedColumnDef: Array<any>
 
-  model: Model[] = [
-    {
-      "patientsPerHour": 1.2,
-      "capacity": [1.0, 0.83, 0.67],
-      "cost": 200,
-      "name": "physician",
-      "expressions": []
-    },
-    {
-      "patientsPerHour": 0.6,
-      "capacity": [0.6, 0.5, 0.4],
-      "cost": 65,
-      "name": "app",
-      "expressions": ["2 * m"]
-    },
-    {
-      "patientsPerHour": 0.37,
-      "capacity": [0.15, 0.12, 0.1],
-      "cost": 20,
-      "name": "scribe",
-      "expressions": ["1 * m", "1 * n"]
-    }]
-
-  columnDefs = [
-    { headerName: 'Role', field: 'name' },
-    {
-      headerName: 'Patients Per Hr', valueGetter: function (params) {
-        return params.data.patientsPerHour;
-      },
-      valueSetter: function (params) {
-        if (params.data.patientsPerHour !== params.newValue) {
-          params.data.patientsPerHour = params.newValue;
-          return true;
-        } else {
-          return false;
-        }
-      }
-    },
-    {
-      headerName: 'Price',
-      valueGetter: function (params) {
-        return params.data.cost;
-      },
-      valueSetter: function (params) {
-        if (params.data.cost !== params.newValue) {
-          params.data.cost = params.newValue;
-          return true;
-        } else {
-          return false;
-        }
-      },
-    }
-  ];
-
-  defaultColDef = {
-    editable: true,
-    resizable: true
-  }
-
-  clear(){
-    this.filteredShiftList = [];
-    
-    this.hourlyDetailData =[];
+  
+  goBack() {
+    console.log("'goBack")
+    this._location.back();
   }
 
   filterDetails(filterVal: any) {
@@ -198,14 +94,13 @@ export class GraphComponent implements OnInit {
   }
   processData() {
     this.hourlyDetailData.forEach(detail=>{
-      detail.expectedWorkLoad = detail.expectedWorkLoad*this.model[0].patientsPerHour;
-      detail.capacityWorkLoad = detail.capacityWorkLoad*this.model[0].patientsPerHour;
       detail.totalCoverage = detail.numberOfAPPs+detail.numberOfPhysicians+detail.numberOfScribes;
       detail.capacityWorkLoad = Math.round(detail.capacityWorkLoad *100)/100;
       detail.expectedWorkLoad = Math.round(detail.expectedWorkLoad*100)/100;
       detail.percentPhysician = Math.round(detail.numberOfPhysicians/detail.totalCoverage *100)/100;
       detail.expectedPatientsPerProvider = Math.round( detail.expectedWorkLoad/detail.totalCoverage*100)/100;
       detail.coveredPatientsPerProvider = Math.round(detail.capacityWorkLoad/detail.totalCoverage*100)/100;
+      detail.differnceBetweenCapacityAndWorkload = Math.round((detail.expectedWorkLoad-detail.capacityWorkLoad)*100)/100;
     })
     this.filteredHourlyData = this.hourlyDetailData;
     this.map = new Map();
@@ -293,39 +188,6 @@ export class GraphComponent implements OnInit {
         return columnValues;
       });
   }
-  
-  calculateCapacity(){
-    for(let i=1;i<this.model.length;i++){
-      this.model[i].capacity[0] = this.model[i].patientsPerHour/this.model[0].patientsPerHour;
-      this.model[i].capacity[1] = this.model[i].capacity[0] * this.model[0].capacity[1];
-      this.model[i].capacity[2] = this.model[i].capacity[0] * this.model[0].capacity[2];
-    }
-  }
-  onSubmit() {
-    this.submitted = true;
-    const apiLink = 'http://localhost:8080/Staffing/api/shiftPlan';
-    let httpHeaders = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-    let options = {
-      headers: httpHeaders
-    };
-    this.calculateCapacity();
-    this.http.post<response>(apiLink, this.model, options)
-      .toPromise()
-      .then(data => {
-        this.hourlyDetailData = data.hourlyDetail;
-        this.shiftSlots = data.clinicianHourCount;
-        this.shiftList = this.processData();
-        this.filteredShiftList = this.shiftList;
-        this.filteredTransposedData = this.transposedData;
-        this.createGraph(this.hourlyDetailData);
-      },
-        error => {
-          console.log('Something went wrong.');
-        })
-  }
-
 
   public options: any = {
     chart: {
@@ -359,7 +221,7 @@ export class GraphComponent implements OnInit {
       {
         min: 0,
         title: {
-          text: 'Employees'
+          text: 'Patient Arriving'
         }
       }
     ],
@@ -385,7 +247,7 @@ export class GraphComponent implements OnInit {
 
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private dataService: DataService, private _location: Location) { }
 
   private createGraph(data: HourlyDetail[]) {
     let expectedWorkLoadArray = data.map(hour => hour.expectedWorkLoad); //.slice(0,24);
@@ -393,14 +255,14 @@ export class GraphComponent implements OnInit {
     this.dataSource = data; //.slice(0,24);
     this.options.series = [
       {
-        name: 'Expected Workload',
+        name: 'Workload',
         color: 'rgba(0,0,217,1)',
         data: expectedWorkLoadArray,
         pointPadding: 0.3,
         pointPlacement: -0.2
       },
       {
-        name: 'Covered Workload',
+        name: 'Capacity',
         color: 'rgba(255,165,0,1)',
         data: capacityWorkLoadArray,
         pointPadding: 0.4,
@@ -435,16 +297,31 @@ export class GraphComponent implements OnInit {
     { headerName: 'Percent Physician ', field: 'percentPhysician' },
     { headerName: 'Expected Patient Arriving', field: 'expectedWorkLoad' },
     { headerName: 'Covered Patient Arriving', field: 'capacityWorkLoad' },
+    { headerName: 'Difference ', field: 'differnceBetweenCapacityAndWorkload' },
     { headerName: 'Expected Patient Per Provider', field: 'expectedPatientsPerProvider' },
     { headerName: 'Covered Patient Per Provider', field: 'coveredPatientsPerProvider' },
     
         
   ];
 
+  initialize(data){
+    this.hourlyDetailData = data.hourlyDetail;
+    this.shiftSlots = data.clinicianHourCount;
+    this.shiftList = this.processData();
+    this.filteredShiftList = this.shiftList;
+    this.filteredTransposedData = this.transposedData;
+    this.createGraph(this.hourlyDetailData);
+  }
 
   
   
   ngOnInit() {
+    this.dataService.apiData$.subscribe(apiData => this.apiData = apiData)
+    this.dataService.currentMessage.subscribe(message => this.message = message);
+    if(this.apiData!=null){
+      this.initialize(this.apiData)
+
+    }
     // Highcharts.chart('container', this.options);    
   }
 

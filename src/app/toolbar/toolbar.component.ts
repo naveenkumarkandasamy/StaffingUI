@@ -12,5 +12,5 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
   }
 
-  message ="Welcome";
+  message ="Staffing";
 }

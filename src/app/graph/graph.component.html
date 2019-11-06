@@ -1,14 +1,6 @@
-<div>
-    <div style="height:30vh;width: 40vw; position: absolute; left:30vw">
-        <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
-            <ag-grid-angular style="width: 40vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
-            </ag-grid-angular>
-            <button type="submit" class="btn btn-success" style="margin-top: 1vh;">Submit</button>
-            <button class="btn " style="margin-top:1vh ;" (click)="clear()"> Clear</button>
-        </form>
-    </div>
-
-    <div [hidden]="!filteredHourlyData" style=" position: absolute;top: 35vh;width: 100%; padding: 2.5vw">
+<div style="position: absolute;top: 8vh;width: 100vw;">
+    <button style="position: absolute; float: left;" (click)="goBack()">Back</button>
+    <div [hidden]="!filteredHourlyData" style=" position: absolute;width: 100%; padding: 2.5vw; top:2vh">
         <div style="height: 5vh;">
             <label>Days </label>
             <select (change)="filterDetails($event.target.value)">
