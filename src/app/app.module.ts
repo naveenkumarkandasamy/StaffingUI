@@ -12,6 +12,10 @@ import { GraphComponent } from './graph/graph.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { TutorialComponent } from './tutorial/tutorial.component';
 
+//Services
+import { DataService } from "./services/data.service";
+
+
 
 
 @NgModule({
@@ -32,7 +36,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
   ],
-  providers: [],
+  providers: [DataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -4,7 +4,9 @@ import { GraphComponent } from './graph/graph.component';
 import {TutorialComponent} from './tutorial/tutorial.component';
 
 
-const routes: Routes = [         {
+const routes: Routes = [     
+  { path: '', redirectTo: '/tutorial', pathMatch: 'full' },
+      {
   path: 'tutorial',
   component: TutorialComponent
 },
