@@ -13,6 +13,7 @@ export interface HourlyDetail {
     percentPhysician ? :number ;
     expectedPatientsPerProvider?:number;
     coveredPatientsPerProvider?:number;
+    differnceBetweenCapacityAndWorkload?:number;
   }
   
   export interface Detail{

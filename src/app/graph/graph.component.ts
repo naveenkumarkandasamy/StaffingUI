@@ -100,6 +100,7 @@ export class GraphComponent implements OnInit {
       detail.percentPhysician = Math.round(detail.numberOfPhysicians/detail.totalCoverage *100)/100;
       detail.expectedPatientsPerProvider = Math.round( detail.expectedWorkLoad/detail.totalCoverage*100)/100;
       detail.coveredPatientsPerProvider = Math.round(detail.capacityWorkLoad/detail.totalCoverage*100)/100;
+      detail.differnceBetweenCapacityAndWorkload = Math.round((detail.expectedWorkLoad-detail.capacityWorkLoad)*100)/100;
     })
     this.filteredHourlyData = this.hourlyDetailData;
     this.map = new Map();
@@ -220,7 +221,7 @@ export class GraphComponent implements OnInit {
       {
         min: 0,
         title: {
-          text: 'Employees'
+          text: 'Patient Arriving'
         }
       }
     ],
@@ -254,14 +255,14 @@ export class GraphComponent implements OnInit {
     this.dataSource = data; //.slice(0,24);
     this.options.series = [
       {
-        name: 'Expected Workload',
+        name: 'Workload',
         color: 'rgba(0,0,217,1)',
         data: expectedWorkLoadArray,
         pointPadding: 0.3,
         pointPlacement: -0.2
       },
       {
-        name: 'Covered Workload',
+        name: 'Capacity',
         color: 'rgba(255,165,0,1)',
         data: capacityWorkLoadArray,
         pointPadding: 0.4,
@@ -296,6 +297,7 @@ export class GraphComponent implements OnInit {
     { headerName: 'Percent Physician ', field: 'percentPhysician' },
     { headerName: 'Expected Patient Arriving', field: 'expectedWorkLoad' },
     { headerName: 'Covered Patient Arriving', field: 'capacityWorkLoad' },
+    { headerName: 'Difference ', field: 'differnceBetweenCapacityAndWorkload' },
     { headerName: 'Expected Patient Per Provider', field: 'expectedPatientsPerProvider' },
     { headerName: 'Covered Patient Per Provider', field: 'coveredPatientsPerProvider' },
     

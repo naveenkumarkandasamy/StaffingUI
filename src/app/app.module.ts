@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule  }   from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CustomMaxDirective } from './directives/custom-msx-validator';
 import { AgGridModule } from 'ag-grid-angular';
 import { MatTableModule} from "@angular/material";
 import { AppRoutingModule } from './app-routing.module';
@@ -24,7 +23,7 @@ import { DataService } from "./services/data.service";
     GraphComponent,
     ToolbarComponent,
     TutorialComponent,
-    CustomMaxDirective,
+
   
   ],
   imports: [
