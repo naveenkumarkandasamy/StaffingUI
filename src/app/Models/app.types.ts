@@ -9,6 +9,7 @@ export interface HourlyDetail {
     numberOfScribes?: number;
     numberOfShiftBeginning?: number;
     numberOfShiftEnding?: number;
+    costPerHour?:number;
     totalCoverage?:number;
     percentPhysician ? :number ;
     expectedPatientsPerProvider?:number;

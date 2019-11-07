@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ColDef } from 'ag-grid-community';
+import { HttpClient } from '@angular/common/http';
 import {HourlyDetail, Detail, TransposedRow, response, Shifts, Model} from "../Models/app.types"
 import { DataService } from "../services/data.service"
 import {Location} from '@angular/common';
+
 
 declare var require: any;
 let Boost = require('highcharts/modules/boost');
@@ -49,12 +49,14 @@ export class GraphComponent implements OnInit {
 
   filterDetails(filterVal: any) {
     if(filterVal == -1){
+     
       this.filteredShiftList = this.shiftList;
-      this.filteredTransposedData = this.transposedData;
-      console.log(this.transposedData);
-      this.createGraph(this.hourlyDetailData);
       
-
+     
+     this.filteredHourlyData = this.hourlyDetailData;
+     this.createColumnData(0);
+     this.filteredTransposedData = this.transposedData;
+      this.createGraph(this.hourlyDetailData);
       return; 
     }
     this.filteredHourlyData = this.hourlyDetailData.slice(filterVal * 24, (parseInt(filterVal) + 1) * 24);
@@ -100,7 +102,7 @@ export class GraphComponent implements OnInit {
       detail.percentPhysician = Math.round(detail.numberOfPhysicians/detail.totalCoverage *100)/100;
       detail.expectedPatientsPerProvider = Math.round( detail.expectedWorkLoad/detail.totalCoverage*100)/100;
       detail.coveredPatientsPerProvider = Math.round(detail.capacityWorkLoad/detail.totalCoverage*100)/100;
-      detail.differnceBetweenCapacityAndWorkload = Math.round((detail.expectedWorkLoad-detail.capacityWorkLoad)*100)/100;
+      detail.differnceBetweenCapacityAndWorkload = Math.round((detail.capacityWorkLoad-detail.expectedWorkLoad)*100)/100;
     })
     this.filteredHourlyData = this.hourlyDetailData;
     this.map = new Map();
@@ -201,12 +203,21 @@ export class GraphComponent implements OnInit {
       enabled: false
     },
     legend: { shadow: false },
-    tooltip: {
-      formatter: function () {
-        return
-        '  workload: ' + this.y.toFixed(2);
-      }
+    tooltip:{
+      formatter: function(){
+        var s = '<b>Hour ' + this.x + '</b>';
+
+        this.points.forEach(element => {
+          s += '<br/> '+ element.series.name + ': ' + element.y;
+        });
+      
+        s+= '<br>Excess Capacity: ' + Math.round(( this.points[1].y - this.points[0].y )*100)/100;
+
+        return s;
+      },
+      shared:true
     },
+
     plotOptions: {
       column: {
         grouping: false,
@@ -300,7 +311,7 @@ export class GraphComponent implements OnInit {
     { headerName: 'Difference ', field: 'differnceBetweenCapacityAndWorkload' },
     { headerName: 'Expected Patient Per Provider', field: 'expectedPatientsPerProvider' },
     { headerName: 'Covered Patient Per Provider', field: 'coveredPatientsPerProvider' },
-    
+    { headerName: 'Cost ', field: 'costPerHour' },
         
   ];
 
