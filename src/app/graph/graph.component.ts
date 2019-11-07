@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ColDef } from 'ag-grid-community';
+import { HttpClient } from '@angular/common/http';
 import {HourlyDetail, Detail, TransposedRow, response, Shifts, Model} from "../Models/app.types"
 import { DataService } from "../services/data.service"
 import {Location} from '@angular/common';
+
 
 declare var require: any;
 let Boost = require('highcharts/modules/boost');
@@ -203,12 +203,21 @@ export class GraphComponent implements OnInit {
       enabled: false
     },
     legend: { shadow: false },
-    tooltip: {
-      formatter: function () {
-        return
-        '  workload: ' + this.y.toFixed(2);
-      }
+    tooltip:{
+      formatter: function(){
+        var s = '<b>Hour ' + this.x + '</b>';
+
+        this.points.forEach(element => {
+          s += '<br/> '+ element.series.name + ': ' + element.y;
+        });
+      
+        s+= '<br>Excess Capacity: ' + Math.round(( this.points[1].y - this.points[0].y )*100)/100;
+
+        return s;
+      },
+      shared:true
     },
+
     plotOptions: {
       column: {
         grouping: false,
