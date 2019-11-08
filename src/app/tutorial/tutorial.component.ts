@@ -36,6 +36,13 @@ export class TutorialComponent implements OnInit {
       "expressions": ["1 * m", "1 * n"]
     }]
 
+    requestBody: any ={
+      "shiftLength":[12, 8,10,4],
+  "lowerLimitFactor": 0.75, 
+  "clinician":this.model
+    }
+
+
 
     columnDefs = [
       { headerName: 'Role', field: 'name' },
@@ -95,16 +102,10 @@ export class TutorialComponent implements OnInit {
       headers: httpHeaders
     };
    // this.calculateCapacity();
-    this.http.post<response>(apiLink, this.model, options)
+    this.http.post<response>(apiLink, this.requestBody, options)
       .toPromise()
       .then(data => {
         this.dataService.setData(data);
-       // this.hourlyDetailData = data.hourlyDetail;
-       // this.shiftSlots = data.clinicianHourCount;
-        //this.shiftList = this.processData();
-       // this.filteredShiftList = this.shiftList;
-       // this.filteredTransposedData = this.transposedData;
-        //this.createGraph(this.hourlyDetailData);
         this.router.navigateByUrl('/graph');
       },
         error => {
