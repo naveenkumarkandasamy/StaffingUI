@@ -9,11 +9,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphComponent } from './graph/graph.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { TutorialComponent } from './tutorial/tutorial.component';
+import { MainFormComponent } from './form/form.component';
 
 //Services
 import { DataService } from "./services/data.service";
-
+import {ConstantsService} from "./services/constants.service";
 
 
 
@@ -22,7 +22,7 @@ import { DataService } from "./services/data.service";
     AppComponent,
     GraphComponent,
     ToolbarComponent,
-    TutorialComponent,
+    MainFormComponent,
 
   
   ],
@@ -35,7 +35,7 @@ import { DataService } from "./services/data.service";
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
   ],
-  providers: [DataService],
+  providers: [DataService, ConstantsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
