@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GraphComponent } from './graph/graph.component';
-import {TutorialComponent} from './tutorial/tutorial.component';
+import {MainFormComponent} from './form/form.component';
 
 
 const routes: Routes = [     
-  { path: '', redirectTo: '/tutorial', pathMatch: 'full' },
+  { path: '', redirectTo: '/mainForm', pathMatch: 'full' },
       {
-  path: 'tutorial',
-  component: TutorialComponent
+  path: 'mainForm',
+  component: MainFormComponent
 },
 {
   path: 'graph',

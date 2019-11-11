@@ -3,16 +3,19 @@ import {Router} from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {HourlyDetail, Detail, TransposedRow, response, Shifts, Model} from "../Models/app.types"
 import { DataService } from "../services/data.service"
+import {ConstantsService} from "../services/constants.service";
 
 @Component({
-  selector: 'tutorial',
-  templateUrl: './tutorial.component.html',
-  styleUrls: ['./tutorial.component.css']
+  selector: 'mainForm',
+  templateUrl: './form.component.html',
+  styleUrls: ['./form.component.css']
 })
-export class TutorialComponent implements OnInit {
+export class MainFormComponent implements OnInit {
 
   message:string;
   apiData:response;
+  transposedColumnDef: Array<any>
+  data :any =this.constantsService.data;
   model: Model[] = [
     {
       "patientsPerHour": 1.2,
@@ -26,20 +29,21 @@ export class TutorialComponent implements OnInit {
       "capacity": [0.6, 0.5, 0.4],
       "cost": 65,
       "name": "app",
-      "expressions": ["2 * m"]
+      "expressions": ["2 * physician"]
     },
     {
       "patientsPerHour": 0.37,
       "capacity": [0.15, 0.12, 0.1],
       "cost": 20,
       "name": "scribe",
-      "expressions": ["1 * m", "1 * n"]
+      "expressions": ["1 * physician", "1 * app"]
     }]
 
     requestBody: any ={
       "shiftLength":[12, 8,10,4],
-  "lowerLimitFactor": 0.75, 
-  "clinician":this.model
+  "lowerLimitFactor": 0.85, 
+  "clinician":this.model,
+  "dayWorkload": this.data,
     }
 
 
@@ -81,15 +85,14 @@ export class TutorialComponent implements OnInit {
     }
 
 
-  constructor(private router: Router, private http: HttpClient,private dataService: DataService ) { }
+  constructor(private router: Router, private http: HttpClient,private dataService: DataService, private constantsService: ConstantsService ) { }
 
   ngOnInit() {
-    this.dataService.apiData$.subscribe(apiData => this.apiData = apiData)
+    this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
+    this.createColumnData();
   }
 
-  printHi(){
-   // console.log(selection.value);
-  }
+
 
 
   onSubmit() {
@@ -101,6 +104,7 @@ export class TutorialComponent implements OnInit {
     let options = {
       headers: httpHeaders
     };
+    console.log(JSON.stringify(this.requestBody));
    // this.calculateCapacity();
     this.http.post<response>(apiLink, this.requestBody, options)
       .toPromise()
@@ -125,4 +129,29 @@ export class TutorialComponent implements OnInit {
   navigateToGraph() {
     this.router.navigateByUrl('/graph');
  }
+
+
+ createColumnData(){
+  this.transposedColumnDef = [
+    {
+      headerName: 'Day',
+      field: 'name',
+      cellStyle: { 'font-size': 'large' },
+      pinned: 'left',
+      width : 300
+    }
+  ];
+
+  for(let i=0;i<24;i++){
+    this.transposedColumnDef.push({  headerName:i+"",
+    valueGetter: function(params){
+      return params.data.expectedPatientsPerHour[i];
+    },
+    valueSetter: function(params){
+        params.data.expectedPatientsPerHour[i]=params.newValue;
+    },
+    width:60
+     } )
+  }
+}
 }
