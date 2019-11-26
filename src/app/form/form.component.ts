@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {HourlyDetail, Detail, TransposedRow, response, Shifts, Model} from "../Models/app.types"
+import { HourlyDetail, Detail, TransposedRow, response, Shifts, Model } from "../Models/app.types"
 import { DataService } from "../services/data.service"
-import {ConstantsService} from "../services/constants.service";
+import { ConstantsService } from "../services/constants.service";
 
 @Component({
   selector: 'mainForm',
@@ -12,10 +12,12 @@ import {ConstantsService} from "../services/constants.service";
 })
 export class MainFormComponent implements OnInit {
 
-  message:string;
-  apiData:response;
+  message: string;
+  apiData: response;
   transposedColumnDef: Array<any>
-  data :any =this.constantsService.data;
+  data: any = this.constantsService.data;
+  shiftLength : string =null;
+  utilization = "";
   model: Model[] = [
     {
       "patientsPerHour": 1.2,
@@ -39,53 +41,53 @@ export class MainFormComponent implements OnInit {
       "expressions": ["1 * physician", "1 * app"]
     }]
 
-    requestBody: any ={
-      "shiftLength":[12, 8,10,4],
-  "lowerLimitFactor": 0.85, 
-  "clinician":this.model,
-  "dayWorkload": this.data,
-    }
+  requestBody: any = {
+    "shiftLength": [12, 8, 10, 4],
+    "lowerLimitFactor": 0.85,
+    "clinician": this.model,
+    "dayWorkload": this.data,
+  }
 
 
 
-    columnDefs = [
-      { headerName: 'Role', field: 'name' },
-      {
-        headerName: 'Patients Per Hr', valueGetter: function (params) {
-          return params.data.patientsPerHour;
-        },
-        valueSetter: function (params) {
-          if (params.data.patientsPerHour !== params.newValue) {
-            params.data.patientsPerHour = params.newValue;
-            return true;
-          } else {
-            return false;
-          }
+  columnDefs = [
+    { headerName: 'Role', field: 'name' },
+    {
+      headerName: 'Patients Per Hr', valueGetter: function (params) {
+        return params.data.patientsPerHour;
+      },
+      valueSetter: function (params) {
+        if (params.data.patientsPerHour !== params.newValue) {
+          params.data.patientsPerHour = params.newValue;
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+    {
+      headerName: 'Price',
+      valueGetter: function (params) {
+        return params.data.cost;
+      },
+      valueSetter: function (params) {
+        if (params.data.cost !== params.newValue) {
+          params.data.cost = params.newValue;
+          return true;
+        } else {
+          return false;
         }
       },
-      {
-        headerName: 'Price',
-        valueGetter: function (params) {
-          return params.data.cost;
-        },
-        valueSetter: function (params) {
-          if (params.data.cost !== params.newValue) {
-            params.data.cost = params.newValue;
-            return true;
-          } else {
-            return false;
-          }
-        },
-      }
-    ];
-  
-    defaultColDef = {
-      editable: true,
-      resizable: true
     }
+  ];
+
+  defaultColDef = {
+    editable: true,
+    resizable: true
+  }
 
 
-  constructor(private router: Router, private http: HttpClient,private dataService: DataService, private constantsService: ConstantsService ) { }
+  constructor(private router: Router, private http: HttpClient, private dataService: DataService, private constantsService: ConstantsService) { }
 
   ngOnInit() {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
@@ -97,15 +99,16 @@ export class MainFormComponent implements OnInit {
 
   onSubmit() {
     this.calculateCapacity();
-    const apiLink = 'http://localhost:8080/Staffing/api/shiftPlan';
+    const apiLink = 'http://localhost:8086/Staffing/api/shiftPlan';
+
     let httpHeaders = new HttpHeaders({
       'Content-Type': 'application/json'
     });
     let options = {
       headers: httpHeaders
     };
-    console.log(JSON.stringify(this.requestBody));
-   // this.calculateCapacity();
+    this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
+    this.requestBody.lowerLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.lowerLimitFactor;
     this.http.post<response>(apiLink, this.requestBody, options)
       .toPromise()
       .then(data => {
@@ -118,9 +121,9 @@ export class MainFormComponent implements OnInit {
   }
 
 
-  calculateCapacity(){
-    for(let i=1;i<this.model.length;i++){
-      this.model[i].capacity[0] = this.model[i].patientsPerHour/this.model[0].patientsPerHour;
+  calculateCapacity() {
+    for (let i = 1; i < this.model.length; i++) {
+      this.model[i].capacity[0] = this.model[i].patientsPerHour / this.model[0].patientsPerHour;
       this.model[i].capacity[1] = this.model[i].capacity[0] * this.model[0].capacity[1];
       this.model[i].capacity[2] = this.model[i].capacity[0] * this.model[0].capacity[2];
     }
@@ -128,30 +131,31 @@ export class MainFormComponent implements OnInit {
 
   navigateToGraph() {
     this.router.navigateByUrl('/graph');
- }
-
-
- createColumnData(){
-  this.transposedColumnDef = [
-    {
-      headerName: 'Day',
-      field: 'name',
-      cellStyle: { 'font-size': 'large' },
-      pinned: 'left',
-      width : 300
-    }
-  ];
-
-  for(let i=0;i<24;i++){
-    this.transposedColumnDef.push({  headerName:i+"",
-    valueGetter: function(params){
-      return params.data.expectedPatientsPerHour[i];
-    },
-    valueSetter: function(params){
-        params.data.expectedPatientsPerHour[i]=params.newValue;
-    },
-    width:60
-     } )
   }
-}
+
+
+  createColumnData() {
+    this.transposedColumnDef = [
+      {
+        headerName: 'Day',
+        field: 'name',
+        cellStyle: { 'font-size': 'large' },
+        pinned: 'left',
+        width: 300
+      }
+    ];
+
+    for (let i = 0; i < 24; i++) {
+      this.transposedColumnDef.push({
+        headerName: i + "",
+        valueGetter: function (params) {
+          return params.data.expectedPatientsPerHour[i];
+        },
+        valueSetter: function (params) {
+          params.data.expectedPatientsPerHour[i] = params.newValue;
+        },
+        width: 60
+      })
+    }
+  }
 }

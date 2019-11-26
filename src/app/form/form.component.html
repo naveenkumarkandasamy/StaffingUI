@@ -1,9 +1,12 @@
 <div style="position: relative
 ;margin:2vh; ">
+    <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+        <div> <label>Enter comma seperted shift preferences</label><input required type="text" [(ngModel)]="shiftLength" name="shiftLength" #name="ngModel"></div>
+        <div> <label>Enter lower limit for utilization</label><input type="text" [(ngModel)]="utilization" name="utilzation"></div>
 
-    <div style="height:30vh; position: relative; ">
-        <label>Coverage Summary</label>
-        <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+        <div style="height:30vh; position: relative; ">
+            <label>Coverage Summary</label>
+
             <ag-grid-angular style="width: 40vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
             </ag-grid-angular>
 
@@ -15,6 +18,7 @@
             </div>
             <button type="submit" class="btn btn-success" style="margin-top: 1vh;">Submit</button>
 
-        </form>
-    </div>
+
+        </div>
+    </form>
 </div>
