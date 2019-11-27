@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HourlyDetail, Detail, TransposedRow, response, Shifts, Model } from "../Models/app.types"
+import { ViewChild, ElementRef } from '@angular/core';
 import { DataService } from "../services/data.service"
 import { ConstantsService } from "../services/constants.service";
 
@@ -10,13 +11,20 @@ import { ConstantsService } from "../services/constants.service";
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.css']
 })
+
 export class MainFormComponent implements OnInit {
+
+
+  @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
   message: string;
   apiData: response;
   transposedColumnDef: Array<any>
   data: any = this.constantsService.data;
-  shiftLength : string =null;
+  shiftLength: string = "";
+  inputTypes: Array<string> = ["File", "Inline Table"];
+  inputFormat: string;
+  fileToUpload: File = null;
   utilization = "";
   model: Model[] = [
     {
@@ -95,11 +103,23 @@ export class MainFormComponent implements OnInit {
   }
 
 
+  formatChanged(value) {
+    this.inputFormat = value;
+  }
 
-
+  handleFileInput(files: FileList) {
+    this.fileToUpload = files.item(0);
+    var ext = this.fileToUpload.name.split(".").pop();
+    if (ext != "xlsx") {
+      //TODO: change alert to excpetion handling or toast 
+      alert("file format not supported , upload only xlsx files")
+      this.fileInput.nativeElement.value = null;
+      this.fileToUpload = undefined;
+    }
+  }
   onSubmit() {
     this.calculateCapacity();
-    const apiLink = 'http://localhost:8086/Staffing/api/shiftPlan';
+    const apiLink = '/Staffing/api/shiftPlan';
 
     let httpHeaders = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -109,17 +129,41 @@ export class MainFormComponent implements OnInit {
     };
     this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.lowerLimitFactor;
+    if (this.inputFormat == "File") {
+      this.apiRequestwithFileData();
+    }
+    else {
+      this.apiRequestwithTableData(apiLink, options);
+    }
+  }
+
+
+  private apiRequestwithFileData() {
+    const apiLink = '/Staffing/api/shiftPlanFileUpload';
+    const formData = new FormData();
+    formData.append('workloadExcel', this.fileToUpload);
+    formData.append('inputData', JSON.stringify(this.requestBody));
+    this.http.post<response>(apiLink, formData)
+      .toPromise()
+      .then(data => {
+        this.dataService.setData(data);
+        this.router.navigateByUrl('/graph');
+      }, error => {
+        console.log('Something went wrong.');
+      });
+  }
+
+
+  private apiRequestwithTableData(apiLink: string, options: { headers: HttpHeaders; }) {
     this.http.post<response>(apiLink, this.requestBody, options)
       .toPromise()
       .then(data => {
         this.dataService.setData(data);
         this.router.navigateByUrl('/graph');
-      },
-        error => {
-          console.log('Something went wrong.');
-        })
+      }, error => {
+        console.log('Something went wrong.');
+      });
   }
-
 
   calculateCapacity() {
     for (let i = 1; i < this.model.length; i++) {
