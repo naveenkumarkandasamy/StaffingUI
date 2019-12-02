@@ -25,9 +25,9 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                dir('/home/accoliteadmin/Desktop/Staffing/') {
+             
                     sh '/home/accoliteadmin/Desktop/Staffing/deployui.sh'
-                }
+                
             }
         }
 
