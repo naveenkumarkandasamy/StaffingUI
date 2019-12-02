@@ -253,3 +253,7 @@ svg#clouds {
         visibility: hidden;
     }
 }
+
+div label {
+    margin: 1vh;
+}

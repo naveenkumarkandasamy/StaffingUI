@@ -1,20 +1,34 @@
 <div style="position: relative
 ;margin:2vh; ">
+    <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+        <div> <label>Enter comma seperted shift preferences</label><input required type="text" [(ngModel)]="shiftLength" name="shiftLength" #name="ngModel"></div>
+        <div> <label>Enter lower limit for utilization</label><input type="text" [(ngModel)]="utilization" name="utilzation"></div>
 
-    <div style="height:30vh; position: relative; ">
-        <label>Coverage Summary</label>
-        <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+        <div style="height:30vh; position: relative; ">
+            <label>Coverage Summary</label>
+
             <ag-grid-angular style="width: 40vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
             </ag-grid-angular>
 
-            <div style="width:95%">
+            <div style="width: 30vh;">
+                <label>Data format</label>
+                <select class="form-control mt-2" id="inputType" name="inputFormat" #t (change)="formatChanged(t.value)">
+                    <option></option>
+                    <option [value]="type" *ngFor="let type of inputTypes"> {{ type }} </option>
+                </select>
+            </div>
+            <div style="width:95%" *ngIf="inputFormat == 'Inline Table'">
                 <label>Hourly Data</label>
                 <ag-grid-angular style="height: 20vh;" class="ag-theme-balham" [rowData]="data" [columnDefs]="transposedColumnDef" [defaultColDef]="defaultColDef">
                 </ag-grid-angular>
-
+            </div>
+            <div *ngIf="inputFormat == 'File'">
+                <label for="file">Choose File</label>
+                <input type="file" id="file" #fileInput (change)="handleFileInput($event.target.files)">
             </div>
             <button type="submit" class="btn btn-success" style="margin-top: 1vh;">Submit</button>
 
-        </form>
-    </div>
+
+        </div>
+    </form>
 </div>
