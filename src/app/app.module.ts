@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule  }   from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 import { AgGridModule } from 'ag-grid-angular';
 import { MatTableModule} from "@angular/material";
 import { AppRoutingModule } from './app-routing.module';
@@ -34,6 +35,7 @@ import {ConstantsService} from "./services/constants.service";
     MatTableModule,
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
+    ToastrModule.forRoot(),
   ],
   providers: [DataService, ConstantsService],
   bootstrap: [AppComponent]

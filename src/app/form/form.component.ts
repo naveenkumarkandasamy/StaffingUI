@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { HourlyDetail, Detail, TransposedRow, response, Shifts, Model } from "../Models/app.types"
+import { response,  Model } from "../Models/app.types"
 import { ViewChild, ElementRef } from '@angular/core';
 import { DataService } from "../services/data.service"
 import { ConstantsService } from "../services/constants.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'mainForm',
@@ -95,7 +96,7 @@ export class MainFormComponent implements OnInit {
   }
 
 
-  constructor(private router: Router, private http: HttpClient, private dataService: DataService, private constantsService: ConstantsService) { }
+  constructor(private router: Router, private http: HttpClient, private dataService: DataService, private toastr: ToastrService, private constantsService: ConstantsService) { }
 
   ngOnInit() {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
@@ -111,8 +112,7 @@ export class MainFormComponent implements OnInit {
     this.fileToUpload = files.item(0);
     var ext = this.fileToUpload.name.split(".").pop();
     if (ext != "xlsx") {
-      //TODO: change alert to excpetion handling or toast 
-      alert("file format not supported , upload only xlsx files")
+      this.toastr.error('file format not supported , upload only xlsx files');
       this.fileInput.nativeElement.value = null;
       this.fileToUpload = undefined;
     }
@@ -149,7 +149,7 @@ export class MainFormComponent implements OnInit {
         this.dataService.setData(data);
         this.router.navigateByUrl('/graph');
       }, error => {
-        console.log('Something went wrong.');
+        this.toastr.error(error.message);
       });
   }
 
@@ -161,7 +161,8 @@ export class MainFormComponent implements OnInit {
         this.dataService.setData(data);
         this.router.navigateByUrl('/graph');
       }, error => {
-        console.log('Something went wrong.');
+        this.toastr.error(error.message);
+
       });
   }
 
