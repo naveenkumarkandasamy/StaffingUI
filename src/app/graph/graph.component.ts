@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HttpClient } from '@angular/common/http';
-import {HourlyDetail, Detail, TransposedRow, response, Shifts, Model} from "../Models/app.types"
+import { HourlyDetail, Detail, TransposedRow, response, Shifts, Model } from "../Models/app.types"
 import { DataService } from "../services/data.service"
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 
 
 declare var require: any;
@@ -25,8 +25,8 @@ noData(Highcharts);
 })
 export class GraphComponent implements OnInit {
 
-  apiData:response;
-  message:string;
+  apiData: response;
+  message: string;
   Arr = Array;
   hourlyDetailData: HourlyDetail[];
   filteredHourlyData: HourlyDetail[];
@@ -35,87 +35,126 @@ export class GraphComponent implements OnInit {
   filteredShiftList: Shifts[];
   shiftSlots: object[];
   dataSource: any[];
-  daysOfWeek : string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   days: number[] = [0, 1, 2, 3, 4, 5, 6];
   transposedData: TransposedRow[];
-  filteredTransposedData : TransposedRow[];
+  filteredTransposedData: TransposedRow[];
   transposedColumnDef: Array<any>
 
-  
+
   goBack() {
-    console.log("'goBack")
     this._location.back();
   }
 
   filterDetails(filterVal: any) {
-    if(filterVal == -1){
-     
+    if (filterVal == -1) {
       this.filteredShiftList = this.shiftList;
-      
-     
-     this.filteredHourlyData = this.hourlyDetailData;
-     this.createColumnData(0);
-     this.filteredTransposedData = this.transposedData;
+      this.filteredHourlyData = this.hourlyDetailData;
+      this.createColumnData(0);
+      this.filteredTransposedData = this.transposedData;
       this.createGraph(this.hourlyDetailData);
-      return; 
+      return;
     }
     this.filteredHourlyData = this.hourlyDetailData.slice(filterVal * 24, (parseInt(filterVal) + 1) * 24);
-    this.createColumnData(filterVal*24);
-    this.filteredShiftList = this.shiftList.filter(a=>a.day == this.daysOfWeek[filterVal])
-    this.filteredTransposedData=[];
-   
-    this.transposedData.forEach(transposedRow=>{
-      let newRow = this.filterList(filterVal*24,  (parseInt(filterVal) + 1) * 24, transposedRow);
-      newRow["header"]=transposedRow["header"];
+    this.createColumnData(filterVal * 24);
+    this.filteredShiftList = this.shiftList.filter(a => a.day == this.daysOfWeek[filterVal])
+    this.filteredTransposedData = [];
+
+    this.transposedData.forEach(transposedRow => {
+      let newRow = this.filterList(filterVal * 24, (parseInt(filterVal) + 1) * 24, transposedRow);
+      newRow["header"] = transposedRow["header"];
       this.filteredTransposedData.push(newRow);
 
     })
-    console.log(this.filteredTransposedData);
-   
     this.createGraph(this.filteredHourlyData);
     ;
   }
 
 
-  filterList(startIndex:number, endIndex:number, dataArray: Object){
+  filterList(startIndex: number, endIndex: number, dataArray: Object) {
     let newArray = new TransposedRow;
-    for(let i=startIndex;i<endIndex;i++){
-      newArray[i-startIndex]=dataArray[i];
+    for (let i = startIndex; i < endIndex; i++) {
+      newArray[i - startIndex] = dataArray[i];
     }
     return newArray;
   }
-  submitted = false;
 
-  createNewShift(startTime:number, shiftLength:number){
+  createNewShift(startTime: number, shiftLength: number) {
     let shift = new Shifts();
-    shift.startTime = startTime%24;
-    shift.endTime = (startTime+shiftLength)%24;
-    shift.day = this.daysOfWeek[Math.floor(startTime/24)];
+    shift.startTime = startTime % 24;
+    shift.endTime = (startTime + shiftLength) % 24;
+    shift.day = this.daysOfWeek[Math.floor(startTime / 24)];
     shift.shiftLength = shiftLength;
     return shift;
   }
+
+  calculateWaitLoss(currentHourlyData: HourlyDetail, prevHourlyData: HourlyDetail) {
+    if (prevHourlyData.wait == 0 && prevHourlyData.differnceBetweenCapacityAndWorkload < 0) {
+      if (currentHourlyData.differnceBetweenCapacityAndWorkload > 0)
+        currentHourlyData.wait = Math.min(0, currentHourlyData.differnceBetweenCapacityAndWorkload + prevHourlyData.differnceBetweenCapacityAndWorkload);
+      else
+        currentHourlyData.wait = prevHourlyData.differnceBetweenCapacityAndWorkload
+      currentHourlyData.loss = 0;
+    }
+    else if (prevHourlyData.wait < 0 && currentHourlyData.differnceBetweenCapacityAndWorkload < 0) {
+      currentHourlyData.loss = prevHourlyData.wait;
+      currentHourlyData.wait = prevHourlyData.differnceBetweenCapacityAndWorkload;
+    }
+    else if (prevHourlyData.wait < 0) {
+      let sum = prevHourlyData.wait + prevHourlyData.differnceBetweenCapacityAndWorkload;
+      if (Math.abs(sum) < currentHourlyData.differnceBetweenCapacityAndWorkload) {
+        currentHourlyData.wait = 0;
+        currentHourlyData.loss = 0;
+      }
+      else {
+        currentHourlyData.loss = Math.min(0, currentHourlyData.differnceBetweenCapacityAndWorkload - Math.abs(prevHourlyData.wait));
+        currentHourlyData.wait = Math.max(prevHourlyData.differnceBetweenCapacityAndWorkload, currentHourlyData.differnceBetweenCapacityAndWorkload + sum - currentHourlyData.loss);
+      }
+    }
+    else {
+      currentHourlyData.wait = 0;
+      currentHourlyData.loss = 0;
+    }
+
+    if (currentHourlyData.wait > 0) currentHourlyData.wait = 0;
+
+    currentHourlyData.wait = Math.round(currentHourlyData.wait * 100) / 100;
+    currentHourlyData.loss = Math.round(currentHourlyData.loss * 100) / 100;
+  }
+
   processData() {
-    this.hourlyDetailData.forEach(detail=>{
-      detail.totalCoverage = detail.numberOfAPPs+detail.numberOfPhysicians+detail.numberOfScribes;
-      detail.capacityWorkLoad = Math.round(detail.capacityWorkLoad *100)/100;
-      detail.expectedWorkLoad = Math.round(detail.expectedWorkLoad*100)/100;
-      detail.percentPhysician = Math.round(detail.numberOfPhysicians/detail.totalCoverage *100)/100;
-      detail.expectedPatientsPerProvider = Math.round( detail.expectedWorkLoad/detail.totalCoverage*100)/100;
-      detail.coveredPatientsPerProvider = Math.round(detail.capacityWorkLoad/detail.totalCoverage*100)/100;
-      detail.differnceBetweenCapacityAndWorkload = Math.round((detail.capacityWorkLoad-detail.expectedWorkLoad)*100)/100;
+    this.hourlyDetailData.forEach((detail, index) => {
+      detail.totalCoverage = detail.numberOfAPPs + detail.numberOfPhysicians + detail.numberOfScribes;
+      detail.capacityWorkLoad = Math.round(detail.capacityWorkLoad * 100) / 100;
+      detail.expectedWorkLoad = Math.round(detail.expectedWorkLoad * 100) / 100;
+      detail.percentPhysician = Math.round(detail.numberOfPhysicians / detail.totalCoverage * 100) / 100;
+      detail.expectedPatientsPerProvider = Math.round(detail.expectedWorkLoad / detail.totalCoverage * 100) / 100;
+      detail.coveredPatientsPerProvider = Math.round(detail.capacityWorkLoad / detail.totalCoverage * 100) / 100;
+      detail.differnceBetweenCapacityAndWorkload = Math.round((detail.capacityWorkLoad - detail.expectedWorkLoad) * 100) / 100;
+      if (index == 0) {
+        detail.wait = 0;
+        detail.loss = 0;
+      }
+      if (index == 1) {
+        detail.wait = Math.abs(this.hourlyDetailData[0].differnceBetweenCapacityAndWorkload) + detail.differnceBetweenCapacityAndWorkload;
+        detail.loss = 0;
+      }
+      if (index > 1) {
+        this.calculateWaitLoss(detail, this.hourlyDetailData[index - 1])
+      }
     })
     this.filteredHourlyData = this.hourlyDetailData;
     this.map = new Map();
     this.shiftSlots.forEach((shiftSlot, index) => {
       for (let key of Object.keys(shiftSlot)) {
-         let shift = new Shifts();
+        let shift = new Shifts();
         if (shiftSlot[key].physicianStart > 0) {
           if (this.map.has(index + "to" + key)) {
             shift = this.map.get(index + "to" + key);
             shift.physicians += shiftSlot[key].physicianStart;
           }
           else {
-             shift = this.createNewShift(index, parseInt(key));
+            shift = this.createNewShift(index, parseInt(key));
             shift.physicians = shiftSlot[key].physicianStart;
           }
           this.map.set(index + "to" + key, shift)
@@ -126,55 +165,54 @@ export class GraphComponent implements OnInit {
             shift.apps += shiftSlot[key].appStart;
           }
           else {
-            shift =  this.createNewShift(index, parseInt(key))
+            shift = this.createNewShift(index, parseInt(key))
             shift.apps = shiftSlot[key].appStart;
           }
           this.map.set(index + "to" + key, shift)
         }
         if (shiftSlot[key].scribeStart > 0) {
           if (this.map.has(index + "to" + key)) {
-             shift = this.map.get(index + "to" + key);
+            shift = this.map.get(index + "to" + key);
             shift.scribes += shiftSlot[key].scribeStart;
             ;
           }
           else {
-             shift =  this.createNewShift(index, parseInt(key))
+            shift = this.createNewShift(index, parseInt(key))
             shift.scribes = shiftSlot[key].scribeStart;
-            
+
           }
           this.map.set(index + "to" + key, shift)
         }
-       
+
       }
 
     })
     this.createColumnData(0);
     this.transposeData();
-    //console.log(this.transposedData, this.transposedColumnDef);
     return Array.from(this.map.values());
   }
 
-  createColumnData(startIndex:number){
+  createColumnData(startIndex: number) {
     this.transposedColumnDef = [
       {
         headerName: '',
         field: 'header',
         cellStyle: { 'font-size': 'large' },
         pinned: 'left',
-        width : 300
+        width: 300
       }
     ];
-  
+
     this.transposedColumnDef.push(...this.filteredHourlyData.map(translation => {
       return {
-        headerName: (translation.hour-startIndex)+"",
-        field: (translation.hour-startIndex).toString(),
-       width : 75
+        headerName: (translation.hour - startIndex) + "",
+        field: (translation.hour - startIndex).toString(),
+        width: 75
       };
-     }));
+    }));
   }
-  transposeData(){
-      // use map, spread, and push to populate the rest of the columns
+  transposeData() {
+    // use map, spread, and push to populate the rest of the columns
     this.transposedData = this.coverageColumnDef
       .filter((_, index) => index > 0) // we don't show first column - it's the header
       .map(data => {
@@ -203,19 +241,19 @@ export class GraphComponent implements OnInit {
       enabled: false
     },
     legend: { shadow: false },
-    tooltip:{
-      formatter: function(){
+    tooltip: {
+      formatter: function () {
         var s = '<b>Hour ' + this.x + '</b>';
 
         this.points.forEach(element => {
-          s += '<br/> '+ element.series.name + ': ' + element.y;
+          s += '<br/> ' + element.series.name + ': ' + element.y;
         });
-      
-        s+= '<br>Excess Capacity: ' + Math.round(( this.points[1].y - this.points[0].y )*100)/100;
+
+        s += '<br>Excess Capacity: ' + Math.round((this.points[1].y - this.points[0].y) * 100) / 100;
 
         return s;
       },
-      shared:true
+      shared: true
     },
 
     plotOptions: {
@@ -254,10 +292,6 @@ export class GraphComponent implements OnInit {
     ]
   }
 
-
-
-
-
   constructor(private http: HttpClient, private dataService: DataService, private _location: Location) { }
 
   private createGraph(data: HourlyDetail[]) {
@@ -283,11 +317,6 @@ export class GraphComponent implements OnInit {
     Highcharts.chart('container', this.options);
   }
 
-
-
-
-
-
   shiftColumnDef = [
     { headerName: 'Day', field: 'day' },
     { headerName: 'Start Time', field: 'startTime' },
@@ -312,10 +341,11 @@ export class GraphComponent implements OnInit {
     { headerName: 'Expected Patient Per Provider', field: 'expectedPatientsPerProvider' },
     { headerName: 'Covered Patient Per Provider', field: 'coveredPatientsPerProvider' },
     { headerName: 'Cost ', field: 'costPerHour' },
-        
+    { headerName: 'Two Hour Wait ', field: 'wait' },
+    { headerName: 'Patient Lost ', field: 'loss' },
   ];
 
-  initialize(data){
+  initialize(data) {
     this.hourlyDetailData = data.hourlyDetail;
     this.shiftSlots = data.clinicianHourCount;
     this.shiftList = this.processData();
@@ -324,12 +354,10 @@ export class GraphComponent implements OnInit {
     this.createGraph(this.hourlyDetailData);
   }
 
-  
-  
   ngOnInit() {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData)
     this.dataService.currentMessage.subscribe(message => this.message = message);
-    if(this.apiData!=null){
+    if (this.apiData != null) {
       this.initialize(this.apiData)
 
     }
