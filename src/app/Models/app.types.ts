@@ -15,6 +15,8 @@ export interface HourlyDetail {
     expectedPatientsPerProvider?:number;
     coveredPatientsPerProvider?:number;
     differnceBetweenCapacityAndWorkload?:number;
+    wait?:number ;
+    loss?:number;
   }
   
   export interface Detail{
