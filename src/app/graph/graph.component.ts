@@ -145,6 +145,7 @@ export class GraphComponent implements OnInit {
       if (index > 1) {
         this.calculateWaitLoss(detail, this.hourlyDetailData[index - 1])
       }
+      if (detail.wait > 0) detail.wait = 0;
     })
     this.filteredHourlyData = this.hourlyDetailData;
     this.map = new Map();
