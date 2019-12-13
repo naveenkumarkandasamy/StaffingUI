@@ -380,13 +380,12 @@ export class GraphComponent implements OnInit {
     this.requestBody = this.dataService.getRequestBody();
     if (this.apiData != null && this.requestBody!=null) {
       this.getCliniciansName();
-      this.initialize(this.apiData)
-     
       this.changeHeaders();
+      this.initialize(this.apiData);
     }
-
     // Highcharts.chart('container', this.options);    
   }
+
 
 }
 
