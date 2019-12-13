@@ -20,6 +20,10 @@ p {
     margin: 0;
 }
 
+.script-menu>::ng-deep .mat-figure {
+    justify-content: flex-start;
+}
+
 .content {
     display: flex;
     margin: 32px auto;

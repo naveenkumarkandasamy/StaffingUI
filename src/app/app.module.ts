@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { GraphComponent } from './graph/graph.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MainFormComponent } from './form/form.component';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 //Services
 import { DataService } from "./services/data.service";
@@ -28,6 +29,7 @@ import {ConstantsService} from "./services/constants.service";
   
   ],
   imports: [
+    MatGridListModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,

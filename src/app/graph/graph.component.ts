@@ -235,7 +235,7 @@ export class GraphComponent implements OnInit {
       height: 400
     },
     title: {
-      text: 'Efficiency Optimization by Branch'
+      text: 'Efficiency Optimization'
     },
     credits: {
       enabled: false

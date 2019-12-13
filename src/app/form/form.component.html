@@ -1,28 +1,31 @@
 <div style="position: relative
-;margin:2vh; ">
+;width:96vw;margin:2vh;">
     <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
-        <div> <label>Enter comma seperted shift preferences</label><input required type="text" [(ngModel)]="shiftLength" name="shiftLength" #name="ngModel"></div>
-        <div> <label>Enter lower limit for utilization</label><input type="text" [(ngModel)]="utilization" name="utilzation"></div>
-
-        <div style="height:30vh; position: relative; ">
+        <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+            <mat-grid-tile class="script-menu"> <label class=" col-sm ">Enter comma seperted shift preferences</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <input class="col-sm" required type="text" [(ngModel)]="shiftLength" placeholder="12, 8, 10, 4" name="shiftLength" #name="ngModel"></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class=" col-sm ">Enter lower limit for utilization</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <input class="col-sm" type="text" [(ngModel)]="utilization" placeholder="0.85" name="utilzation"></mat-grid-tile>
+        </mat-grid-list>
+        <div style="height:30vh; position: relative;  ">
             <label>Coverage Summary</label>
 
             <ag-grid-angular style="width: 40vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
             </ag-grid-angular>
 
             <div style="width: 30vh;">
-                <label>Data format</label>
+                <label>Arrival Data format</label>
                 <select class="form-control mt-2" id="inputType" name="inputFormat" #t (change)="formatChanged(t.value)">
-                    <option></option>
+                   
                     <option [value]="type" *ngFor="let type of inputTypes"> {{ type }} </option>
                 </select>
             </div>
-            <div style="width:95%" *ngIf="inputFormat == 'Inline Table'">
+            <div *ngIf="inputFormat == 'Provide Online'">
                 <label>Hourly Data</label>
-                <ag-grid-angular style="height: 20vh;" class="ag-theme-balham" [rowData]="data" [columnDefs]="transposedColumnDef" [defaultColDef]="defaultColDef">
+                <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="data" [columnDefs]="transposedColumnDef" [defaultColDef]="defaultColDef">
                 </ag-grid-angular>
             </div>
-            <div *ngIf="inputFormat == 'File'">
+            <div *ngIf="inputFormat == 'File Upload'">
                 <label for="file">Choose File</label>
                 <input type="file" id="file" #fileInput (change)="handleFileInput($event.target.files)">
             </div>
