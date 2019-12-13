@@ -1,6 +1,6 @@
 
 
-export interface HourlyDetail {
+export class HourlyDetail {
     hour?: number;
     capacityWorkLoad?: number;
     expectedWorkLoad?: number;

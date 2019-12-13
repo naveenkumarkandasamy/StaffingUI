@@ -6,16 +6,33 @@
             <select (change)="filterDetails($event.target.value)">
                 <option value="-1">--All--</option>
                 <option *ngFor="let i of days" value={{i}}>
-                        {{daysOfWeek[i]}}
+                    {{daysOfWeek[i]}}
                 </option>
             </select>
         </div>
         <div id="container" style="width:100%;height: 52vh;"></div>
         <div *ngIf="filteredHourlyData" style=" position: relative;width:100%">
-            <label>Coverage Summary</label>
-            <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="filteredTransposedData" [columnDefs]="transposedColumnDef">
-            </ag-grid-angular>
+            <div>
+                <label>Coverage Summary</label>
+                <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="filteredTransposedData" [columnDefs]="transposedColumnDef">
+                </ag-grid-angular>
+            </div>
+            <div> <label>Overall Summary</label>
+                <mat-grid-list cols="4" rowHeight="5vh" style="width: 80%;">
+                    <mat-grid-tile class="script-menu"> Total Expected Patient</mat-grid-tile>
+                    <mat-grid-tile class="script-menu"> {{summaryHourlyDetail['expectedWorkLoad']}} </mat-grid-tile>
+                    <mat-grid-tile class="script-menu"> Total Capacity Workload</mat-grid-tile>
+                    <mat-grid-tile class="script-menu">{{summaryHourlyDetail['capacityWorkLoad']}} </mat-grid-tile>
+                    <mat-grid-tile class="script-menu"> Total Patients Waiting for Maximum Two hour</mat-grid-tile>
+                    <mat-grid-tile class="script-menu">{{summaryHourlyDetail['wait']}} </mat-grid-tile>
+                    <mat-grid-tile class="script-menu"> Total Patients Loss</mat-grid-tile>
+                    <mat-grid-tile class="script-menu">{{(summaryHourlyDetail['loss'])}} </mat-grid-tile>
+                    <mat-grid-tile class="script-menu"> Total Cost </mat-grid-tile>
+                    <mat-grid-tile class="script-menu"> {{summaryHourlyDetail['costPerHour']}} </mat-grid-tile>
+                </mat-grid-list>
+            </div>
         </div>
+
         <div *ngIf="filteredShiftList" style=" position: relative;width:100%">
             <label>Shifts Summary</label>
             <ag-grid-angular style="width:100%;height:40vh;" class="ag-theme-balham" [rowData]="filteredShiftList" [columnDefs]="shiftColumnDef">

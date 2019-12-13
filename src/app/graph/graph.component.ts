@@ -42,8 +42,8 @@ export class GraphComponent implements OnInit {
   transposedColumnDef: Array<any>
   clinicianNames: Array<String>;
   requestBody: any = {
-    
   }
+  summaryHourlyDetail: HourlyDetail;
   goBack() {
     this._location.back();
   }
@@ -68,8 +68,9 @@ export class GraphComponent implements OnInit {
       this.filteredTransposedData.push(newRow);
 
     })
+    this.getSummary();
     this.createGraph(this.filteredHourlyData);
-    ;
+
   }
 
 
@@ -150,37 +151,37 @@ export class GraphComponent implements OnInit {
     this.shiftSlots.forEach((shiftSlot, index) => {
       for (let key of Object.keys(shiftSlot)) {
         let shift = new Shifts();
-        if (shiftSlot[key][this.clinicianNames[0]+"Start"] > 0) {
+        if (shiftSlot[key][this.clinicianNames[0] + "Start"] > 0) {
           if (this.map.has(index + "to" + key)) {
             shift = this.map.get(index + "to" + key);
-            shift.physicians += shiftSlot[key][this.clinicianNames[0]+"Start"];
+            shift.physicians += shiftSlot[key][this.clinicianNames[0] + "Start"];
           }
           else {
             shift = this.createNewShift(index, parseInt(key));
-            shift.physicians = shiftSlot[key][this.clinicianNames[0]+"Start"];
+            shift.physicians = shiftSlot[key][this.clinicianNames[0] + "Start"];
           }
           this.map.set(index + "to" + key, shift)
         }
-        if (shiftSlot[key][this.clinicianNames[1]+"Start"]> 0) {
+        if (shiftSlot[key][this.clinicianNames[1] + "Start"] > 0) {
           if (this.map.has(index + "to" + key)) {
             shift = this.map.get(index + "to" + key);
-            shift.apps += shiftSlot[key][this.clinicianNames[1]+"Start"];
+            shift.apps += shiftSlot[key][this.clinicianNames[1] + "Start"];
           }
           else {
             shift = this.createNewShift(index, parseInt(key))
-            shift.apps = shiftSlot[key][this.clinicianNames[1]+"Start"];
+            shift.apps = shiftSlot[key][this.clinicianNames[1] + "Start"];
           }
           this.map.set(index + "to" + key, shift)
         }
-        if (shiftSlot[key][this.clinicianNames[2]+"Start"] > 0) {
+        if (shiftSlot[key][this.clinicianNames[2] + "Start"] > 0) {
           if (this.map.has(index + "to" + key)) {
             shift = this.map.get(index + "to" + key);
-            shift.scribes += shiftSlot[key][this.clinicianNames[2]+"Start"];
+            shift.scribes += shiftSlot[key][this.clinicianNames[2] + "Start"];
             ;
           }
           else {
             shift = this.createNewShift(index, parseInt(key))
-            shift.scribes = shiftSlot[key][this.clinicianNames[2]+"Start"];
+            shift.scribes = shiftSlot[key][this.clinicianNames[2] + "Start"];
 
           }
           this.map.set(index + "to" + key, shift)
@@ -296,7 +297,7 @@ export class GraphComponent implements OnInit {
 
   constructor(private http: HttpClient, private dataService: DataService, private _location: Location) {
 
-   }
+  }
 
   private createGraph(data: HourlyDetail[]) {
     let expectedWorkLoadArray = data.map(hour => hour.expectedWorkLoad); //.slice(0,24);
@@ -350,17 +351,20 @@ export class GraphComponent implements OnInit {
   ];
 
 
-  changeHeaders(){
-    this.coverageColumnDef[1].headerName = this.requestBody.clinician[0].name+" Coverage";
-    this.coverageColumnDef[2].headerName = this.requestBody.clinician[1].name+" Coverage";
-    this.coverageColumnDef[3].headerName = this.requestBody.clinician[2].name+" Coverage";
+  changeHeaders() {
+    this.coverageColumnDef[1].headerName = this.requestBody.clinician[0].name + " Coverage";
+    this.coverageColumnDef[2].headerName = this.requestBody.clinician[1].name + " Coverage";
+    this.coverageColumnDef[3].headerName = this.requestBody.clinician[2].name + " Coverage";
 
-    this.shiftColumnDef[4].headerName =  this.requestBody.clinician[0].name+" count";
-    this.shiftColumnDef[5].headerName =  this.requestBody.clinician[1].name+" count";
-    this.shiftColumnDef[6].headerName =  this.requestBody.clinician[2].name+" count";
+    this.shiftColumnDef[4].headerName = this.requestBody.clinician[0].name + " count";
+    this.shiftColumnDef[5].headerName = this.requestBody.clinician[1].name + " count";
+    this.shiftColumnDef[6].headerName = this.requestBody.clinician[2].name + " count";
 
   }
 
+  round(number) {
+    return Math.round(number * 100) / 100;
+  }
   initialize(data) {
     this.hourlyDetailData = data.hourlyDetail;
     this.shiftSlots = data.clinicianHourCount;
@@ -370,20 +374,33 @@ export class GraphComponent implements OnInit {
     this.createGraph(this.hourlyDetailData);
   }
 
-  getCliniciansName(){
-   this.clinicianNames= this.requestBody.clinician.map(c=>c.name);
+  getCliniciansName() {
+    this.clinicianNames = this.requestBody.clinician.map(c => c.name);
   }
 
   ngOnInit() {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData)
     this.dataService.currentMessage.subscribe(message => this.message = message);
     this.requestBody = this.dataService.getRequestBody();
-    if (this.apiData != null && this.requestBody!=null) {
+    if (this.apiData != null && this.requestBody != null) {
       this.getCliniciansName();
       this.changeHeaders();
       this.initialize(this.apiData);
+      this.getSummary();
     }
     // Highcharts.chart('container', this.options);    
+  }
+
+  getSummary() {
+    this.summaryHourlyDetail = new HourlyDetail;
+    Object.keys(this.filteredHourlyData[0]).forEach(key => {
+      this.summaryHourlyDetail[key] = this.filteredHourlyData.reduce(function (prev, cur) {
+        return prev + cur[key];
+      }, 0)
+    })
+      Object.keys(this.summaryHourlyDetail).forEach(key=> {
+        this.summaryHourlyDetail[key] = Math.abs(this.round( this.summaryHourlyDetail[key]))
+      })
   }
 
 
