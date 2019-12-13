@@ -257,3 +257,7 @@ svg#clouds {
 div label {
     margin: 1vh;
 }
+
+.mat-figure {
+    justify-content: left;
+}

@@ -23,8 +23,8 @@ export class MainFormComponent implements OnInit {
   transposedColumnDef: Array<any>
   data: any = this.constantsService.data;
   shiftLength: string = "";
-  inputTypes: Array<string> = ["File", "Inline Table"];
-  inputFormat: string;
+  inputTypes: Array<string> = [ "Provide Online", "File Upload"];
+  inputFormat: string = "Provide Online";
   fileToUpload: File = null;
   utilization = "";
   model: Model[] = [
@@ -60,7 +60,7 @@ export class MainFormComponent implements OnInit {
 
 
   columnDefs = [
-    { headerName: 'Role', field: 'name' },
+    { headerName: 'Role', field: 'name', editable: false },
     {
       headerName: 'Patients Per Hr', valueGetter: function (params) {
         return params.data.patientsPerHour;
@@ -186,7 +186,8 @@ export class MainFormComponent implements OnInit {
         field: 'name',
         cellStyle: { 'font-size': 'large' },
         pinned: 'left',
-        width: 300
+        width: 300, 
+        editable: false
       }
     ];
 
