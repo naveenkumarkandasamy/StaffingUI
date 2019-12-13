@@ -237,7 +237,7 @@ export class GraphComponent implements OnInit {
       height: 400
     },
     title: {
-      text: 'Workload and Capacaity Pattern'
+      text: 'Workload and Capacity Pattern'
     },
     credits: {
       enabled: false
