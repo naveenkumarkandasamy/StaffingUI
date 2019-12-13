@@ -40,14 +40,14 @@ export class MainFormComponent implements OnInit {
       "capacity": [0.6, 0.5, 0.4],
       "cost": 65,
       "name": "app",
-      "expressions": ["2 * physician"]
+      "expressions": []
     },
     {
       "patientsPerHour": 0.37,
       "capacity": [0.15, 0.12, 0.1],
       "cost": 20,
       "name": "scribe",
-      "expressions": ["1 * physician", "1 * app"]
+      "expressions": []
     }]
 
   requestBody: any = {
@@ -60,7 +60,7 @@ export class MainFormComponent implements OnInit {
 
 
   columnDefs = [
-    { headerName: 'Role', field: 'name', editable: false },
+    { headerName: 'Role', field: 'name', editable: true },
     {
       headerName: 'Patients Per Hr', valueGetter: function (params) {
         return params.data.patientsPerHour;
@@ -119,6 +119,7 @@ export class MainFormComponent implements OnInit {
   }
   onSubmit() {
     this.calculateCapacity();
+    this.generateExpressions();
     const apiLink = '/Staffing/api/shiftPlan';
 
     let httpHeaders = new HttpHeaders({
@@ -171,6 +172,14 @@ export class MainFormComponent implements OnInit {
       this.model[i].capacity[0] = this.model[i].patientsPerHour / this.model[0].patientsPerHour;
       this.model[i].capacity[1] = this.model[i].capacity[0] * this.model[0].capacity[1];
       this.model[i].capacity[2] = this.model[i].capacity[0] * this.model[0].capacity[2];
+    }
+  }
+
+  generateExpressions(){
+    for(let i=0;i<this.model.length;i++){
+      for(let j=0;j<i;j++){
+        this.model[i].expressions.push("1 * "+this.model[j].name);
+      }
     }
   }
 
