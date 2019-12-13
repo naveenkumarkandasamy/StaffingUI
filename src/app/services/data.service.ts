@@ -19,7 +19,6 @@ public apiData$ = this.apiData.asObservable();
   }
 
   setRequestBody(data){
-    console.log("hi")
     this.requestBody = data;
   }
 
