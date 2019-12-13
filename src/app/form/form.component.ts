@@ -22,33 +22,12 @@ export class MainFormComponent implements OnInit {
   apiData: response;
   transposedColumnDef: Array<any>
   data: any = this.constantsService.data;
-  shiftLength: string = "";
+  shiftLength: string = this.constantsService.shiftLength;
   inputTypes: Array<string> = [ "Provide Online", "File Upload"];
   inputFormat: string = "Provide Online";
   fileToUpload: File = null;
   utilization = "";
-  model: Model[] = [
-    {
-      "patientsPerHour": 1.2,
-      "capacity": [1.0, 0.83, 0.67],
-      "cost": 200,
-      "name": "physician",
-      "expressions": []
-    },
-    {
-      "patientsPerHour": 0.6,
-      "capacity": [0.6, 0.5, 0.4],
-      "cost": 65,
-      "name": "app",
-      "expressions": []
-    },
-    {
-      "patientsPerHour": 0.37,
-      "capacity": [0.15, 0.12, 0.1],
-      "cost": 20,
-      "name": "scribe",
-      "expressions": []
-    }]
+  model: Model[] = this.constantsService.model;
 
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
@@ -131,7 +110,7 @@ export class MainFormComponent implements OnInit {
     };
     this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.lowerLimitFactor;
-    if (this.inputFormat == "File") {
+    if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
     else {
@@ -180,6 +159,7 @@ export class MainFormComponent implements OnInit {
 
   generateExpressions(){
     for(let i=0;i<this.model.length;i++){
+      this.model[i].expressions =[];
       for(let j=0;j<i;j++){
         this.model[i].expressions.push("1 * "+this.model[j].name);
       }
