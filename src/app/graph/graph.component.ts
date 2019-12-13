@@ -41,7 +41,9 @@ export class GraphComponent implements OnInit {
   filteredTransposedData: TransposedRow[];
   transposedColumnDef: Array<any>
 
-
+  requestBody: any = {
+    
+  }
   goBack() {
     this._location.back();
   }
@@ -235,7 +237,7 @@ export class GraphComponent implements OnInit {
       height: 400
     },
     title: {
-      text: 'Efficiency Optimization'
+      text: 'Workload and Capacity Pattern'
     },
     credits: {
       enabled: false
@@ -292,7 +294,13 @@ export class GraphComponent implements OnInit {
     ]
   }
 
-  constructor(private http: HttpClient, private dataService: DataService, private _location: Location) { }
+  constructor(private http: HttpClient, private dataService: DataService, private _location: Location) {
+    this.requestBody = dataService.getRequestBody();
+    console.log(this.requestBody);
+    if(this.requestBody!=null){
+      this.changeHeaders();
+    }
+   }
 
   private createGraph(data: HourlyDetail[]) {
     let expectedWorkLoadArray = data.map(hour => hour.expectedWorkLoad); //.slice(0,24);
@@ -345,6 +353,18 @@ export class GraphComponent implements OnInit {
     { headerName: 'Patient Lost ', field: 'loss' },
   ];
 
+
+  changeHeaders(){
+    this.coverageColumnDef[1].headerName = this.requestBody.clinician[0].name+" Coverage";
+    this.coverageColumnDef[2].headerName = this.requestBody.clinician[1].name+" Coverage";
+    this.coverageColumnDef[3].headerName = this.requestBody.clinician[2].name+" Coverage";
+
+    this.shiftColumnDef[4].headerName =  this.requestBody.clinician[0].name+" count";
+    this.shiftColumnDef[5].headerName =  this.requestBody.clinician[1].name+" count";
+    this.shiftColumnDef[6].headerName =  this.requestBody.clinician[2].name+" count";
+
+  }
+
   initialize(data) {
     this.hourlyDetailData = data.hourlyDetail;
     this.shiftSlots = data.clinicianHourCount;
@@ -361,6 +381,7 @@ export class GraphComponent implements OnInit {
       this.initialize(this.apiData)
 
     }
+
     // Highcharts.chart('container', this.options);    
   }
 

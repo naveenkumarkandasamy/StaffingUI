@@ -59,6 +59,7 @@ export class MainFormComponent implements OnInit {
 
 
 
+
   columnDefs = [
     { headerName: 'Role', field: 'name', editable: true },
     {
@@ -144,6 +145,7 @@ export class MainFormComponent implements OnInit {
     const formData = new FormData();
     formData.append('workloadExcel', this.fileToUpload);
     formData.append('inputData', JSON.stringify(this.requestBody));
+    this.dataService.setRequestBody(this.requestBody)
     this.http.post<response>(apiLink, formData)
       .toPromise()
       .then(data => {
@@ -156,6 +158,7 @@ export class MainFormComponent implements OnInit {
 
 
   private apiRequestwithTableData(apiLink: string, options: { headers: HttpHeaders; }) {
+    this.dataService.setRequestBody(this.requestBody)
     this.http.post<response>(apiLink, this.requestBody, options)
       .toPromise()
       .then(data => {

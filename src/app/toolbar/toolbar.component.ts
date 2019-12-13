@@ -12,5 +12,5 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
   }
 
-  message ="Staffing";
+  message ="Optimal Shift Generation Tool";
 }
