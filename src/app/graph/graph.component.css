@@ -12,3 +12,7 @@
 div label {
     margin: 1vh;
 }
+
+.script-menu>::ng-deep .mat-figure {
+    justify-content: flex-start;
+}
