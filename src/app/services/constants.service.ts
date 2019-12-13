@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Model } from '../Models/app.types';
 
 @Injectable()
 export class ConstantsService{
@@ -208,5 +209,34 @@ export class ConstantsService{
                  0.5
               ]
            }
-        ]
+        ];
+      readonly model: Model[] = [
+         {
+           "patientsPerHour": 1.2,
+           "capacity": [1.0, 0.83, 0.67],
+           "cost": 200,
+           "name": "physician",
+           "expressions": []
+         },
+         {
+           "patientsPerHour": 0.6,
+           "capacity": [0.6, 0.5, 0.4],
+           "cost": 65,
+           "name": "app",
+           "expressions": []
+         },
+         {
+           "patientsPerHour": 0.37,
+           "capacity": [0.15, 0.12, 0.1],
+           "cost": 20,
+           "name": "scribe",
+           "expressions": []
+         }];
+     readonly shiftLength : string = "";
+      readonly requestBody: any = {
+         "shiftLength": [12, 8, 10, 4],
+         "lowerLimitFactor": 0.85,
+         "clinician": this.model,
+         "dayWorkload": this.data,
+       }
     }
