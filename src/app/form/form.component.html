@@ -2,15 +2,15 @@
 ;width:96vw;margin:2vh;">
     <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
         <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
-            <mat-grid-tile class="script-menu"> <label class=" col-sm ">Enter comma seperted shift preferences</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter comma seperted shift preferences</label></mat-grid-tile>
             <mat-grid-tile class="script-menu"> <input class="col-sm" required type="text" [(ngModel)]="shiftLength" placeholder="12, 8, 10, 4" name="shiftLength" #name="ngModel"></mat-grid-tile>
-            <mat-grid-tile class="script-menu"> <label class=" col-sm ">Enter lower limit for utilization</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter lower limit for utilization</label></mat-grid-tile>
             <mat-grid-tile class="script-menu"> <input class="col-sm" type="text" [(ngModel)]="utilization" placeholder="0.85" name="utilzation"></mat-grid-tile>
         </mat-grid-list>
         <div style="height:30vh; position: relative;  ">
             <label>Coverage Summary</label>
 
-            <ag-grid-angular style="width: 40vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
+            <ag-grid-angular domLayout='autoHeight' style="width: 40vw; height: 20vh;" (gridReady)="onGridReady($event)" (firstDataRendered)="onFirstDataRendered($event)" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
             </ag-grid-angular>
 
             <div style="width: 30vh;">
