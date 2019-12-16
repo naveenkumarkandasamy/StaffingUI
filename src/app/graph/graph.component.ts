@@ -40,7 +40,7 @@ export class GraphComponent implements OnInit {
   transposedData: TransposedRow[];
   filteredTransposedData: TransposedRow[];
   transposedColumnDef: Array<any>
-  clinicianNames: Array<String>;
+  clinicianNames: Array<string>;
   requestBody: any = {
   }
   summaryHourlyDetail: HourlyDetail;
@@ -83,7 +83,7 @@ export class GraphComponent implements OnInit {
   }
 
   createNewShift(startTime: number, shiftLength: number) {
-    let shift = new Shifts();
+    let shift : Shifts ={};
     shift.startTime = startTime % 24;
     shift.endTime = (startTime + shiftLength) % 24;
     shift.day = this.daysOfWeek[Math.floor(startTime / 24)];
@@ -147,50 +147,34 @@ export class GraphComponent implements OnInit {
       }
       if (detail.wait > 0) detail.wait = 0;
     })
+
+
     this.filteredHourlyData = this.hourlyDetailData;
     this.map = new Map();
     this.shiftSlots.forEach((shiftSlot, index) => {
       for (let key of Object.keys(shiftSlot)) {
-        let shift = new Shifts();
-        if (shiftSlot[key][this.clinicianNames[0] + "Start"] > 0) {
-          if (this.map.has(index + "to" + key)) {
-            shift = this.map.get(index + "to" + key);
-            shift.physicians += shiftSlot[key][this.clinicianNames[0] + "Start"];
+        let shift :Shifts ={};
+        this.clinicianNames.forEach(name => {
+          if(shiftSlot[key][name+"Start"] > 0){
+            if (this.map.has(index + "to" + key)) {
+              shift = this.map.get(index + "to" + key);
+              if(shift[name]!=undefined)
+              shift[name]+= shiftSlot[key][name+ "Start"];
+              else 
+              shift[name]= shiftSlot[key][name+ "Start"];
+            }
+            else {
+              shift = this.createNewShift(index, parseInt(key));
+              shift[name] = shiftSlot[key][name + "Start"];
+            }
+            this.map.set(index + "to" + key, shift)
           }
-          else {
-            shift = this.createNewShift(index, parseInt(key));
-            shift.physicians = shiftSlot[key][this.clinicianNames[0] + "Start"];
-          }
-          this.map.set(index + "to" + key, shift)
-        }
-        if (shiftSlot[key][this.clinicianNames[1] + "Start"] > 0) {
-          if (this.map.has(index + "to" + key)) {
-            shift = this.map.get(index + "to" + key);
-            shift.apps += shiftSlot[key][this.clinicianNames[1] + "Start"];
-          }
-          else {
-            shift = this.createNewShift(index, parseInt(key))
-            shift.apps = shiftSlot[key][this.clinicianNames[1] + "Start"];
-          }
-          this.map.set(index + "to" + key, shift)
-        }
-        if (shiftSlot[key][this.clinicianNames[2] + "Start"] > 0) {
-          if (this.map.has(index + "to" + key)) {
-            shift = this.map.get(index + "to" + key);
-            shift.scribes += shiftSlot[key][this.clinicianNames[2] + "Start"];
-            ;
-          }
-          else {
-            shift = this.createNewShift(index, parseInt(key))
-            shift.scribes = shiftSlot[key][this.clinicianNames[2] + "Start"];
-
-          }
-          this.map.set(index + "to" + key, shift)
-        }
+        })
 
       }
 
     })
+    
     this.createColumnData(0);
     this.transposeData();
     return Array.from(this.map.values());
@@ -267,9 +251,6 @@ export class GraphComponent implements OnInit {
         borderWidth: 0
       }
     },
-    // xAxis: {
-    //   categories: ['Seattle HQ', 'San Francisco', 'Tokyo']
-    // },
     yAxis: [
       {
         min: 0,
@@ -280,14 +261,14 @@ export class GraphComponent implements OnInit {
     ],
     series: [
       {
-        name: 'Employees',
+        name: 'Workload',
         color: 'rgba(165,170,217,1)',
         data: [150, 73, 40, 50],
         pointPadding: 0.3,
         pointPlacement: -0.2
       },
       {
-        name: 'Employees Optimized',
+        name: 'Capacity',
         color: 'rgba(126,86,134,.9)',
         data: [140, 90, 70, 60],
         pointPadding: 0.4,
@@ -328,9 +309,6 @@ export class GraphComponent implements OnInit {
     { headerName: 'Start Time', field: 'startTime' },
     { headerName: 'End Time', field: 'endTime' },
     { headerName: 'Shift Duration', field: 'shiftLength' },
-    { headerName: 'Physician Count', field: 'physicians' },
-    { headerName: 'APP count', field: 'apps' },
-    { headerName: 'Scribe count', field: 'scribes' },
   ];
 
 
@@ -353,13 +331,13 @@ export class GraphComponent implements OnInit {
 
 
   changeHeaders() {
+
+    this.clinicianNames.forEach((name, index)=>{
+      this.shiftColumnDef.push({headerName : name+ " count", field:name})
+    })
     this.coverageColumnDef[1].headerName = this.requestBody.clinician[0].name + " Coverage";
     this.coverageColumnDef[2].headerName = this.requestBody.clinician[1].name + " Coverage";
     this.coverageColumnDef[3].headerName = this.requestBody.clinician[2].name + " Coverage";
-
-    this.shiftColumnDef[4].headerName = this.requestBody.clinician[0].name + " count";
-    this.shiftColumnDef[5].headerName = this.requestBody.clinician[1].name + " count";
-    this.shiftColumnDef[6].headerName = this.requestBody.clinician[2].name + " count";
 
   }
 
@@ -372,7 +350,6 @@ export class GraphComponent implements OnInit {
     this.shiftList = this.processData();
     this.filteredShiftList = this.shiftList;
     this.filteredTransposedData = this.transposedData;
-    this.createGraph(this.hourlyDetailData);
   }
 
   getCliniciansName() {
@@ -388,8 +365,8 @@ export class GraphComponent implements OnInit {
       this.changeHeaders();
       this.initialize(this.apiData);
       this.getSummary();
-    }
-    // Highcharts.chart('container', this.options);    
+      this.createGraph(this.hourlyDetailData);
+    } 
   }
 
   getSummary() {
