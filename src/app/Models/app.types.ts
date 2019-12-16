@@ -37,14 +37,14 @@ export class HourlyDetail {
     hourlyDetail: HourlyDetail[];
     clinicianHourCount : Map<number, Detail> [];
   }
-  export class Shifts {
-    shiftLength: number =0;
-    startTime: number =0;
-    endTime: number =0;
-    physicians: number =0;
-    apps: number =0;
-    scribes: number =0;
-    day:string;
+  export interface Shifts {
+    shiftLength?: number;
+    startTime?: number ;
+    endTime?: number ;
+    physicians?: number;
+    apps?: number ;
+    scribes?: number;
+    day?:string;
   }
   
   export class Model{

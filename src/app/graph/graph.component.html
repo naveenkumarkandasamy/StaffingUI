@@ -13,8 +13,11 @@
         <div id="container" style="width:100%;height: 52vh;"></div>
         <div *ngIf="filteredHourlyData" style=" position: relative;width:100%">
             <div>
-                <label>Coverage Summary</label>
-                <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="filteredTransposedData" [columnDefs]="transposedColumnDef">
+                <span>
+                <label>Coverage Summary</label></span>
+                <span> <button  class="pull-right" (click)="coverageSummaryGridExport()">Download as CSV</button></span>
+
+                <ag-grid-angular #agGrid domLayout='autoHeight' class="ag-theme-balham" [rowData]="filteredTransposedData" [columnDefs]="transposedColumnDef" (gridReady)="onCoverageSummaryGridReady($event)">
                 </ag-grid-angular>
             </div>
             <div> <label>Overall Summary</label>
@@ -34,8 +37,10 @@
         </div>
 
         <div *ngIf="filteredShiftList" style=" position: relative;width:100%">
-            <label>Shifts Summary</label>
-            <ag-grid-angular style="width:100%;height:40vh;" class="ag-theme-balham" [rowData]="filteredShiftList" [columnDefs]="shiftColumnDef">
+            <span>
+                <label>Shifts Summary</label></span>
+            <span> <button  class="pull-right" (click)="shiftSummaryGridExport()">Download as CSV</button></span>
+            <ag-grid-angular style="width:100%;height:40vh;" (gridReady)="onShiftSummaryGridReady($event)" class="ag-theme-balham" [rowData]="filteredShiftList" [columnDefs]="shiftColumnDef">
             </ag-grid-angular>
         </div>
 

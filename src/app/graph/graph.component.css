@@ -16,3 +16,8 @@ div label {
 .script-menu>::ng-deep .mat-figure {
     justify-content: flex-start;
 }
+
+.pull-right {
+    float: right;
+    position: relative;
+}
