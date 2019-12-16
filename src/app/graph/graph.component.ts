@@ -17,7 +17,6 @@ noData(Highcharts);
 More(Highcharts);
 noData(Highcharts);
 
-
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.component.html',
@@ -41,9 +40,11 @@ export class GraphComponent implements OnInit {
   filteredTransposedData: TransposedRow[];
   transposedColumnDef: Array<any>
   clinicianNames: Array<string>;
-  requestBody: any = {
-  }
+  requestBody: any = {}
   summaryHourlyDetail: HourlyDetail;
+  private coverageSummaryGridApi;
+  private shiftSummaryGridApi;
+
   goBack() {
     this._location.back();
   }
@@ -61,16 +62,13 @@ export class GraphComponent implements OnInit {
     this.createColumnData(filterVal * 24);
     this.filteredShiftList = this.shiftList.filter(a => a.day == this.daysOfWeek[filterVal])
     this.filteredTransposedData = [];
-
     this.transposedData.forEach(transposedRow => {
       let newRow = this.filterList(filterVal * 24, (parseInt(filterVal) + 1) * 24, transposedRow);
       newRow["header"] = transposedRow["header"];
       this.filteredTransposedData.push(newRow);
-
     })
     this.getSummary();
     this.createGraph(this.filteredHourlyData);
-
   }
 
 
@@ -83,7 +81,7 @@ export class GraphComponent implements OnInit {
   }
 
   createNewShift(startTime: number, shiftLength: number) {
-    let shift : Shifts ={};
+    let shift: Shifts = {};
     shift.startTime = startTime % 24;
     shift.endTime = (startTime + shiftLength) % 24;
     shift.day = this.daysOfWeek[Math.floor(startTime / 24)];
@@ -153,15 +151,15 @@ export class GraphComponent implements OnInit {
     this.map = new Map();
     this.shiftSlots.forEach((shiftSlot, index) => {
       for (let key of Object.keys(shiftSlot)) {
-        let shift :Shifts ={};
+        let shift: Shifts = {};
         this.clinicianNames.forEach(name => {
-          if(shiftSlot[key][name+"Start"] > 0){
+          if (shiftSlot[key][name + "Start"] > 0) {
             if (this.map.has(index + "to" + key)) {
               shift = this.map.get(index + "to" + key);
-              if(shift[name]!=undefined)
-              shift[name]+= shiftSlot[key][name+ "Start"];
-              else 
-              shift[name]= shiftSlot[key][name+ "Start"];
+              if (shift[name] != undefined)
+                shift[name] += shiftSlot[key][name + "Start"];
+              else
+                shift[name] = shiftSlot[key][name + "Start"];
             }
             else {
               shift = this.createNewShift(index, parseInt(key));
@@ -174,7 +172,7 @@ export class GraphComponent implements OnInit {
       }
 
     })
-    
+
     this.createColumnData(0);
     this.transposeData();
     return Array.from(this.map.values());
@@ -278,7 +276,6 @@ export class GraphComponent implements OnInit {
   }
 
   constructor(private http: HttpClient, private dataService: DataService, private _location: Location) {
-
   }
 
   private createGraph(data: HourlyDetail[]) {
@@ -332,8 +329,8 @@ export class GraphComponent implements OnInit {
 
   changeHeaders() {
 
-    this.clinicianNames.forEach((name, index)=>{
-      this.shiftColumnDef.push({headerName : name+ " count", field:name})
+    this.clinicianNames.forEach((name, index) => {
+      this.shiftColumnDef.push({ headerName: name + " count", field: name })
     })
     this.coverageColumnDef[1].headerName = this.requestBody.clinician[0].name + " Coverage";
     this.coverageColumnDef[2].headerName = this.requestBody.clinician[1].name + " Coverage";
@@ -356,6 +353,24 @@ export class GraphComponent implements OnInit {
     this.clinicianNames = this.requestBody.clinician.map(c => c.name);
   }
 
+  public onCoverageSummaryGridReady(params) {
+    this.coverageSummaryGridApi = params.api;
+  }
+
+  coverageSummaryGridExport() {
+    this.coverageSummaryGridApi.exportDataAsCsv();
+  }
+
+
+  public onShiftSummaryGridReady(params) {
+    this.shiftSummaryGridApi = params.api;
+  }
+
+  shiftSummaryGridExport() {
+    this.shiftSummaryGridApi.exportDataAsCsv();
+  }
+
+
   ngOnInit() {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData)
     this.dataService.currentMessage.subscribe(message => this.message = message);
@@ -366,7 +381,7 @@ export class GraphComponent implements OnInit {
       this.initialize(this.apiData);
       this.getSummary();
       this.createGraph(this.hourlyDetailData);
-    } 
+    }
   }
 
   getSummary() {
@@ -376,12 +391,10 @@ export class GraphComponent implements OnInit {
         return prev + cur[key];
       }, 0)
     })
-      Object.keys(this.summaryHourlyDetail).forEach(key=> {
-        this.summaryHourlyDetail[key] = Math.abs(this.round( this.summaryHourlyDetail[key]))
-      })
+    Object.keys(this.summaryHourlyDetail).forEach(key => {
+      this.summaryHourlyDetail[key] = Math.abs(this.round(this.summaryHourlyDetail[key]))
+    })
   }
-
-
 }
 
 
