@@ -5,12 +5,13 @@ import { FormsModule  }   from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { AgGridModule } from 'ag-grid-angular';
-import { MatTableModule} from "@angular/material";
+import { MatToolbarModule, MatIconModule, MatSidenavModule,  MatButtonModule} from "@angular/material";
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphComponent } from './graph/graph.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MainFormComponent } from './form/form.component';
+import { AutorunComponent } from "./autorun/autorun.component"
 import {MatGridListModule} from '@angular/material/grid-list';
 
 //Services
@@ -25,16 +26,19 @@ import {ConstantsService} from "./services/constants.service";
     GraphComponent,
     ToolbarComponent,
     MainFormComponent,
-
+    AutorunComponent,
   
   ],
   imports: [
     MatGridListModule,
+    MatButtonModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule     ,
-    MatTableModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatSidenavModule,
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
     ToastrModule.forRoot(),
