@@ -5,7 +5,7 @@ import { FormsModule  }   from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { AgGridModule } from 'ag-grid-angular';
-import { MatToolbarModule, MatIconModule, MatSidenavModule,  MatButtonModule} from "@angular/material";
+import { MatToolbarModule, MatIconModule, MatSidenavModule,  MatButtonModule, MatCheckboxModule} from "@angular/material";
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphComponent } from './graph/graph.component';
@@ -39,6 +39,7 @@ import {ConstantsService} from "./services/constants.service";
     MatToolbarModule,
     MatIconModule,
     MatSidenavModule,
+    MatCheckboxModule,
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
     ToastrModule.forRoot(),
