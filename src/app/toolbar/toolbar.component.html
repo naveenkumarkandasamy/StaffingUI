@@ -4,6 +4,11 @@
       <mat-icon (click)="sidenav.toggle()">menu</mat-icon> 
     </button> -->
         <span [routerLink]="'/mainForm'">Optimized Shift Allocation Tool</span>
-        <a mat-button [routerLink]="'/autorun'" style="text-decoration:none"> Autorun </a>
+        <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/autorun'" style="text-decoration:none"> Autorun </a>
+        <!-- <a mat-button *ngIf="!loginService.isUserLoggedIn()" [routerLink]="'/login'" style="text-decoration:none"> Login </a> -->
+
+        <div class="spacer"> </div>
+        <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/logout'" style="text-decoration:none"> Logout </a>
+
     </mat-toolbar-row>
 </mat-toolbar>

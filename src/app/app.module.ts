@@ -17,6 +17,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
 //Services
 import { DataService } from "./services/data.service";
 import {ConstantsService} from "./services/constants.service";
+import { LoginComponent } from './login/login.component';
+import { LogoutComponent } from './logout/logout.component';
 
 
 
@@ -27,6 +29,8 @@ import {ConstantsService} from "./services/constants.service";
     ToolbarComponent,
     MainFormComponent,
     AutorunComponent,
+    LoginComponent,
+    LogoutComponent,
   
   ],
   imports: [
