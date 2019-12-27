@@ -21,10 +21,15 @@ export class AuthenticationService {
 
   authenticate(username, password) {
     const headers = new HttpHeaders({ Authorization: 'Basic ' + btoa(username + ':' + password) });
-    return this.httpClient.get<User>('/Staffing/api/validateLogin', { headers }).pipe(
+    return this.httpClient.get<User>('http://localhost:8086/Staffing/api/validateLogin', { headers }).pipe(
       map(
         userData => {
-          sessionStorage.setItem('username', username);
+          if (userData) {
+            // store user details and basic auth credentials in local storage 
+            // to keep user logged in between page refreshes
+            userData.authData = window.btoa(username + ':' + password);
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+          }
           return userData;
         }
       )
@@ -32,11 +37,11 @@ export class AuthenticationService {
   }
 
   isUserLoggedIn(value) {
-    let user = sessionStorage.getItem('username')
+    let user = localStorage.getItem('currentUser')
     return !(user === null)
   }
 
   logOut() {
-    sessionStorage.removeItem('username')
+    localStorage.removeItem('currentUser')
   }
 }

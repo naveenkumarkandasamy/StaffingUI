@@ -17,10 +17,15 @@ import { MatGridListModule } from '@angular/material/grid-list';
 //Services
 import { DataService } from "./services/data.service";
 import { ConstantsService } from "./services/constants.service";
+import { AuthenticationService } from './services/authentication.service';
+import { HttpClientService } from './services/http-client.service';
+
+//Components
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
-import { AuthenticationService } from './services/authentication.service';
 
+//Interceptors
+import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
 
 
 
@@ -50,7 +55,9 @@ import { AuthenticationService } from './services/authentication.service';
     AgGridModule.withComponents([]),
     ToastrModule.forRoot(),
   ],
-  providers: [DataService, ConstantsService, AuthenticationService],
+  providers: [DataService, ConstantsService, AuthenticationService, HttpClientService,
+    { provide: HTTP_INTERCEPTORS, useClass: BasicAuthInterceptor, multi: true },],
+  // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

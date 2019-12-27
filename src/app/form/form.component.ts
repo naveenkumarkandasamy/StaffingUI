@@ -5,7 +5,9 @@ import { response, Model } from "../Models/app.types"
 import { ViewChild, ElementRef } from '@angular/core';
 import { DataService } from "../services/data.service"
 import { ConstantsService } from "../services/constants.service";
+import { HttpClientService } from "../services/http-client.service";
 import { ToastrService } from 'ngx-toastr';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'mainForm',
@@ -23,7 +25,7 @@ export class MainFormComponent implements OnInit {
   transposedColumnDef: Array<any>
   data: any = this.constantsService.data;
   shiftLength: string = this.constantsService.shiftLength;
-  inputTypes: Array<string> = [ "Provide Online", "File Upload"];
+  inputTypes: Array<string> = ["Provide Online", "File Upload"];
   inputFormat: string = "Provide Online";
   fileToUpload: File = null;
   utilization = "";
@@ -76,7 +78,8 @@ export class MainFormComponent implements OnInit {
   }
 
 
-  constructor(private router: Router, private http: HttpClient, private dataService: DataService, private toastr: ToastrService, private constantsService: ConstantsService) { }
+  constructor(private router: Router, private http: HttpClient,
+    private dataService: DataService, private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService) { }
 
   ngOnInit() {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
@@ -100,53 +103,40 @@ export class MainFormComponent implements OnInit {
   onSubmit() {
     this.calculateCapacity();
     this.generateExpressions();
-    const apiLink = '/Staffing/api/shiftPlan';
-
-    let httpHeaders = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-    let options = {
-      headers: httpHeaders
-    };
     this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.lowerLimitFactor;
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
     else {
-      this.apiRequestwithTableData(apiLink, options);
+      this.apiRequestwithTableData();
     }
   }
 
 
   private apiRequestwithFileData() {
-    const apiLink = '/Staffing/api/shiftPlanFileUpload';
     const formData = new FormData();
     formData.append('workloadExcel', this.fileToUpload);
     formData.append('inputData', JSON.stringify(this.requestBody));
     this.dataService.setRequestBody(this.requestBody)
-    this.http.post<response>(apiLink, formData)
-      .toPromise()
-      .then(data => {
-        this.dataService.setData(data);
-        this.router.navigateByUrl('/graph');
-      }, error => {
-        this.toastr.error(error.message);
-      });
+    this.httpClientService.getGraphDetailsUsingFileData(formData).pipe(first()).subscribe(data => {
+      this.dataService.setData(data);
+      this.router.navigateByUrl('/graph');
+    }, error => {
+      this.toastr.error(error.message);
+    });
   }
 
 
-  private apiRequestwithTableData(apiLink: string, options: { headers: HttpHeaders; }) {
+  private apiRequestwithTableData() {
     this.dataService.setRequestBody(this.requestBody)
-    this.http.post<response>(apiLink, this.requestBody, options)
-      .toPromise()
-      .then(data => {
-        this.dataService.setData(data);
-        this.router.navigateByUrl('/graph');
-      }, error => {
-        this.toastr.error(error.message);
+    this.httpClientService.getGraphDetailsUsingTableData(this.requestBody).pipe(first()).subscribe(data => {
+      this.dataService.setData(data);
+      this.router.navigateByUrl('/graph');
+    }, error => {
+      this.toastr.error(error.message);
+    });
 
-      });
   }
 
   calculateCapacity() {
@@ -157,11 +147,11 @@ export class MainFormComponent implements OnInit {
     }
   }
 
-  generateExpressions(){
-    for(let i=0;i<this.model.length;i++){
-      this.model[i].expressions =[];
-      for(let j=0;j<i;j++){
-        this.model[i].expressions.push("1 * "+this.model[j].name);
+  generateExpressions() {
+    for (let i = 0; i < this.model.length; i++) {
+      this.model[i].expressions = [];
+      for (let j = 0; j < i; j++) {
+        this.model[i].expressions.push("1 * " + this.model[j].name);
       }
     }
   }
@@ -178,7 +168,7 @@ export class MainFormComponent implements OnInit {
         field: 'name',
         cellStyle: { 'font-size': 'large' },
         pinned: 'left',
-        width: 300, 
+        width: 300,
         editable: false
       }
     ];
