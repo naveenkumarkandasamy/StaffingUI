@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 export class User {
   constructor(
     public status: string,
+    public authData: string,
   ) { }
 
 }

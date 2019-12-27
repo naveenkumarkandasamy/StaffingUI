@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { response,  Model } from "../Models/app.types"
+import { response, Model } from "../Models/app.types"
 import { ViewChild, ElementRef } from '@angular/core';
 import { DataService } from "../services/data.service"
 import { ConstantsService } from "../services/constants.service";
