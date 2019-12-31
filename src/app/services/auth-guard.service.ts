@@ -11,12 +11,22 @@ export class AuthGuardService implements CanActivate {
     private authService: AuthenticationService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.authService.isUserLoggedIn("authGuardService"))
+    const currentUser = this.authService.currentUserValue;
+    if (currentUser) {
+      // check if route is restricted by role
+      if (route.data.roles && route.data.roles.indexOf(currentUser.roles[0]) === -1) {
+          // role not authorised so redirect to home page
+          this.router.navigate(['/']);
+          return false;
+      }
+
+      // authorised so return true
       return true;
+  }
 
-    this.router.navigate(['login']);
-    return false;
-
+  // not logged in so redirect to login page with the return url
+  this.router.navigate(['/login'] );
+  return false;
   }
 
 }

@@ -6,6 +6,8 @@ import { AutorunComponent } from './autorun/autorun.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { AuthGuardService } from './services/auth-guard.service';
+import { JobListComponent } from './job-list/job-list.component';
+import { Role } from './Models/Role';
 
 
 const routes: Routes = [
@@ -23,6 +25,12 @@ const routes: Routes = [
   {
     path: 'autorun',
     component: AutorunComponent,
+    canActivate:[AuthGuardService],
+    data: { roles: [Role.Admin] }
+  },
+  {
+    path: 'joblist',
+    component: JobListComponent,
     canActivate:[AuthGuardService]
   },
   { path: 'login', component: LoginComponent,  },
