@@ -1,0 +1,14 @@
+<div style="position: relative
+;width:96vw;margin:2vh;">
+    <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+        <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Input Arrival data file Location</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <input class="col-sm" required type="text" [(ngModel)]="ftpUrl" name="shiftLength"></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Cron expression</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <input class="col-sm" type="text" [(ngModel)]="cronExpression" name="cronExpression"></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Result Format</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <input class="col-sm" type="text" [(ngModel)]="resultFormat" name="resultFormat"></mat-grid-tile>
+        </mat-grid-list>
+        <button type="submit" class="btn btn-success" style="margin-top: 1vh;">Submit</button>
+    </form>
+</div>

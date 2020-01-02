@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthenticationService, User } from '../services/authentication.service';
+import { Role } from '../Models/Role';
 
 @Component({
   selector: 'toolbar',
@@ -7,10 +9,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ToolbarComponent implements OnInit {
 
-  constructor() { }
+  currentUser: User;
 
-  ngOnInit() {
+
+  isUserLoggedIn: boolean = false;
+
+  constructor(private loginService: AuthenticationService) {
+    this.loginService.currentUser.subscribe(x => this.currentUser = x)
   }
 
-  message ="Optimal Shift Generation Tool";
+  ngOnInit() {
+    this.isUserLoggedIn = this.loginService.isUserLoggedIn("toolbar init");
+  }
+
+  get isAdmin() {
+    return this.currentUser && this.currentUser.roles.indexOf(Role.Admin) > -1;
+  }
+
+
+  message = "Optimal Shift Generation Tool";
 }

@@ -1,6 +1,6 @@
-<div style="position: absolute;top: 8vh;">
-    <button style="position: absolute; float: left;" (click)="goBack()">Back</button>
-    <div [hidden]="!filteredHourlyData" style=" position: absolute;width: 95vw; margin: 2.5vw;">
+<div style="position: relative;">
+    <button style="position: relative; float: left;margin: 1vh;" (click)="goBack()">Back</button>
+    <div [hidden]="!filteredHourlyData" style=" width: 95vw; margin-left: 2.5vw;position: relative; top:5vh;">
         <div style="height: 8vh;">
             <label>Days </label>
             <select (change)="filterDetails($event.target.value)">
@@ -16,7 +16,6 @@
                 <span>
                 <label>Coverage Summary</label></span>
                 <span> <button  class="pull-right" (click)="coverageSummaryGridExport()">Download as CSV</button></span>
-
                 <ag-grid-angular #agGrid domLayout='autoHeight' class="ag-theme-balham" [rowData]="filteredTransposedData" [columnDefs]="transposedColumnDef" (gridReady)="onCoverageSummaryGridReady($event)">
                 </ag-grid-angular>
             </div>
