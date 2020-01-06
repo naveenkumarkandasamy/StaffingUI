@@ -10,12 +10,12 @@ export class HttpClientService {
   constructor(private http: HttpClient) { }
 
   getGraphDetailsUsingTableData(requestBody) {
-    const apiLink = 'http://localhost:8086/Staffing/api/shiftPlan';
+    const apiLink = '/Staffing/api/request/shiftPlan';
     return this.http.post<response>(apiLink, requestBody);
   }
 
   getGraphDetailsUsingFileData(requestBody) {
-    const apiLink = 'http://localhost:8086/Staffing/api/shiftPlanFileUpload';
+    const apiLink = '/Staffing/api/request/shiftPlanFileUpload';
     return this.http.post<response>(apiLink, requestBody);
   }
 }
