@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 
 export class User {
@@ -22,10 +23,12 @@ export class AuthenticationService {
 
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
+  private apiUrl:string ="";
 
   constructor(private httpClient: HttpClient) {
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
+    this.apiUrl = environment.apiUrl;
   }
 
 
@@ -40,7 +43,7 @@ export class AuthenticationService {
       .set('username', username)
       .set('pass', password);
     //  const headers = new HttpHeaders({ Authorization: 'Basic ' + btoa(username + ':' + password) });
-    return this.httpClient.post<User>('/Staffing/api/login?username=' + username + "&pass=" + password, "").pipe(
+    return this.httpClient.post<User>(this.apiUrl+'/Staffing/api/login?username=' + username + "&pass=" + password, "").pipe(
       map(
         userData => {
           if (userData) {
