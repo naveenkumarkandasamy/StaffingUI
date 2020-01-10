@@ -28,4 +28,17 @@ export class HttpClientService {
     const apiLink = this.apiUrl + '/Staffing/api/jobDetails/all';
     return this.http.get(apiLink);
   }
+
+  getJobDetails() {
+    const apiLink = 'http://localhost:8086/Staffing/api/jobDetails/all';
+    return this.http.get(apiLink);
+  }
+
+  saveJobDetails(requestBody) {
+    const apiLink = 'http://localhost:8086/Staffing/api/jobDetails/add';
+    // console.log(requestBody);
+    return this.http.post(apiLink, requestBody);
+  }
+
+  
 }
