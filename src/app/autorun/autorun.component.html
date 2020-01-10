@@ -14,7 +14,6 @@
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Enter lower limit for utilization</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-<<<<<<< HEAD
                 <input class="col-sm" type="text" [(ngModel)]="lowerUtilization" placeholder="0.85"
                     name="lowerUtilization" />
             </mat-grid-tile>
@@ -23,9 +22,6 @@
             <mat-grid-tile class="script-menu">
                 <input class="col-sm" type="text" [(ngModel)]="upperUtilization" placeholder="1.10"
                     name="upperUtilization" />
-=======
-                <input class="col-sm" type="text" [(ngModel)]="utilization" placeholder="0.85" name="utilzation" />
->>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
             </mat-grid-tile>
         </mat-grid-list>
 
@@ -70,11 +66,7 @@
 
         <div *ngIf="inputFormat == 'File Upload'">
             <label for="file">Choose File</label>
-<<<<<<< HEAD
             <input type="file" [(ngModel)]="inputFile" id="file" #fileInput />
-=======
-            <input type="file" id="file" #fileInput />
->>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
             <!-- (change)="handleFileInput($event.target.files)"> -->
         </div>
 
@@ -111,7 +103,6 @@
             </mat-grid-list>
         </div>
 
-<<<<<<< HEAD
         <div *ngIf="outputFormat == 'Email'">
             <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
                 <mat-grid-tile class="script-menu">
@@ -123,8 +114,6 @@
             </mat-grid-list>
         </div>
 
-=======
->>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
         <br />
 
         <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
@@ -138,7 +127,6 @@
         <button type="submit" class="btn btn-success" style="margin-top: 1vh;">
             Submit
         </button>
-<<<<<<< HEAD
         &nbsp;
         <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onReset()">
             Reset
@@ -147,11 +135,5 @@
         <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onSaveDraft()">
             Save as Draft
         </button>
-=======
-        &nbsp;&nbsp;
-        <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onReset()">
-            Reset
-        </button>
->>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
     </form>
 </div>
