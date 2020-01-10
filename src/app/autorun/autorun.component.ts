@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewChild, ElementRef } from '@angular/core';
 import { ConstantsService } from "../services/constants.service";
+<<<<<<< HEAD
 import { Model } from '../Models/app.types';
 import { HttpClientService } from '../services/http-client.service';
+=======
+>>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
 import { ToastrService } from 'ngx-toastr';
+import { Model } from '../Models/app.types';
 
 @Component({
   selector: 'autorun',
@@ -13,8 +17,12 @@ import { ToastrService } from 'ngx-toastr';
 
 export class AutorunComponent implements OnInit {
   
+<<<<<<< HEAD
   constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService,
     private toastr: ToastrService) { }
+=======
+  constructor(private constantsService: ConstantsService) { }
+>>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
 
   ngOnInit(): void {
     this.initialize()
@@ -29,6 +37,7 @@ export class AutorunComponent implements OnInit {
   outputFtpUrl: string;
   outputFtpUsername: string;
   outputFtpPassword: string;
+<<<<<<< HEAD
 
   inputFile: any;
   jobStatus: string;
@@ -47,6 +56,16 @@ export class AutorunComponent implements OnInit {
 
   model1: Model[] = this.constantsService.model;
   model:Model[] = JSON.parse(JSON.stringify(this.model1));
+=======
+  cronExpression: string;
+   
+  inputTypes: Array<string> = ["FTP URL", "File Upload"];
+  inputFormat: string
+  outputTypes: Array<string> = ["FTP URL", "Excel"];
+  outputFormat: string
+
+  model: Model[]
+>>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
   columnDefs:any
 
   defaultColDef = {
@@ -54,6 +73,7 @@ export class AutorunComponent implements OnInit {
     resizable: true
   }
 
+<<<<<<< HEAD
   requestBody: any = {
     "id": "2",
     "name": "",
@@ -108,6 +128,8 @@ export class AutorunComponent implements OnInit {
     }
   }
 
+=======
+>>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
 
   initialize(){
     this.inputFtpUrl = null;
@@ -119,6 +141,7 @@ export class AutorunComponent implements OnInit {
     this.cronExpression = null;
     this.inputFormat = "";
     this.outputFormat = "";
+
     this.shiftLength = "";
     this.lowerUtilization = "";
     this.upperUtilization = "";
@@ -157,15 +180,19 @@ export class AutorunComponent implements OnInit {
     ];
   }
 
+<<<<<<< HEAD
   showToaster(text){
     this.toastr.success("Successfully saved '"+text+"'")
   }
 
+=======
+>>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
   onReset(){
     this.initialize();
   }
 
   onSubmit() {
+<<<<<<< HEAD
     this.createRequestBody();
     this.showToaster("dummy");
     this.httpClientService.saveJobDetails(this.requestBody).subscribe(data=> console.log()
@@ -186,6 +213,21 @@ export class AutorunComponent implements OnInit {
     this.outputFormat = value;
   }
 
+=======
+    console.log(this.inputFtpUrl, this.inputFtpUsername, this.inputFtpPassword);
+  }
+
+
+  inputformatChanged(value) {
+    this.inputFormat = value;
+  }
+
+  
+  outputformatChanged(value) {
+    this.outputFormat = value;
+  }
+
+>>>>>>> 23dd60d9d7b36966fecb1b67539c0520bcdcc777
 
 
 

@@ -5,12 +5,13 @@ import {response} from '../Models/app.types'
 @Injectable()
 export class DataService {
 
- private requestBody : any = null;
+  private requestBody : any = null;
   private apiData = new BehaviorSubject<response>(null);
-//  public requestBody$ = this.requestBody.asObservable();
-public apiData$ = this.apiData.asObservable();
+  //  public requestBody$ = this.requestBody.asObservable();
+  public apiData$ = this.apiData.asObservable();
   private messageSource = new BehaviorSubject('default message');
   currentMessage = this.messageSource.asObservable();
+  
 
   constructor() { }
 
