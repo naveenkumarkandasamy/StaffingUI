@@ -14,7 +14,14 @@
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Enter lower limit for utilization</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" type="text" [(ngModel)]="utilization" placeholder="0.85" name="utilzation" />
+                <input class="col-sm" type="text" [(ngModel)]="lowerUtilization" placeholder="0.85"
+                    name="lowerUtilization" />
+            </mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">Enter upper limit for utilization</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" type="text" [(ngModel)]="upperUtilization" placeholder="1.10"
+                    name="upperUtilization" />
             </mat-grid-tile>
         </mat-grid-list>
 
@@ -59,7 +66,7 @@
 
         <div *ngIf="inputFormat == 'File Upload'">
             <label for="file">Choose File</label>
-            <input type="file" id="file" #fileInput />
+            <input type="file" [(ngModel)]="inputFile" id="file" #fileInput />
             <!-- (change)="handleFileInput($event.target.files)"> -->
         </div>
 
@@ -96,6 +103,17 @@
             </mat-grid-list>
         </div>
 
+        <div *ngIf="outputFormat == 'Email'">
+            <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+                <mat-grid-tile class="script-menu">
+                    <label class="col-sm">Email ID</label></mat-grid-tile>
+                <mat-grid-tile class="script-menu">
+                    <input class="col-sm" required type="text" [(ngModel)]="emailId" id="emailId"
+                        placeholder="" name="emailId" />
+                </mat-grid-tile>
+            </mat-grid-list>
+        </div>
+
         <br />
 
         <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
@@ -109,9 +127,13 @@
         <button type="submit" class="btn btn-success" style="margin-top: 1vh;">
             Submit
         </button>
-        &nbsp;&nbsp;
+        &nbsp;
         <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onReset()">
             Reset
+        </button>
+        &nbsp;
+        <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onSaveDraft()">
+            Save as Draft
         </button>
     </form>
 </div>
