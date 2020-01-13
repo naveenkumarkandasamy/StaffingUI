@@ -5,8 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { AgGridModule } from 'ag-grid-angular';
-import { MatToolbarModule, MatIconModule, MatSidenavModule, MatButtonModule, MatCheckboxModule } from "@angular/material";
+import { MatToolbarModule, MatIconModule, MatSidenavModule, MatButtonModule, MatCheckboxModule, MatInputModule, MatPaginatorModule } from "@angular/material";
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -29,7 +31,7 @@ import { HttpClientService } from './services/http-client.service';
 //Interceptors
 import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
 
-
+import { GrdFilterPipe } from './filter'
 
 @NgModule({
   declarations: [
@@ -41,9 +43,13 @@ import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
     LoginComponent,
     LogoutComponent,
     JobListComponent,
-
+    GrdFilterPipe
   ],
   imports: [
+    MatPaginatorModule,
+    MatInputModule,
+    MatSortModule,
+    MatTableModule,
     MatGridListModule,
     MatButtonModule,
     BrowserModule,

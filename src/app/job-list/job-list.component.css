@@ -1,0 +1,19 @@
+table {
+  width: 100%;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.jobListFilter {
+  width: 90%;
+  margin-top: 2%;
+  margin-left: 5%;
+  margin-right: 5%;
+}

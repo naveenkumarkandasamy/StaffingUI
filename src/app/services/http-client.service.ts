@@ -23,4 +23,9 @@ export class HttpClientService {
     const apiLink = this.apiUrl+'/Staffing/api/request/shiftPlanFileUpload';
     return this.http.post<response>(apiLink, requestBody);
   }
+
+  getJobDetailsData() {
+    const apiLink = this.apiUrl + '/Staffing/api/jobDetails/all';
+    return this.http.get(apiLink);
+  }
 }
