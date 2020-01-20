@@ -1,6 +1,6 @@
 <div style="position: relative; width:96vw; margin:2vh;">
     <h2>&nbsp;Job Scheduler</h2>
-    <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+    <form (ngSubmit)="onSubmit()" #heroForm="ngForm" ngNativeValidate>
         <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Job Name</label></mat-grid-tile>
@@ -9,7 +9,7 @@
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Enter comma seperted shift preferences</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" required type="text" [(ngModel)]="shiftLength" placeholder="12, 8, 10, 4"
+                <input class="col-sm" type="text" title="Enter comma separated numbers" [(ngModel)]="shiftLength" pattern = "\d{1,2}(,\d{1,2}|, \d{1,2}| ,\d{1,2})*[, ]?"
                     name="shiftLength" #name="ngModel" /></mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Enter lower limit for utilization</label></mat-grid-tile>
@@ -42,7 +42,7 @@
             </select>
         </div>
 
-        <div *ngIf="inputFormat == 'FTP URL'">
+        <div *ngIf="inputFormat == 'FTP_URL'">
             <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">FTP URL</label></mat-grid-tile>
@@ -64,9 +64,9 @@
             </mat-grid-list>
         </div>
 
-        <div *ngIf="inputFormat == 'File Upload'">
+        <div *ngIf="inputFormat == 'DATA_FILE'">
             <label for="file">Choose File</label>
-            <input type="file" [(ngModel)]="inputFile" id="file" #fileInput />
+            <input type="file" required [(ngModel)]="inputFile" id="file" #fileInput name="inputFile"/>
             <!-- (change)="handleFileInput($event.target.files)"> -->
         </div>
 
@@ -81,7 +81,7 @@
             </select>
         </div>
 
-        <div *ngIf="outputFormat == 'FTP URL'">
+        <div *ngIf="outputFormat == 'FTP_URL'">
             <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">FTP URL</label></mat-grid-tile>
@@ -103,12 +103,12 @@
             </mat-grid-list>
         </div>
 
-        <div *ngIf="outputFormat == 'Email'">
+        <div *ngIf="outputFormat == 'EMAIL'">
             <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">Email ID</label></mat-grid-tile>
                 <mat-grid-tile class="script-menu">
-                    <input class="col-sm" required type="text" [(ngModel)]="emailId" id="emailId"
+                    <input class="col-sm" required type="email" [(ngModel)]="emailId" id="emailId"
                         placeholder="" name="emailId" />
                 </mat-grid-tile>
             </mat-grid-list>

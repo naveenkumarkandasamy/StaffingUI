@@ -13,7 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 
 export class AutorunComponent implements OnInit {
   
-  constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService,
+  constructor(private constantsService: ConstantsService, private   httpClientService: HttpClientService,
     private toastr: ToastrService) { }
 
   ngOnInit(): void {
@@ -34,15 +34,15 @@ export class AutorunComponent implements OnInit {
   jobStatus: string;
 
   jobName:string;
-  shiftLength:string;
+  shiftLength: string;
   lowerUtilization: string;
   upperUtilization: string;
   cronExpression: string;
   emailId:string;
    
-  inputTypes: Array<string> = ["FTP URL", "File Upload"];
+  inputTypes: Array<string> = ["FTP_URL", "DATA_FILE"];
   inputFormat: string
-  outputTypes: Array<string> = ["FTP URL", "Email"];
+  outputTypes: Array<string> = ["FTP_URL", "EMAIL"];
   outputFormat: string
 
   model1: Model[] = this.constantsService.model;
@@ -55,74 +55,78 @@ export class AutorunComponent implements OnInit {
   }
 
   requestBody: any = {
-    "id": "2",
     "name": "",
-    "userId": "osatadmin",
-
-    "shiftLengthPreferences": "8, 10, 4",
+    "shiftLengthPreferences": "8, 6, 4",
     "lowerUtilizationFactor": 0.85,
     "upperUtilizationFactor": 1.10,
+    "clinicians": null,
     "chronExpression": "",
     
     "inputFormat": "",
-    "inputId": "",
     "inputFtpDetails": {
         "fileUrl": "",
         "username": "",
         "password": "",
-        "id": "",
     },
     "inputFileDetails": {
       "inputFile": null,
     },
     "outputFormat": "",
-    "outputId": "",
     "outputFtpDetails": {
       "fileUrl": "",
       "username": "",
-      "password": "",
-      "id": "",
+      "password": ""
     },
     "outputEmailId": "",
     "status": "",
   }
 
   createRequestBody(){
-    this.requestBody.shiftLengthPPreferences = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
+    this.requestBody.shiftLengthPreferences = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerUtilizationFactor = this.lowerUtilization != "" ? this.lowerUtilization : this.requestBody.lowerUtilizationFactor;
     this.requestBody.upperUtilizationFactor = this.upperUtilization != "" ? this.upperUtilization : this.requestBody.upperUtilizationFactor;
     this.requestBody.name = this.jobName;
+    this.requestBody.clinicians = this.model;
+    this.requestBody.chronExpression = this.cronExpression;
+
     if(this.inputFormat == "FTP_URL"){
-      this.requestBody.ftpDetails.fileUrl = this.inputFtpUrl;
-      this.requestBody.ftpDetails.username = this.inputFtpUsername;
-      this.requestBody.ftpDetails.password = this.inputFtpPassword;
+      this.requestBody.inputFormat = this.inputFormat;
+      this.requestBody.inputFtpDetails.fileUrl = this.inputFtpUrl;
+      this.requestBody.inputFtpDetails.username = this.inputFtpUsername;
+      this.requestBody.inputFtpDetails.password = this.inputFtpPassword;
     }
     else{
-      this.requestBody.ftpDetails = null;
+      this.requestBody.inputFtpDetails = null;
     }
-    if(this.inputFormat == "FTP_URL"){
-      this.requestBody.inputFileDetails.inputFile = this.inputFile;
+    if(this.outputFormat == "FTP_URL"){
+      this.requestBody.outputFormat = this.outputFormat;
+      this.requestBody.outputFtpDetails.fileUrl = this.outputFtpUrl;
+      this.requestBody.outputFtpDetails.username = this.outputFtpUsername;
+      this.requestBody.outputFtpDetails.password = this.outputFtpPassword;
     }
     else{
-      this.requestBody.inputFileDetails.inputFile = null;
+      this.requestBody.outputEmailId = this.emailId;
     }
+   
   }
 
 
   initialize(){
+    this.jobName = "";
+    this.shiftLength = "8, 6, 4";
+    this.lowerUtilization = "0.85";
+    this.upperUtilization = "1.10";
+    this.model = this.model1;
+    this.inputFormat = "";
     this.inputFtpUrl = null;
     this.inputFtpUsername = null;
     this.inputFtpPassword = null;
+    this.inputFile = null;
+    this.outputFormat = "";
     this.outputFtpUrl = null;
     this.outputFtpUsername = null;
     this.outputFtpPassword = null;
     this.cronExpression = null;
-    this.inputFormat = "";
-    this.outputFormat = "";
-    this.shiftLength = "";
-    this.lowerUtilization = "";
-    this.upperUtilization = "";
-    this.jobName = "";
     this.emailId = "";
 
     this.columnDefs = [
@@ -158,7 +162,7 @@ export class AutorunComponent implements OnInit {
   }
 
   showToaster(text){
-    this.toastr.success("Successfully saved '"+text+"'")
+    this.toastr.success("Successfully saved '"+ text +"'")
   }
 
   onReset(){
@@ -167,11 +171,16 @@ export class AutorunComponent implements OnInit {
 
   onSubmit() {
     this.createRequestBody();
-    this.showToaster("dummy");
-    this.httpClientService.saveJobDetails(this.requestBody).subscribe(data=> console.log()
-      // todo display on toaster inside subscribe
-      );
+    this.showToaster(this.jobName);
+
+    const formData = new FormData();
+    formData.append('inputFile', this.inputFile);
+    formData.append('jobDetails', JSON.stringify(this.requestBody));
+    // this.httpClientService.getGraphDetailsUsingFileData(formData).subscribe(data => {}, error => {
+    //   this.toastr.error(error.message);
+    // });
   }
+
 
   onSaveDraft(){
     this.createRequestBody();
