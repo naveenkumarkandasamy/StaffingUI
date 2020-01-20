@@ -31,7 +31,6 @@ import { HttpClientService } from './services/http-client.service';
 //Interceptors
 import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
 
-import { GrdFilterPipe } from './filter'
 
 @NgModule({
   declarations: [
@@ -42,8 +41,7 @@ import { GrdFilterPipe } from './filter'
     AutorunComponent,
     LoginComponent,
     LogoutComponent,
-    JobListComponent,
-    GrdFilterPipe
+    JobListComponent
   ],
   imports: [
     MatPaginatorModule,
