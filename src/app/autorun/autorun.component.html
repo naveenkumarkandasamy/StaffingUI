@@ -9,32 +9,28 @@
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Enter comma seperted shift preferences</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" type="text" title="Enter comma separated numbers" [(ngModel)]="shiftLength" pattern = "\d{1,2}(,\d{1,2}|, \d{1,2}| ,\d{1,2})*[, ]?"
-                    name="shiftLength" #name="ngModel" /></mat-grid-tile>
+                <input class="col-sm" type="text" title="Enter comma separated numbers" [(ngModel)]="shiftLength" pattern="\d{1,2}(,\d{1,2}|, \d{1,2}| ,\d{1,2})*[, ]?" name="shiftLength" #name="ngModel" />
+            </mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Enter lower limit for utilization</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" type="text" [(ngModel)]="lowerUtilization" placeholder="0.85"
-                    name="lowerUtilization" />
+                <input class="col-sm" type="text" [(ngModel)]="lowerUtilization" placeholder="0.85" name="lowerUtilization" />
             </mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Enter upper limit for utilization</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" type="text" [(ngModel)]="upperUtilization" placeholder="1.10"
-                    name="upperUtilization" />
+                <input class="col-sm" type="text" [(ngModel)]="upperUtilization" placeholder="1.10" name="upperUtilization" />
             </mat-grid-tile>
         </mat-grid-list>
 
         <label>Coverage Summary</label>
-        <ag-grid-angular domLayout="autoHeight" style="width: 42vw; height: 20vh;" class="ag-theme-balham"
-            [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
+        <ag-grid-angular domLayout="autoHeight" style="width: 42vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
         </ag-grid-angular>
         <br />
 
         <div style="width: 30vh;">
             <label>Arrival Data format</label>
-            <select class="form-control mt-2" id="inputType" name="inputFormat" #it
-                (change)="inputformatChanged(it.value)">
+            <select class="form-control mt-2" id="inputType" name="inputFormat" #it (change)="inputformatChanged(it.value)">
                 <option value="Select One">Select One</option>
                 <option [value]="type" *ngFor="let type of inputTypes">
                     {{ type }}
@@ -47,33 +43,28 @@
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">FTP URL</label></mat-grid-tile>
                 <mat-grid-tile class="script-menu">
-                    <input class="col-sm" required type="text" [(ngModel)]="inputFtpUrl" id="inputFtpUrl"
-                        placeholder="ftp://myname@host.dom/2Fetc" name="inputFtpUrl" /></mat-grid-tile>
+                    <input class="col-sm" required type="text" [(ngModel)]="inputFtpUrl" id="inputFtpUrl" placeholder="ftp://myname@host.dom/2Fetc" name="inputFtpUrl" /></mat-grid-tile>
 
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">FTP Username</label></mat-grid-tile>
                 <mat-grid-tile class="script-menu">
-                    <input class="col-sm" required type="text" [(ngModel)]="inputFtpUsername" id="inputFtpUsername"
-                        placeholder="" name="inputFtpUsername" /></mat-grid-tile>
+                    <input class="col-sm" required type="text" [(ngModel)]="inputFtpUsername" id="inputFtpUsername" placeholder="" name="inputFtpUsername" /></mat-grid-tile>
 
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">FTP Password</label></mat-grid-tile>
                 <mat-grid-tile class="script-menu">
-                    <input class="col-sm" required type="text" [(ngModel)]="inputFtpPassword" id="inputFtpPassword"
-                        placeholder="" name="inputFtpPassword" /></mat-grid-tile>
+                    <input class="col-sm" required type="text" [(ngModel)]="inputFtpPassword" id="inputFtpPassword" placeholder="" name="inputFtpPassword" /></mat-grid-tile>
             </mat-grid-list>
         </div>
 
         <div *ngIf="inputFormat == 'DATA_FILE'">
             <label for="file">Choose File</label>
-            <input type="file" required [(ngModel)]="inputFile" id="file" #fileInput name="inputFile"/>
-            <!-- (change)="handleFileInput($event.target.files)"> -->
+            <input type="file" required id="file" #fileInput (change)="handleFileInput($event.target.files)" />
         </div>
 
         <div style="width: 30vh;">
             <label>Output Data format</label>
-            <select class="form-control mt-2" id="outputType" name="outputFormat" #ot
-                (change)="outputformatChanged(ot.value)">
+            <select class="form-control mt-2" id="outputType" name="outputFormat" #ot (change)="outputformatChanged(ot.value)">
                 <option value="Select One">Select One</option>
                 <option [value]="type" *ngFor="let type of outputTypes">
                     {{ type }}
@@ -86,20 +77,17 @@
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">FTP URL</label></mat-grid-tile>
                 <mat-grid-tile class="script-menu">
-                    <input class="col-sm" required type="text" [(ngModel)]="outputFtpUrl" id="outputFtpUrl"
-                        placeholder="ftp://myname@host.dom/2Fetc" name="outputFtpUrl" /></mat-grid-tile>
+                    <input class="col-sm" required type="text" [(ngModel)]="outputFtpUrl" id="outputFtpUrl" placeholder="ftp://myname@host.dom/2Fetc" name="outputFtpUrl" /></mat-grid-tile>
 
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">FTP Username</label></mat-grid-tile>
                 <mat-grid-tile class="script-menu">
-                    <input class="col-sm" required type="text" [(ngModel)]="outputFtpUsername" id="outputFtpUsername"
-                        placeholder="" name="outputFtpUsername" /></mat-grid-tile>
+                    <input class="col-sm" required type="text" [(ngModel)]="outputFtpUsername" id="outputFtpUsername" placeholder="" name="outputFtpUsername" /></mat-grid-tile>
 
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">FTP Password</label></mat-grid-tile>
                 <mat-grid-tile class="script-menu">
-                    <input class="col-sm" required type="text" [(ngModel)]="outputFtpPassword" id="outputFtpPassword"
-                        placeholder="" name="outputFtpPassword" /></mat-grid-tile>
+                    <input class="col-sm" required type="text" [(ngModel)]="outputFtpPassword" id="outputFtpPassword" placeholder="" name="outputFtpPassword" /></mat-grid-tile>
             </mat-grid-list>
         </div>
 
@@ -108,8 +96,7 @@
                 <mat-grid-tile class="script-menu">
                     <label class="col-sm">Email ID</label></mat-grid-tile>
                 <mat-grid-tile class="script-menu">
-                    <input class="col-sm" required type="email" [(ngModel)]="emailId" id="emailId"
-                        placeholder="" name="emailId" />
+                    <input class="col-sm" required type="email" [(ngModel)]="emailId" id="emailId" placeholder="" name="emailId" />
                 </mat-grid-tile>
             </mat-grid-list>
         </div>
@@ -120,18 +107,15 @@
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Cron expression</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" type="text" [(ngModel)]="cronExpression" name="cronExpression"
-                    placeholder="0 0 12 ? * SAT *" /></mat-grid-tile>
+                <input class="col-sm" type="text" [(ngModel)]="cronExpression" name="cronExpression" placeholder="0 0 12 ? * SAT *" /></mat-grid-tile>
         </mat-grid-list>
 
         <button type="submit" class="btn btn-success" style="margin-top: 1vh;">
             Submit
-        </button>
-        &nbsp;
+        </button> &nbsp;
         <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onReset()">
             Reset
-        </button>
-        &nbsp;
+        </button> &nbsp;
         <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onSaveDraft()">
             Save as Draft
         </button>

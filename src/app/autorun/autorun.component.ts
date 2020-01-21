@@ -4,6 +4,7 @@ import { ConstantsService } from "../services/constants.service";
 import { Model } from '../Models/app.types';
 import { HttpClientService } from '../services/http-client.service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'autorun',
@@ -12,9 +13,9 @@ import { ToastrService } from 'ngx-toastr';
 })
 
 export class AutorunComponent implements OnInit {
-  
-  constructor(private constantsService: ConstantsService, private   httpClientService: HttpClientService,
-    private toastr: ToastrService) { }
+
+  constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService,
+    private toastr: ToastrService, private authService: AuthenticationService) { }
 
   ngOnInit(): void {
     this.initialize()
@@ -30,24 +31,24 @@ export class AutorunComponent implements OnInit {
   outputFtpUsername: string;
   outputFtpPassword: string;
 
-  inputFile: any;
+  inputFile: File;
   jobStatus: string;
 
-  jobName:string;
+  jobName: string;
   shiftLength: string;
   lowerUtilization: string;
   upperUtilization: string;
   cronExpression: string;
-  emailId:string;
-   
+  emailId: string;
+
   inputTypes: Array<string> = ["FTP_URL", "DATA_FILE"];
   inputFormat: string
   outputTypes: Array<string> = ["FTP_URL", "EMAIL"];
   outputFormat: string
 
   model1: Model[] = this.constantsService.model;
-  model:Model[] = JSON.parse(JSON.stringify(this.model1));
-  columnDefs:any
+  model: Model[] = JSON.parse(JSON.stringify(this.model1));
+  columnDefs: any
 
   defaultColDef = {
     editable: true,
@@ -61,12 +62,12 @@ export class AutorunComponent implements OnInit {
     "upperUtilizationFactor": 1.10,
     "clinicians": null,
     "chronExpression": "",
-    
+
     "inputFormat": "",
     "inputFtpDetails": {
-        "fileUrl": "",
-        "username": "",
-        "password": "",
+      "fileUrl": "",
+      "username": "",
+      "password": "",
     },
     "inputFileDetails": {
       "inputFile": null,
@@ -81,37 +82,39 @@ export class AutorunComponent implements OnInit {
     "status": "",
   }
 
-  createRequestBody(){
+  createRequestBody() {
     this.requestBody.shiftLengthPreferences = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerUtilizationFactor = this.lowerUtilization != "" ? this.lowerUtilization : this.requestBody.lowerUtilizationFactor;
     this.requestBody.upperUtilizationFactor = this.upperUtilization != "" ? this.upperUtilization : this.requestBody.upperUtilizationFactor;
     this.requestBody.name = this.jobName;
     this.requestBody.clinicians = this.model;
     this.requestBody.chronExpression = this.cronExpression;
+    this.requestBody.userId = this.authService.currentLoggedInUser;
 
-    if(this.inputFormat == "FTP_URL"){
+    if (this.inputFormat == "FTP_URL") {
       this.requestBody.inputFormat = this.inputFormat;
       this.requestBody.inputFtpDetails.fileUrl = this.inputFtpUrl;
       this.requestBody.inputFtpDetails.username = this.inputFtpUsername;
       this.requestBody.inputFtpDetails.password = this.inputFtpPassword;
     }
-    else{
+    else {
+      this.requestBody.inputFormat = "DATA_FILE"
       this.requestBody.inputFtpDetails = null;
     }
-    if(this.outputFormat == "FTP_URL"){
+    if (this.outputFormat == "FTP_URL") {
       this.requestBody.outputFormat = this.outputFormat;
       this.requestBody.outputFtpDetails.fileUrl = this.outputFtpUrl;
       this.requestBody.outputFtpDetails.username = this.outputFtpUsername;
       this.requestBody.outputFtpDetails.password = this.outputFtpPassword;
     }
-    else{
+    else {
       this.requestBody.outputEmailId = this.emailId;
     }
-   
+
   }
 
 
-  initialize(){
+  initialize() {
     this.jobName = "";
     this.shiftLength = "8, 6, 4";
     this.lowerUtilization = "0.85";
@@ -161,28 +164,40 @@ export class AutorunComponent implements OnInit {
     ];
   }
 
-  showToaster(text){
-    this.toastr.success("Successfully saved '"+ text +"'")
+  showToaster(text) {
+    this.toastr.success("Successfully saved '" + text + "'")
   }
 
-  onReset(){
+  onReset() {
     this.initialize();
   }
 
   onSubmit() {
     this.createRequestBody();
-    this.showToaster(this.jobName);
+
 
     const formData = new FormData();
-    formData.append('inputFile', this.inputFile);
-    formData.append('jobDetails', JSON.stringify(this.requestBody));
-    this.httpClientService.getGraphDetailsUsingFileData(formData).subscribe(data => {}, error => {
+    formData.append('file', this.inputFile);
+    formData.append('input', JSON.stringify(this.requestBody));
+
+    this.httpClientService.saveJobDetails(formData).subscribe(data => { this.toastr.success(data.toString()) }, error => {
       this.toastr.error(error.message);
     });
   }
 
 
-  onSaveDraft(){
+
+  handleFileInput(files: FileList) {
+    this.inputFile = files.item(0);
+    var ext = this.inputFile.name.split(".").pop();
+    if (ext != "xlsx") {
+      this.toastr.error('file format not supported , upload only xlsx files');
+      this.fileInput.nativeElement.value = null;
+      this.inputFile = undefined;
+    }
+  }
+
+  onSaveDraft() {
     this.createRequestBody();
     // todo create service to save draft
   }
@@ -190,13 +205,8 @@ export class AutorunComponent implements OnInit {
   inputformatChanged(value) {
     this.inputFormat = value;
   }
-  
+
   outputformatChanged(value) {
     this.outputFormat = value;
   }
-
-
-
-
-
 }
