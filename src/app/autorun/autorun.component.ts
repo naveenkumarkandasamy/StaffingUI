@@ -42,9 +42,9 @@ export class AutorunComponent implements OnInit {
   emailId: string;
 
   inputTypes: Array<string> = ["FTP_URL", "DATA_FILE"];
-  inputFormat: string
+  inputFormat: any;
   outputTypes: Array<string> = ["FTP_URL", "EMAIL"];
-  outputFormat: string
+  outputFormat: any;
 
   model1: Model[] = this.constantsService.model;
   model: Model[] = JSON.parse(JSON.stringify(this.model1));
@@ -120,12 +120,12 @@ export class AutorunComponent implements OnInit {
     this.lowerUtilization = 0.85;
     this.upperUtilization = 1.10;
     this.model = this.model1;
-    this.inputFormat = "";
+    this.inputFormat = -1;
     this.inputFtpUrl = null;
     this.inputFtpUsername = null;
     this.inputFtpPassword = null;
     this.inputFile = null;
-    this.outputFormat = "";
+    this.outputFormat = -1;
     this.outputFtpUrl = null;
     this.outputFtpUsername = null;
     this.outputFtpPassword = null;
@@ -188,16 +188,23 @@ export class AutorunComponent implements OnInit {
   }
 
   createAndPostJob(){
+    if(this.inputFormat == -1){
+      this.toastr.error("Please select a valid input format");
+    }
+    else if(this.outputFormat == -1){
+      this.toastr.error("Please select a valid output format");
+    
+    }
+    else{
     this.createRequestBody();
-
-
     const formData = new FormData();
     formData.append('file', this.inputFile);
     formData.append('input', JSON.stringify(this.requestBody));
 
-    this.httpClientService.saveJobDetails(formData).subscribe(data => { this.toastr.success(data.toString()) }, error => {
-      this.toastr.error(error.message);
-    });
+    // this.httpClientService.saveJobDetails(formData).subscribe(data => { this.toastr.success(data.toString()) }, error => {
+    //   this.toastr.error(error.message);
+    // });
+    }
   }
 
   handleFileInput(files: FileList) {
