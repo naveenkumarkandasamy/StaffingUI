@@ -201,9 +201,9 @@ export class AutorunComponent implements OnInit {
     formData.append('file', this.inputFile);
     formData.append('input', JSON.stringify(this.requestBody));
 
-    // this.httpClientService.saveJobDetails(formData).subscribe(data => { this.toastr.success(data.toString()) }, error => {
-    //   this.toastr.error(error.message);
-    // });
+    this.httpClientService.saveJobDetails(formData).subscribe(data => { this.toastr.success(data.toString()) }, error => {
+      this.toastr.error(error.message);
+    });
     }
   }
 
