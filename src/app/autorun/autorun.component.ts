@@ -36,8 +36,8 @@ export class AutorunComponent implements OnInit {
 
   jobName: string;
   shiftLength: string;
-  lowerUtilization: string;
-  upperUtilization: string;
+  lowerUtilization: number;
+  upperUtilization: number;
   cronExpression: string;
   emailId: string;
 
@@ -84,8 +84,8 @@ export class AutorunComponent implements OnInit {
 
   createRequestBody() {
     this.requestBody.shiftLengthPreferences = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
-    this.requestBody.lowerUtilizationFactor = this.lowerUtilization != "" ? this.lowerUtilization : this.requestBody.lowerUtilizationFactor;
-    this.requestBody.upperUtilizationFactor = this.upperUtilization != "" ? this.upperUtilization : this.requestBody.upperUtilizationFactor;
+    this.requestBody.lowerUtilizationFactor = this.lowerUtilization;
+    this.requestBody.upperUtilizationFactor = this.upperUtilization;
     this.requestBody.name = this.jobName;
     this.requestBody.clinicians = this.model;
     this.requestBody.chronExpression = this.cronExpression;
@@ -110,15 +110,15 @@ export class AutorunComponent implements OnInit {
     else {
       this.requestBody.outputEmailId = this.emailId;
     }
-
+    this.requestBody.status = this.jobStatus;   
   }
 
 
   initialize() {
     this.jobName = "";
     this.shiftLength = "8, 6, 4";
-    this.lowerUtilization = "0.85";
-    this.upperUtilization = "1.10";
+    this.lowerUtilization = 0.85;
+    this.upperUtilization = 1.10;
     this.model = this.model1;
     this.inputFormat = "";
     this.inputFtpUrl = null;
@@ -131,6 +131,7 @@ export class AutorunComponent implements OnInit {
     this.outputFtpPassword = null;
     this.cronExpression = null;
     this.emailId = "";
+    this.jobStatus = "SCHEDULED";
 
     this.columnDefs = [
       { headerName: 'Role', field: 'name', editable: true },
@@ -164,8 +165,13 @@ export class AutorunComponent implements OnInit {
     ];
   }
 
-  showToaster(text) {
-    this.toastr.success("Successfully saved '" + text + "'")
+  showToaster(text){
+    if(this.jobStatus == "SCHEDULED"){
+      this.toastr.success("Successfully scheduled '"+ text +"'");
+    }
+    else{
+      this.toastr.success("Successfully saved '"+ text +"' as draft")
+    }
   }
 
   onReset() {
@@ -173,6 +179,15 @@ export class AutorunComponent implements OnInit {
   }
 
   onSubmit() {
+    this.createAndPostJob();
+  }
+
+  onSaveDraft(){
+    this.jobStatus = "DRAFT";
+    this.createAndPostJob();
+  }
+
+  createAndPostJob(){
     this.createRequestBody();
 
 
@@ -185,8 +200,6 @@ export class AutorunComponent implements OnInit {
     });
   }
 
-
-
   handleFileInput(files: FileList) {
     this.inputFile = files.item(0);
     var ext = this.inputFile.name.split(".").pop();
@@ -195,11 +208,6 @@ export class AutorunComponent implements OnInit {
       this.fileInput.nativeElement.value = null;
       this.inputFile = undefined;
     }
-  }
-
-  onSaveDraft() {
-    this.createRequestBody();
-    // todo create service to save draft
   }
 
   inputformatChanged(value) {
