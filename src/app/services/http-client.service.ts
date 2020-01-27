@@ -8,19 +8,19 @@ import { environment } from "../../environments/environment"
 })
 export class HttpClientService {
 
-  private apiUrl:string="";
+  private apiUrl: string = "";
   constructor(private http: HttpClient) {
     this.apiUrl = environment.apiUrl;
-   }
+  }
 
   getGraphDetailsUsingTableData(requestBody) {
     console.log(environment.environment)
-    const apiLink = this.apiUrl+'/Staffing/api/request/shiftPlan';
+    const apiLink = this.apiUrl + '/Staffing/api/request/shiftPlan';
     return this.http.post<response>(apiLink, requestBody);
   }
 
   getGraphDetailsUsingFileData(requestBody) {
-    const apiLink = this.apiUrl+'/Staffing/api/request/shiftPlanFileUpload';
+    const apiLink = this.apiUrl + '/Staffing/api/request/shiftPlanFileUpload';
     return this.http.post<response>(apiLink, requestBody);
   }
 

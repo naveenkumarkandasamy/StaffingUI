@@ -5,6 +5,8 @@ import { Model } from '../Models/app.types';
 import { HttpClientService } from '../services/http-client.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from '../services/authentication.service';
+import { CronGeneratorComponent } from './../cron-generator/cron-generator.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'autorun',
@@ -15,12 +17,11 @@ import { AuthenticationService } from '../services/authentication.service';
 export class AutorunComponent implements OnInit {
 
   constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService,
-    private toastr: ToastrService, private authService: AuthenticationService) { }
+    private toastr: ToastrService, private authService: AuthenticationService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.initialize()
   }
-
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
@@ -89,7 +90,7 @@ export class AutorunComponent implements OnInit {
     this.requestBody.name = this.jobName;
     this.requestBody.clinicians = this.model;
     this.requestBody.chronExpression = this.cronExpression;
-    this.requestBody.userId = this.authService.currentLoggedInUser;
+    this.requestBody.userId = this.authService.currentLoggedInUser();
 
     if (this.inputFormat == "FTP_URL") {
       this.requestBody.inputFormat = this.inputFormat;
@@ -224,4 +225,21 @@ export class AutorunComponent implements OnInit {
   outputformatChanged(value) {
     this.outputFormat = value;
   }
+  openDialog(): void {
+    const dialogRef = this.dialog.open(CronGeneratorComponent, {
+      width: '',
+      data: {cronResult: this.cronExpression}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.cronExpression = result;
+      console.log(this.cronExpression);
+    });
+  }
+
+}
+
+export interface DialogData {
+  cronResult: string;
 }

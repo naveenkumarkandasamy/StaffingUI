@@ -6,6 +6,7 @@
         <span [routerLink]="'/mainForm'">Optimized Shift Allocation Tool</span>
         <a mat-button *ngIf="loginService.isUserLoggedIn() && isAdmin" [routerLink]="'/autorun'" style="text-decoration:none"> Autorun </a>
         <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/joblist'" style="text-decoration:none"> Job List </a>
+        <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/crongen'" style="text-decoration:none"> Cron Generator </a>
 
         <!-- <a mat-button *ngIf="!loginService.isUserLoggedIn()" [routerLink]="'/login'" style="text-decoration:none"> Login </a> -->
 

@@ -1,14 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { AgGridModule } from 'ag-grid-angular';
-import { MatToolbarModule, MatIconModule, MatSidenavModule, MatButtonModule, MatCheckboxModule, MatInputModule, MatPaginatorModule } from "@angular/material";
+import { MatToolbarModule, MatIconModule, MatSidenavModule, MatButtonModule, MatCheckboxModule, MatInputModule, MatPaginatorModule, MatRadioModule, MatCardModule, MatDialogModule } from "@angular/material";
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatSelectModule } from '@angular/material/select';
+import { CronEditorModule } from 'ngx-cron-editor';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -31,6 +34,7 @@ import { HttpClientService } from './services/http-client.service';
 //Interceptors
 import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
 
+import { CronGeneratorComponent } from './cron-generator/cron-generator.component'
 
 @NgModule({
   declarations: [
@@ -41,9 +45,17 @@ import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
     AutorunComponent,
     LoginComponent,
     LogoutComponent,
-    JobListComponent
+    JobListComponent,
+    CronGeneratorComponent
   ],
   imports: [
+    MatDialogModule,
+    MatCardModule,
+    CronEditorModule,
+    ReactiveFormsModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatTabsModule,
     MatPaginatorModule,
     MatInputModule,
     MatSortModule,

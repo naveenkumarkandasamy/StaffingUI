@@ -12,7 +12,7 @@ import { HttpClientService } from './../services/http-client.service';
 })
 export class JobListComponent implements OnInit {
 
-  jobListData: any
+  jobListData: any;
 
   displayedColumns: string[] = ['name', 'shiftLengthPreferences', 'lowerUtilizationFactor', 'upperUtilizationFactor', 'scheduleDateTime', 'customColumn1'];
   dataSource: any;
@@ -23,9 +23,14 @@ export class JobListComponent implements OnInit {
   constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService) { }
 
   ngOnInit() {
+    this.getJobListData();
+  }
+
+  getJobListData() {
 
     this.httpClientService.getJobDetailsData().subscribe(data => {
       this.jobListData = data;
+      
       this.dataSource = new MatTableDataSource(this.jobListData);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
@@ -33,6 +38,7 @@ export class JobListComponent implements OnInit {
       this.dataSource.filterPredicate = function (data: any, filter: string): boolean {
         return data.name.toLowerCase().includes(filter);
       };
+
     });
 
   }
