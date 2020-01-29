@@ -224,6 +224,7 @@ export class AutorunComponent implements OnInit {
   outputformatChanged(value) {
     this.outputFormat = value;
   }
+  
   openDialog(): void {
     const dialogRef = this.dialog.open(CronGeneratorComponent, {
       width: '',
