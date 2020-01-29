@@ -1,7 +1,7 @@
 pipeline {
 
     environment {
-        registry = "payalmantri10/staffingui"
+        registry = "staffingaccolite/staffingui"
         registryCredential = 'payalmantri10'
     }
     agent any;
@@ -18,7 +18,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                    sh 'docker push payalmantri10/staffingui:latest'
+                    sh 'docker push staffingaccolite/staffingui:latest'
                 }
             }
         }
