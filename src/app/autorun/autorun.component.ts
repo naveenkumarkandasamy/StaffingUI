@@ -62,7 +62,7 @@ export class AutorunComponent implements OnInit {
     "lowerUtilizationFactor": 0.85,
     "upperUtilizationFactor": 1.10,
     "clinicians": null,
-    "chronExpression": "",
+    "cronExpression": "",
 
     "inputFormat": "",
     "inputFtpDetails": {
@@ -89,21 +89,20 @@ export class AutorunComponent implements OnInit {
     this.requestBody.upperUtilizationFactor = this.upperUtilization;
     this.requestBody.name = this.jobName;
     this.requestBody.clinicians = this.model;
-    this.requestBody.chronExpression = this.cronExpression;
+    this.requestBody.cronExpression = this.cronExpression;
     this.requestBody.userId = this.authService.currentLoggedInUser;
 
+    this.requestBody.inputFormat = this.inputFormat;
     if (this.inputFormat == "FTP_URL") {
-      this.requestBody.inputFormat = this.inputFormat;
       this.requestBody.inputFtpDetails.fileUrl = this.inputFtpUrl;
       this.requestBody.inputFtpDetails.username = this.inputFtpUsername;
       this.requestBody.inputFtpDetails.password = this.inputFtpPassword;
     }
     else {
-      this.requestBody.inputFormat = "DATA_FILE"
       this.requestBody.inputFtpDetails = null;
     }
+    this.requestBody.outputFormat = this.outputFormat;
     if (this.outputFormat == "FTP_URL") {
-      this.requestBody.outputFormat = this.outputFormat;
       this.requestBody.outputFtpDetails.fileUrl = this.outputFtpUrl;
       this.requestBody.outputFtpDetails.username = this.outputFtpUsername;
       this.requestBody.outputFtpDetails.password = this.outputFtpPassword;
