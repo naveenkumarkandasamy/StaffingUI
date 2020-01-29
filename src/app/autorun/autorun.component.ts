@@ -90,7 +90,7 @@ export class AutorunComponent implements OnInit {
     this.requestBody.name = this.jobName;
     this.requestBody.clinicians = this.model;
     this.requestBody.chronExpression = this.cronExpression;
-    this.requestBody.userId = this.authService.currentLoggedInUser();
+    this.requestBody.userId = this.authService.currentLoggedInUser;
 
     if (this.inputFormat == "FTP_URL") {
       this.requestBody.inputFormat = this.inputFormat;

@@ -110,7 +110,7 @@
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Cron expression</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" type="text" [(ngModel)]="cronExpression" name="cronExpression" placeholder="0 0 12 ? * SAT *" /></mat-grid-tile>
+                <input class="col-sm" type="text" (click)="openDialog()" [(ngModel)]="cronExpression" name="cronExpression" placeholder="0 0 12 ? * SAT *" /></mat-grid-tile>
         </mat-grid-list>
 
         <button type="submit" class="btn btn-success" style="margin-top: 1vh;">
