@@ -56,34 +56,38 @@ export class AutorunComponent implements OnInit {
     resizable: true
   }
 
-  requestBody: any = {
-    "name": "",
-    "shiftLengthPreferences": "8, 6, 4",
-    "lowerUtilizationFactor": 0.85,
-    "upperUtilizationFactor": 1.10,
-    "clinicians": null,
-    "cronExpression": "",
-
-    "inputFormat": "",
-    "inputFtpDetails": {
-      "fileUrl": "",
-      "username": "",
-      "password": "",
-    },
-    "inputFileDetails": {
-      "inputFile": null,
-    },
-    "outputFormat": "",
-    "outputFtpDetails": {
-      "fileUrl": "",
-      "username": "",
-      "password": ""
-    },
-    "outputEmailId": "",
-    "status": "",
-  }
+  requestBody: any;
 
   createRequestBody() {
+
+    this.requestBody = {
+      "name": "",
+      "shiftLengthPreferences": "8, 6, 4",
+      "lowerUtilizationFactor": 0.85,
+      "upperUtilizationFactor": 1.10,
+      "clinicians": null,
+      "cronExpression": "",
+  
+      "inputFormat": "",
+      "inputFtpDetails": {
+        "fileUrl": "",
+        "username": "",
+        "password": "",
+      },
+      "inputFileDetails": {
+        "inputFile": null,
+        "fileExtension": "",
+      },
+      "outputFormat": "",
+      "outputFtpDetails": {
+        "fileUrl": "",
+        "username": "",
+        "password": ""
+      },
+      "outputEmailId": "",
+      "status": "",
+    }
+
     this.requestBody.shiftLengthPreferences = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerUtilizationFactor = this.lowerUtilization;
     this.requestBody.upperUtilizationFactor = this.upperUtilization;
@@ -97,9 +101,11 @@ export class AutorunComponent implements OnInit {
       this.requestBody.inputFtpDetails.fileUrl = this.inputFtpUrl;
       this.requestBody.inputFtpDetails.username = this.inputFtpUsername;
       this.requestBody.inputFtpDetails.password = this.inputFtpPassword;
+      this.requestBody.inputFileDetails = null;
     }
     else {
       this.requestBody.inputFtpDetails = null;
+      this.requestBody.inputFileDetails.fileExtension = 'xlsx';  //*** */
     }
     this.requestBody.outputFormat = this.outputFormat;
     if (this.outputFormat == "FTP_URL") {
@@ -108,9 +114,10 @@ export class AutorunComponent implements OnInit {
       this.requestBody.outputFtpDetails.password = this.outputFtpPassword;
     }
     else {
+      this.requestBody.outputFtpDetails = null;
       this.requestBody.outputEmailId = this.emailId;
     }
-    this.requestBody.status = this.jobStatus;   
+    this.requestBody.status = this.jobStatus;
   }
 
 
@@ -165,12 +172,12 @@ export class AutorunComponent implements OnInit {
     ];
   }
 
-  showToaster(text){
-    if(this.jobStatus == "SCHEDULED"){
-      this.toastr.success("Successfully scheduled '"+ text +"'");
+  showToaster(text) {
+    if (this.jobStatus == "SCHEDULED") {
+      this.toastr.success("Successfully scheduled '" + text + "'");
     }
-    else{
-      this.toastr.success("Successfully saved '"+ text +"' as draft")
+    else {
+      this.toastr.success("Successfully saved '" + text + "' as draft")
     }
   }
 
@@ -182,28 +189,28 @@ export class AutorunComponent implements OnInit {
     this.createAndPostJob();
   }
 
-  onSaveDraft(){
+  onSaveDraft() {
     this.jobStatus = "DRAFT";
     this.createAndPostJob();
   }
 
-  createAndPostJob(){
-    if(this.inputFormat == -1){
+  createAndPostJob() {
+    if (this.inputFormat == -1) {
       this.toastr.error("Please select a valid input format");
     }
-    else if(this.outputFormat == -1){
+    else if (this.outputFormat == -1) {
       this.toastr.error("Please select a valid output format");
-    
-    }
-    else{
-    this.createRequestBody();
-    const formData = new FormData();
-    formData.append('file', this.inputFile);
-    formData.append('input', JSON.stringify(this.requestBody));
 
-    this.httpClientService.saveJobDetails(formData).subscribe(data => { this.toastr.success(data.toString()) }, error => {
-      this.toastr.error(error.message);
-    });
+    }
+    else {
+      this.createRequestBody();
+      const formData = new FormData();
+      formData.append('file', this.inputFile);
+      formData.append('input', JSON.stringify(this.requestBody));
+
+      this.httpClientService.saveJobDetails(formData).subscribe(data => { this.toastr.success(data.toString()) }, error => {
+        this.toastr.error(error.message);
+      });
     }
   }
 
@@ -224,11 +231,11 @@ export class AutorunComponent implements OnInit {
   outputformatChanged(value) {
     this.outputFormat = value;
   }
-  
+
   openDialog(): void {
     const dialogRef = this.dialog.open(CronGeneratorComponent, {
       width: '',
-      data: {cronResult: this.cronExpression}
+      data: { cronResult: this.cronExpression }
     });
 
     dialogRef.afterClosed().subscribe(result => {
