@@ -8,6 +8,7 @@ import { LogoutComponent } from './logout/logout.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { JobListComponent } from './job-list/job-list.component';
 import { Role } from './Models/Role';
+import { CronGeneratorComponent } from './cron-generator/cron-generator.component';
 
 
 const routes: Routes = [
@@ -35,11 +36,16 @@ const routes: Routes = [
   },
   { path: 'login', component: LoginComponent,  },
   { path: 'logout', component: LogoutComponent ,canActivate:[AuthGuardService] },
+  {
+    path: 'crongen',
+    component: CronGeneratorComponent,
+    canActivate:[AuthGuardService]
+  },
 
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+exports: [RouterModule]
 })
 export class AppRoutingModule { }
