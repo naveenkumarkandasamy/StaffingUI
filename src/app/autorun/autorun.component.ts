@@ -48,7 +48,7 @@ export class AutorunComponent implements OnInit {
 
   model1: Model[] = this.constantsService.model;
   model: Model[] = JSON.parse(JSON.stringify(this.model1));
-  columnDefs: any
+  columnDefs: any;
 
   defaultColDef = {
     editable: true,
@@ -61,7 +61,7 @@ export class AutorunComponent implements OnInit {
     "lowerUtilizationFactor": 0.85,
     "upperUtilizationFactor": 1.10,
     "clinicians": null,
-    "chronExpression": "",
+    "cronExpression": "",
 
     "inputFormat": "",
     "inputFtpDetails": {
@@ -88,7 +88,7 @@ export class AutorunComponent implements OnInit {
     this.requestBody.upperUtilizationFactor = this.upperUtilization;
     this.requestBody.name = this.jobName;
     this.requestBody.clinicians = this.model;
-    this.requestBody.chronExpression = this.cronExpression;
+    this.requestBody.cronExpression = this.cronExpression;
     this.requestBody.userId = this.authService.currentLoggedInUser;
 
     if (this.inputFormat == "FTP_URL") {
@@ -101,8 +101,8 @@ export class AutorunComponent implements OnInit {
       this.requestBody.inputFormat = "DATA_FILE"
       this.requestBody.inputFtpDetails = null;
     }
+    this.requestBody.outputFormat = this.outputFormat;
     if (this.outputFormat == "FTP_URL") {
-      this.requestBody.outputFormat = this.outputFormat;
       this.requestBody.outputFtpDetails.fileUrl = this.outputFtpUrl;
       this.requestBody.outputFtpDetails.username = this.outputFtpUsername;
       this.requestBody.outputFtpDetails.password = this.outputFtpPassword;

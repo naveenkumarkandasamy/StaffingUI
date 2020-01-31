@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class User {
   constructor(
     public status: string,
-    public userName: string,
+    public name: string,
     public roles: Array<string>,
     public authData: string,
   ) { }
@@ -38,7 +38,7 @@ export class AuthenticationService {
 
 
   public get currentLoggedInUser(): string {
-    return this.currentUserSubject.value.userName;
+    return this.currentUserSubject.value.name ;
   }
   
  authenticate(username, password) {
