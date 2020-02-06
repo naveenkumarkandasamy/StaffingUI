@@ -31,6 +31,10 @@ export class MainFormComponent implements OnInit {
   utilization = "";
   model: Model[] = this.constantsService.model;
 
+  expression1 = "1";
+  expression2 = "1 * physician";
+  expression3 = "1 * physician, 2 * app";
+
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
     "lowerLimitFactor": 0.85,
@@ -44,7 +48,7 @@ export class MainFormComponent implements OnInit {
   columnDefs = [
     { headerName: 'Role', field: 'name', editable: true },
     {
-      headerName: 'Patients Per Hr', valueGetter: function (params) {
+      headerName: 'Capacity Per Hr', valueGetter: function (params) {
         return params.data.patientsPerHour;
       },
       valueSetter: function (params) {
@@ -57,7 +61,7 @@ export class MainFormComponent implements OnInit {
       }
     },
     {
-      headerName: 'Price',
+      headerName: 'Cost',
       valueGetter: function (params) {
         return params.data.cost;
       },

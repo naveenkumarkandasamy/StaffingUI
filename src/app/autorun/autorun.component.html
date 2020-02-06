@@ -22,9 +22,26 @@
                 <input class="col-sm" type="number" [(ngModel)]="upperUtilization" placeholder="1.10" step = "0.05" min="0.8" max="1.5"
                     name="upperUtilization"/></mat-grid-tile>
         </mat-grid-list>
+        
+        <label class="col-sm">Clinician Relationship</label>
+        <br />
+        <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">Physician</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text" [(ngModel)]="expression1" name = "expression1" /></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">App</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text"  [(ngModel)]="expression2" name = "expression2"/></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">Scribe</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text" [(ngModel)]="expression3" name = "expression3"/></mat-grid-tile>
+        </mat-grid-list>
 
         <label>Coverage Summary</label>
-        <ag-grid-angular domLayout="autoHeight" style="width: 42vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
+        <ag-grid-angular domLayout="autoHeight" style="width: 44.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
         </ag-grid-angular>
         <br />
 

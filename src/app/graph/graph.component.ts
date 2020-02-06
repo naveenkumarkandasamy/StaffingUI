@@ -45,6 +45,7 @@ export class GraphComponent implements OnInit {
   private coverageSummaryGridApi;
   private shiftSummaryGridApi;
 
+
   goBack() {
     this._location.back();
   }
@@ -382,6 +383,7 @@ export class GraphComponent implements OnInit {
       this.getSummary();
       this.createGraph(this.hourlyDetailData);
     }
+    // window.scrollTo(0, 0);
   }
 
   getSummary() {

@@ -51,6 +51,10 @@ export class AutorunComponent implements OnInit {
   model: Model[] = JSON.parse(JSON.stringify(this.model1));
   columnDefs: any
 
+  expression1: string;
+  expression2: string;
+  expression3: string;
+
   defaultColDef = {
     editable: true,
     resizable: true
@@ -139,11 +143,14 @@ export class AutorunComponent implements OnInit {
     this.cronExpression = null;
     this.emailId = "";
     this.jobStatus = "SCHEDULED";
+    this.expression1 = "1";
+    this.expression2 = "1 * physician";
+    this.expression3= "1 * physician, 2 * app";
 
     this.columnDefs = [
       { headerName: 'Role', field: 'name', editable: true },
       {
-        headerName: 'Patients Per Hr', valueGetter: function (params) {
+        headerName: 'Capacity Per Hr', valueGetter: function (params) {
           return params.data.patientsPerHour;
         },
         valueSetter: function (params) {
@@ -156,7 +163,7 @@ export class AutorunComponent implements OnInit {
         }
       },
       {
-        headerName: 'Price',
+        headerName: 'Cost',
         valueGetter: function (params) {
           return params.data.cost;
         },
@@ -174,10 +181,15 @@ export class AutorunComponent implements OnInit {
 
   showToaster(text) {
     if (this.jobStatus == "SCHEDULED") {
-      this.toastr.success("Successfully scheduled '" + text + "'");
+      this.toastr.success("Successfully scheduled " + text + "");
     }
     else {
-      this.toastr.success("Successfully saved '" + text + "' as draft")
+      if(this.jobName == ""){
+        this.toastr.success("Successfully saved job as draft");
+      }
+      else{
+        this.toastr.success("Successfully saved " + text + " as draft");
+      }
     }
   }
 
@@ -208,8 +220,12 @@ export class AutorunComponent implements OnInit {
       formData.append('file', this.inputFile);
       formData.append('input', JSON.stringify(this.requestBody));
 
-      this.httpClientService.saveJobDetails(formData).subscribe(data => { this.toastr.success(data.toString()) }, error => {
-        this.toastr.error(error.message);
+      this.httpClientService.saveJobDetails(formData).subscribe(data => { 
+        this.showToaster(this.jobName);
+        // this.toastr.success(data.toString()) 
+      }, error => {
+        this.showToaster(this.jobName);
+        // this.toastr.error(error.message);
       });
     }
   }
