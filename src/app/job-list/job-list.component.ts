@@ -4,6 +4,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { HttpClientService } from './../services/http-client.service';
+import { Router } from '@angular/router';
+import { DataService } from '../services/data.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-job-list',
@@ -14,13 +17,14 @@ export class JobListComponent implements OnInit {
 
   jobListData: any;
 
-  displayedColumns: string[] = ['name', 'shiftLengthPreferences', 'lowerUtilizationFactor', 'upperUtilizationFactor', 'scheduleDateTime', 'customColumn1'];
+  displayedColumns: string[] = ['name', 'shiftLengthPreferences', 'lowerUtilizationFactor', 'upperUtilizationFactor', 'scheduleDateTime', 'deleteButton', 'editButton'];
   dataSource: any;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService) { }
+  constructor(private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService,
+    private router: Router, private dataService: DataService) { }
 
   ngOnInit() {
     this.getJobListData();
@@ -28,7 +32,7 @@ export class JobListComponent implements OnInit {
 
   getJobListData() {
 
-    this.httpClientService.getJobDetailsData().subscribe(data => {
+    this.httpClientService.getJobDetails().subscribe(data => {
       this.jobListData = data;
       
       this.dataSource = new MatTableDataSource(this.jobListData);
@@ -47,4 +51,20 @@ export class JobListComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  redirect(pagename: string, requestBody) {
+    this.router.navigate(['/'+pagename]);
+    this.dataService.setJobDetailsToEdit(requestBody);
+  }
+
+  deleteJob(jobId: String){
+
+    this.httpClientService.deleteJobDetails(jobId).subscribe(data => { 
+      this.toastr.success(data.message);
+      // this.toastr.success(data.toString()) 
+    }, error => {
+      this.toastr.error(error.message);
+    });
+    this.getJobListData();
+  }
+  
 }

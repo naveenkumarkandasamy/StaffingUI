@@ -3,7 +3,8 @@
         <!-- <button mat-icon-button>
       <mat-icon (click)="sidenav.toggle()">menu</mat-icon> 
     </button> -->
-        <span [routerLink]="'/mainForm'">Optimized Shift Allocation Tool</span>
+        <span>OSAT</span>
+        <a mat-button [routerLink]="'/mainForm'" style="text-decoration:none">Main Form</a>
         <a mat-button *ngIf="loginService.isUserLoggedIn() && isAdmin" [routerLink]="'/autorun'" style="text-decoration:none"> Autorun </a>
         <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/joblist'" style="text-decoration:none"> Job List </a>
 

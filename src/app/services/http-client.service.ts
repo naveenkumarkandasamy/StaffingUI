@@ -24,11 +24,6 @@ export class HttpClientService {
     return this.http.post<response>(apiLink, requestBody);
   }
 
-  getJobDetailsData() {
-    const apiLink = this.apiUrl + '/Staffing/api/jobDetails/all';
-    return this.http.get(apiLink);
-  }
-
   getJobDetails() {
     const apiLink = this.apiUrl+'/Staffing/api/jobDetails/all';
     return this.http.get(apiLink);
@@ -40,5 +35,8 @@ export class HttpClientService {
     return this.http.post(apiLink, requestBody);
   }
 
-  
+  deleteJobDetails(requestBody){
+    const apiLink = this.apiUrl+'/Staffing/api/jobList/delete';
+    return this.http.post(apiLink, requestBody);
+  }  
 }

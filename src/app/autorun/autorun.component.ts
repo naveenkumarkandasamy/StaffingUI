@@ -179,19 +179,19 @@ export class AutorunComponent implements OnInit {
     ];
   }
 
-  showToaster(text) {
-    if (this.jobStatus == "SCHEDULED") {
-      this.toastr.success("Successfully scheduled " + text + "");
-    }
-    else {
-      if(this.jobName == ""){
-        this.toastr.success("Successfully saved job as draft");
-      }
-      else{
-        this.toastr.success("Successfully saved " + text + " as draft");
-      }
-    }
-  }
+  // showToaster(text) {
+  //   if (this.jobStatus == "SCHEDULED") {
+  //     this.toastr.success("Successfully scheduled " + text + "");
+  //   }
+  //   else {
+  //     if(this.jobName == ""){
+  //       this.toastr.success("Successfully saved job as draft");
+  //     }
+  //     else{
+  //       this.toastr.success("Successfully saved " + text + " as draft");
+  //     }
+  //   }
+  // }
 
   onReset() {
     this.initialize();
@@ -221,11 +221,9 @@ export class AutorunComponent implements OnInit {
       formData.append('input', JSON.stringify(this.requestBody));
 
       this.httpClientService.saveJobDetails(formData).subscribe(data => { 
-        this.showToaster(this.jobName);
-        // this.toastr.success(data.toString()) 
+        this.toastr.success(data.message) 
       }, error => {
-        this.showToaster(this.jobName);
-        // this.toastr.error(error.message);
+        this.toastr.error(error.message);
       });
     }
   }

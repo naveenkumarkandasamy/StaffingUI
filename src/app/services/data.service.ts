@@ -7,15 +7,21 @@ export class DataService {
 
  private requestBody : any = null;
   private apiData = new BehaviorSubject<response>(null);
-//  public requestBody$ = this.requestBody.asObservable();
+//  public requestBody = this.requestBody.asObservable();
 public apiData$ = this.apiData.asObservable();
-  private messageSource = new BehaviorSubject('default message');
-  currentMessage = this.messageSource.asObservable();
+
+
+  private jobDetailsToEditObject = new BehaviorSubject(this.requestBody);
+  jobDetailsToEdit = this.jobDetailsToEditObject.asObservable();
 
   constructor() { }
 
-  changeMessage(message: string) {
-    this.messageSource.next(message)
+  getJobDetailsToEdit(){
+    return this.jobDetailsToEdit;
+  }
+
+  setJobDetailsToEdit(requestBody){
+    this.jobDetailsToEdit = requestBody;
   }
 
   setRequestBody(data){

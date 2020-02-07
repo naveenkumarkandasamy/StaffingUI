@@ -27,5 +27,5 @@ export class ToolbarComponent implements OnInit {
   }
 
 
-  message = "Optimal Shift Generation Tool";
+  message = "OSAT";
 }
