@@ -60,6 +60,8 @@ export class AutorunComponent implements OnInit {
     resizable: true
   }
 
+  responseBody: any = {"message":""};
+
   requestBody: any;
 
   createRequestBody() {
@@ -179,19 +181,6 @@ export class AutorunComponent implements OnInit {
     ];
   }
 
-  // showToaster(text) {
-  //   if (this.jobStatus == "SCHEDULED") {
-  //     this.toastr.success("Successfully scheduled " + text + "");
-  //   }
-  //   else {
-  //     if(this.jobName == ""){
-  //       this.toastr.success("Successfully saved job as draft");
-  //     }
-  //     else{
-  //       this.toastr.success("Successfully saved " + text + " as draft");
-  //     }
-  //   }
-  // }
 
   onReset() {
     this.initialize();
@@ -221,7 +210,8 @@ export class AutorunComponent implements OnInit {
       formData.append('input', JSON.stringify(this.requestBody));
 
       this.httpClientService.saveJobDetails(formData).subscribe(data => { 
-        this.toastr.success(data.message) 
+        this.responseBody = data;
+        this.toastr.success(this.responseBody.message); // ***
       }, error => {
         this.toastr.error(error.message);
       });

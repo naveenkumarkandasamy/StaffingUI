@@ -19,6 +19,7 @@ export class JobListComponent implements OnInit {
 
   displayedColumns: string[] = ['name', 'shiftLengthPreferences', 'lowerUtilizationFactor', 'upperUtilizationFactor', 'scheduleDateTime', 'deleteButton', 'editButton'];
   dataSource: any;
+  responseBody: any = {"message":""};
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -59,7 +60,8 @@ export class JobListComponent implements OnInit {
   deleteJob(jobId: String){
 
     this.httpClientService.deleteJobDetails(jobId).subscribe(data => { 
-      this.toastr.success(data.message);
+      this.responseBody = data;
+      this.toastr.success(this.responseBody.message);
       // this.toastr.success(data.toString()) 
     }, error => {
       this.toastr.error(error.message);

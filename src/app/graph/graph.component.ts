@@ -374,7 +374,7 @@ export class GraphComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData)
-    this.dataService.currentMessage.subscribe(message => this.message = message);
+    // this.dataService.currentMessage.subscribe(message => this.message = message);
     this.requestBody = this.dataService.getRequestBody();
     if (this.apiData != null && this.requestBody != null) {
       this.getCliniciansName();

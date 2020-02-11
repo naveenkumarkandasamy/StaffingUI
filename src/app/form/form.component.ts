@@ -37,7 +37,7 @@ export class MainFormComponent implements OnInit {
 
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
-    "lowerLimitFactor": 0.85,
+    "lowerLimitFactor": 0.85, // *** ADD UPPER LIMIT
     "clinician": this.model,
     "dayWorkload": this.data,
   }
