@@ -15,15 +15,13 @@ export class JobListPopupComponent implements OnInit {
   private gridColumnApi;
   
   inputFTPDetailsColumnDefs = [
-    {field: 'FTP URL'},
-    {field: 'Username'},
-    {field: 'Password'}
+    {field: 'Item'},
+    {field: 'Value'}
   ];
 
   outputFTPDetailsColumnDefs = [
-    {field: 'FTP URL'},
-    {field: 'Username'},
-    {field: 'Password'}
+    {field: 'Item'},
+    {field: 'Value'}
   ];
 
   cliniciansColumnDefs = [
@@ -111,17 +109,44 @@ export class JobListPopupComponent implements OnInit {
     for (let index = 0; index < data.length; index++) {
       this.cliniciansRowData.push({ Role: data[index].name, 'Capacity Per Hr' : data[index].name, Cost: data[index].cost});
     }
+
   }
 
   createInputFTPDetails(data : any) { 
     if(data) {
-      this.inputFTPDetailsRowData.push({ 'FTP URL' : data.fileUrl, Username : data.username, Password: data.password});
+      this.inputFTPDetailsRowData = [
+        {
+          Item: 'FTP URL',
+          Value: data.fileUrl
+        },
+        {
+          Item: 'Username',
+          Value: data.username
+        },
+        {
+          Item: 'Password',
+          Value: data.password
+        }
+      ];
     }
   }
 
   createOutputFTPDetails(data : any) { 
     if(data) {
-      this.outputFTPDetailsRowData.push({ 'FTP URL' : data.fileUrl, Username : data.username, Password: data.password});
+      this.outputFTPDetailsRowData = [
+        {
+          Item: 'FTP URL',
+          Value: data.fileUrl
+        },
+        {
+          Item: 'Username',
+          Value: data.username
+        },
+        {
+          Item: 'Password',
+          Value: data.password
+        }
+      ];
     }
   }
 

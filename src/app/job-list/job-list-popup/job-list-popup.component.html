@@ -14,7 +14,7 @@
           <p *ngIf = "element.item != 'Clinicians' && element.item != 'Input FTP Details' && element.item != 'Output FTP Details'"> {{element.value}}  </p>
           <ag-grid-angular 
           *ngIf = "element.item == 'Clinicians'"
-          style="width: 250px; height: 100px;"
+          style="width: 250px; height: 118px;"
           class="ag-theme-balham"
           [rowData]="cliniciansRowData"
           [columnDefs]="cliniciansColumnDefs"
@@ -22,19 +22,21 @@
           </ag-grid-angular>
           <ag-grid-angular 
               *ngIf = "element.item == 'Input FTP Details'"
-              style="width: 250px; height: 60px;"
+              style="width: 250px; height: 88px;"
               class="ag-theme-balham"
               [rowData]="inputFTPDetailsRowData"
               [columnDefs]="inputFTPDetailsColumnDefs"
-              (gridReady)="onGridReady($event)">
+              (gridReady)="onGridReady($event)"
+              headerHeight='0px'>
           </ag-grid-angular>
           <ag-grid-angular 
               *ngIf = "element.item == 'Output FTP Details'"
-              style="width: 250px; height: 60px;"
+              style="width: 250px; height: 88px;"
               class="ag-theme-balham"
               [rowData]="outputFTPDetailsRowData"
               [columnDefs]="outputFTPDetailsColumnDefs"
-              (gridReady)="onGridReady($event)">
+              (gridReady)="onGridReady($event)"
+              headerHeight='0px'>
           </ag-grid-angular>
         </td>
       </ng-container>
