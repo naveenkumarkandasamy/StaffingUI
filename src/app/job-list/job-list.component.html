@@ -1,9 +1,16 @@
 <div class="jobListFilter">
-    <mat-form-field>
+    <mat-form-field style="width: 20%; margin-right: 5px;">
+        <mat-label>Select Job Type</mat-label>
+        <mat-select [(ngModel)]="isScheduled" (selectionChange)="onJobTypeChange($event)">
+            <mat-option value="scheduled" >Scheduled</mat-option>
+            <mat-option value="draft">Draft</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field style="width: 70%;">
         <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Job Name">
     </mat-form-field>
 
-    <div class="mat-elevation-z8">
+    <div *ngIf="isScheduled === 'scheduled'" class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort>
 
             <ng-container matColumnDef="name">
@@ -11,24 +18,19 @@
                 <td mat-cell *matCellDef="let element"> {{element.name}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="shiftLengthPreferences">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Shift Length Preferences </th>
-                <td mat-cell *matCellDef="let element"> {{element.shiftLengthPreferences}} </td>
+            <ng-container matColumnDef="userId">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Username </th>
+                <td mat-cell *matCellDef="let element"> {{element.userId}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="lowerUtilizationFactor">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Lower Utilization Factor </th>
-                <td mat-cell *matCellDef="let element"> {{element.lowerUtilizationFactor}} </td>
+            <ng-container matColumnDef="cronExpression">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Next Trigger Time </th>
+                <td mat-cell *matCellDef="let element"> {{element.cronExpression}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="upperUtilizationFactor">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Upper Utilization Factor </th>
-                <td mat-cell *matCellDef="let element"> {{element.upperUtilizationFactor}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="scheduleDateTime">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-                <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+            <ng-container matColumnDef="infoButton">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                <td mat-cell *matCellDef="let element" (click)="jobListPopup(element)"><img src='assets\clock.png' width='22px'></td>
             </ng-container>
 
             <ng-container matColumnDef="deleteButton">
@@ -41,8 +43,45 @@
                     <td mat-cell *matCellDef="let element" (click)="redirect('autorun',element)"><img src='assets\edit_icon.png' width='20px'></td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsScheduled"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsScheduled;"></tr>
+
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+    </div>
+
+    <div *ngIf="isScheduled === 'draft'" class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" matSort>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Job Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="userId">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Username </th>
+                <td mat-cell *matCellDef="let element"> {{element.userId}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="infoButton">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                <td mat-cell *matCellDef="let element" (click)="jobListPopup(element)"><img src='assets\clock.png' width='22px'></td>
+            </ng-container>
+
+            <ng-container matColumnDef="deleteButton">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                <td mat-cell *matCellDef="let element" (click)="deleteJob(element.id)"><img src='assets\delete_icon.png' width='22px'></td>
+            </ng-container>
+
+            <ng-container matColumnDef="editButton">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                    <td mat-cell *matCellDef="let element" (click)="redirect('autorun',element)"><img src='assets\edit_icon.png' width='20px'></td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsDrafts"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsDrafts;"></tr>
 
         </table>
 
