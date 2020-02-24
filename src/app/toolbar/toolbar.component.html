@@ -5,13 +5,12 @@
     </button> -->
         <span>OSAT</span>
         <a mat-button [routerLink]="'/mainForm'" style="text-decoration:none">Main Form</a>
-        <a mat-button *ngIf="loginService.isUserLoggedIn() && isAdmin" [routerLink]="'/autorun'" style="text-decoration:none"> Autorun </a>
+        <a mat-button *ngIf="loginService.isUserLoggedIn() && isAdmin" [routerLink]="'/job'" style="text-decoration:none"> Autorun </a>
         <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/joblist'" style="text-decoration:none"> Job List </a>
 
         <!-- <a mat-button *ngIf="!loginService.isUserLoggedIn()" [routerLink]="'/login'" style="text-decoration:none"> Login </a> -->
 
         <div class="spacer"> </div>
         <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/logout'" style="text-decoration:none"> Logout </a>
-
     </mat-toolbar-row>
 </mat-toolbar>

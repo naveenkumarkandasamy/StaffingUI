@@ -52,13 +52,12 @@ export class JobListComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  redirect(pagename: string, requestBody) {
-    this.router.navigate(['/'+pagename]);
+  redirect(pagename: string, requestBody, elementid: string) {
+    this.router.navigate(['/'+pagename+'/'+elementid]);
     this.dataService.setJobDetailsToEdit(requestBody);
   }
 
   deleteJob(jobId: String){
-
     this.httpClientService.deleteJobDetails(jobId).subscribe(data => { 
       this.responseBody = data;
       this.toastr.success(this.responseBody.message);
