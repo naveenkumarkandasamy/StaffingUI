@@ -1,0 +1,45 @@
+<div class="example-container mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+  
+      <!-- Item Column -->
+      <ng-container matColumnDef="item">
+        <th mat-header-cell *matHeaderCellDef> Item </th>
+        <td mat-cell *matCellDef="let element"> {{element.item}} </td>
+      </ng-container>
+  
+      <!-- Value Column -->
+      <ng-container matColumnDef="value">
+        <th mat-header-cell *matHeaderCellDef> Value </th>
+        <td mat-cell *matCellDef="let element">
+          <p *ngIf = "element.item != 'Clinicians' && element.item != 'Input FTP Details' && element.item != 'Output FTP Details'"> {{element.value}}  </p>
+          <ag-grid-angular 
+          *ngIf = "element.item == 'Clinicians'"
+          style="width: 250px; height: 100px;"
+          class="ag-theme-balham"
+          [rowData]="cliniciansRowData"
+          [columnDefs]="cliniciansColumnDefs"
+          (gridReady)="onGridReady($event)">
+          </ag-grid-angular>
+          <ag-grid-angular 
+              *ngIf = "element.item == 'Input FTP Details'"
+              style="width: 250px; height: 60px;"
+              class="ag-theme-balham"
+              [rowData]="inputFTPDetailsRowData"
+              [columnDefs]="inputFTPDetailsColumnDefs"
+              (gridReady)="onGridReady($event)">
+          </ag-grid-angular>
+          <ag-grid-angular 
+              *ngIf = "element.item == 'Output FTP Details'"
+              style="width: 250px; height: 60px;"
+              class="ag-theme-balham"
+              [rowData]="outputFTPDetailsRowData"
+              [columnDefs]="outputFTPDetailsColumnDefs"
+              (gridReady)="onGridReady($event)">
+          </ag-grid-angular>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>

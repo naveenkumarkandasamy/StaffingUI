@@ -1,0 +1,38 @@
+.example-container {
+    height: 400px;
+    overflow: auto;
+}
+
+.mat-column-value{
+    word-wrap: break-word;
+    white-space: unset;
+    flex: 0 0 25%;
+    width: 50%;
+    font-size:10px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-align:center;
+  }
+
+  .mat-column-item{
+    word-wrap: break-word;
+    white-space: unset;
+    flex: 0 0 25%;
+    width: 50%;
+    font-size:10px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-align:center;
+  }
+
+  
