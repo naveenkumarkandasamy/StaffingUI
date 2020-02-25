@@ -111,7 +111,7 @@ export class AutorunComponent implements OnInit {
     }
     else {
       this.requestBody.inputFtpDetails = null;
-      this.requestBody.inputFileDetails.fileExtension = 'xlsx';  //*** */
+      this.requestBody.inputFileDetails.fileExtension = this.inputFile.name.split(".").pop();
     }
     this.requestBody.outputFormat = this.outputFormat;
     if (this.outputFormat == "FTP_URL") {
