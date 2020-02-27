@@ -1,5 +1,3 @@
-
-
 export class HourlyDetail {
   hour?: number;
   capacityWorkLoad?: number;
@@ -28,7 +26,6 @@ export interface Detail {
   scribeEnd?: number;
 }
 
-
 export class TransposedRow {
   header: string;
   [index: string]: string;
@@ -54,28 +51,3 @@ export class Model {
   name: String;
   expressions: Array<String>
 }
-
-// export class Job {
-//   name: String;
-//   shiftLengthPreferences: Array<number>;
-//   lowerUtilizationFactor: number;
-//   upperUtilizationFactor: number;
-//   // clinicians: Array<String>;
-//   cronExpression: String;
-//   inputFormat: String;
-//   inputFtpDetails: Array<String>;
-//   inputFileDetails: Array<FileDetails>;
-//   fileExtension: String;
-//   dataFile: File;
-//   outputFormat: String;
-//   outputFtpDetails: Array<FileDetails>;
-//   outputEmailId: String;
-//   status: String;
-// }
-
-// export class FileDetails {
-//   fileUrl: String;
-//   username: String;
-//   password: String;
-// }
-

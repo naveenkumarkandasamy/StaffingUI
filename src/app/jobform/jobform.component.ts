@@ -5,6 +5,7 @@ import { CronGeneratorComponent } from '../cron-generator/cron-generator.compone
 import { MatDialog } from '@angular/material';
 import { AuthenticationService } from '../services/authentication.service';
 import { ToastrService } from 'ngx-toastr';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-jobform',
@@ -19,6 +20,7 @@ export class JobformComponent implements OnInit {
   }
 
   @Output() messagetosend = new EventEmitter();
+  @Output() flagtosend = new EventEmitter();
   @Output() filetosend = new EventEmitter();
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
@@ -65,13 +67,70 @@ export class JobformComponent implements OnInit {
 
   responseBody: any = { "message": "" };
   requestBody: any;
+  flag = 0;
+  flag1=0;
+
+  //FORM VALIDATION
+  jobname = new FormControl('', [Validators.required]);
+  shiftlength = new FormControl('', [Validators.pattern('^[1-9][0-9]?(,[1-9][0-9]?)*$')])
+  lowerutilization = new FormControl('', [Validators.min(0.5), Validators.max(1.1)]);
+  upperutilization = new FormControl('', [Validators.min(0.8), Validators.max(1.5)]);
+  exp1 = new FormControl('', [Validators.required]);
+  exp2 = new FormControl('', [Validators.required]);
+  exp3 = new FormControl('', [Validators.required]);
+  inputfile = new FormControl('', [Validators.required]);
+  inputftpUrl = new FormControl('', [Validators.required]);
+  inputftpUsername = new FormControl('', [Validators.required]);
+  inputftpPassword = new FormControl('', [Validators.required]);
+  outputftpUrl = new FormControl('', [Validators.required]);
+  outputftpUsername = new FormControl('', [Validators.required]);
+  outputftpPassword = new FormControl('', [Validators.required]);
+  outputemail = new FormControl('', [Validators.required, Validators.email]);
+  cronexp = new FormControl('', [Validators.required]);
+
+  getFlagStatus() {
+    this.flag1=0;
+    if (this.jobname.hasError('required') || this.shiftlength.hasError('pattern') || 
+      this.lowerutilization.hasError('min') ||
+      this.lowerutilization.hasError('max') || this.upperutilization.hasError('min') ||
+      this.upperutilization.hasError('max') || this.exp1.hasError('required') ||
+      this.exp3.hasError('required') || this.exp2.hasError('required') ||
+      this.outputemail.hasError('required') || this.cronexp.hasError('required')) {
+      this.flag = 1;
+      this.flag1=1;
+    }
+    if (this.formval.inputFormat == 'FTP_URL' && (this.inputftpUrl.hasError('required') ||
+      this.inputftpUsername.hasError('required') || this.inputftpPassword.hasError('required'))) {
+      this.flag = 1;
+      this.flag1=1;
+    }
+    else if (this.formval.inputFormat == 'DATA_FILE' && this.inputfile.hasError('required')) {
+      this.flag = 1;
+      this.flag1=1;
+    }
+    if (this.formval.outputFormat == 'FTP_URL' && (this.outputftpUrl.hasError('required') ||
+      this.outputftpUsername.hasError('required') || this.outputftpPassword.hasError('required'))) {
+      this.flag = 1;
+      this.flag1=1;
+    }
+    else if (this.formval.outputFormat == 'EMAIL' && this.outputemail.hasError('email')) {
+      this.flag = 1
+      this.flag1=1;
+    }
+    if(this.flag1==0){
+      this.flag=0;
+    }
+  }
 
   sendresponse() {
+    this.getFlagStatus();
     this.createRequestBody();
     this.messagetosend.emit(this.requestBody);
+    this.flagtosend.emit(this.flag);
   }
 
   sendFile() {
+    this.sendresponse();
     this.filetosend.emit(this.inputFile);
   }
 

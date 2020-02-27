@@ -4,8 +4,6 @@ import { ConstantsService } from "../services/constants.service";
 import { Model } from '../Models/app.types';
 import { HttpClientService } from '../services/http-client.service';
 import { ToastrService } from 'ngx-toastr';
-import { AuthenticationService } from '../services/authentication.service';
-import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -18,6 +16,7 @@ export class AutorunComponent implements OnInit {
 
   jobid;
   flag=1;
+  validateflag=0;
 
   constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService,
     private toastr: ToastrService, private _Activatedroute: ActivatedRoute) { }
@@ -30,6 +29,7 @@ export class AutorunComponent implements OnInit {
       this.httpClientService.getJobDetailsByid(this.jobid).subscribe(data => {
         this.editData = data;
         this.createJobDetails(this.editData,this.flag);
+        console.log(this.editData);
       });
     }
     else {
@@ -83,6 +83,10 @@ export class AutorunComponent implements OnInit {
     if(this.jobid!=null){
       this.requestBody['id']= this.jobid;
     }
+  }
+
+  getflag($event) {
+    this.validateflag = $event;
   }
 
   getFile($event){
@@ -180,8 +184,13 @@ export class AutorunComponent implements OnInit {
   }
 
   onSubmit() {
+    if(this.validateflag ==0){
     this.requestBody.status = "SCHEDULED";
     this.createAndPostJob();
+    }
+    else{
+      this.toastr.error("Please Enter Valid Field Values");
+    }
   }
 
   onSaveDraft() {

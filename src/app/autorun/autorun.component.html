@@ -1,13 +1,16 @@
-<app-jobform [formval]="jobDetails" (messagetosend)="createRequestBody($event)" (filetosend)="getFile($event)"></app-jobform>
 <div style="position: relative; width:96vw; margin:2vh;">
-    <button type="submit" class="btn btn-success" style="margin-top: 1vh;" (click)="onSubmit()">
-        Submit
-    </button> &nbsp;
-    <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onReset()">
-        Reset
-    </button> &nbsp;
-    <button type="button" class="btn btn-success" style="margin-top: 1vh;" (click)="onSaveDraft()">
-        Save as Draft
-    </button>
+    <h2>&nbsp;Job Scheduler</h2>
+    <form>
+        <app-jobform [formval]="jobDetails" (messagetosend)="createRequestBody($event)" (flagtosend)="getflag($event)" (filetosend)="getFile($event)">
+        </app-jobform>
+        <button type="submit"  class="btn btn-success" style="margin-top: 1vh;" (click)="onSubmit()">
+            Submit
+        </button> &nbsp;
+        <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onReset()">
+            Reset
+        </button> &nbsp;
+        <button type="button" class="btn btn-success" style="margin-top: 1vh;" (click)="onSaveDraft()">
+            Save as Draft
+        </button>
+    </form>
 </div>
-
