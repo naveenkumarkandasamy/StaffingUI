@@ -22,6 +22,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MainFormComponent } from './form/form.component';
 import { AutorunComponent } from "./autorun/autorun.component";
 import { JobListComponent } from './job-list/job-list.component';
+import { JobListPopupComponent} from './job-list/job-list-popup/job-list-popup.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 
@@ -35,7 +36,7 @@ import { HttpClientService } from './services/http-client.service';
 import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
 
 import { CronGeneratorComponent } from './cron-generator/cron-generator.component';
-import { JobformComponent } from './jobform/jobform.component'
+import { JobformComponent } from './jobform/jobform.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { JobformComponent } from './jobform/jobform.component'
     LogoutComponent,
     JobListComponent,
     CronGeneratorComponent,
-    JobformComponent
+    JobformComponent,
+    JobListPopupComponent
   ],
   imports: [
     MatDialogModule,
@@ -75,6 +77,10 @@ import { JobformComponent } from './jobform/jobform.component'
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
     ToastrModule.forRoot(),
+  ],
+
+  entryComponents: [
+    JobListPopupComponent
   ],
   providers: [DataService, ConstantsService, AuthenticationService, HttpClientService,
     { provide: HTTP_INTERCEPTORS, useClass: BasicAuthInterceptor, multi: true },],

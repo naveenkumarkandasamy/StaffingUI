@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ConstantsService } from './../services/constants.service';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -7,6 +7,8 @@ import { HttpClientService } from './../services/http-client.service';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { JobListPopupComponent } from './job-list-popup/job-list-popup.component';
 
 @Component({
   selector: 'app-job-list',
@@ -16,8 +18,12 @@ import { ToastrService } from 'ngx-toastr';
 export class JobListComponent implements OnInit {
 
   jobListData: any;
+  scheduledJobListData: any = [];
+  draftJobListData: any = [];
+  isScheduled: string = "scheduled";
 
-  displayedColumns: string[] = ['name', 'shiftLengthPreferences', 'lowerUtilizationFactor', 'upperUtilizationFactor', 'scheduleDateTime', 'deleteButton', 'editButton'];
+  displayedColumnsScheduled: string[] = ['name', 'userId', 'cronExpression','infoButton', 'deleteButton', 'editButton'];
+  displayedColumnsDrafts: string[] = ['name', 'userId','infoButton', 'deleteButton', 'editButton'];
   dataSource: any;
   responseBody: any = {"message":""};
 
@@ -25,7 +31,7 @@ export class JobListComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService,
-    private router: Router, private dataService: DataService) { }
+    private router: Router, private dataService: DataService, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.getJobListData();
@@ -35,8 +41,8 @@ export class JobListComponent implements OnInit {
 
     this.httpClientService.getJobDetails().subscribe(data => {
       this.jobListData = data;
-      
-      this.dataSource = new MatTableDataSource(this.jobListData);
+      this.getSegregatedData();
+      this.dataSource = new MatTableDataSource(this.scheduledJobListData);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
 
@@ -52,7 +58,7 @@ export class JobListComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  redirect(pagename: string, requestBody, elementid: string) {
+  redirect(pagename: string, requestBody: any, elementid: string) {
     this.router.navigate(['/'+pagename+'/'+elementid]);
     this.dataService.setJobDetailsToEdit(requestBody);
   }
@@ -66,6 +72,37 @@ export class JobListComponent implements OnInit {
       this.toastr.error(error.message);
     });
     this.getJobListData();
+  }
+
+  jobListPopup(element: any) {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.data = { title: 'Job List Info', job_details : element };
+    this.dialog.open(JobListPopupComponent, dialogConfig).afterClosed()
+      .subscribe(data => {
+         
+      });
+  }
+
+  getSegregatedData()
+  {
+    for (let index = 0; index < this.jobListData.length; index++) {
+      if(this.jobListData[index].status === 'SCHEDULED')
+      {
+        this.scheduledJobListData.push(this.jobListData[index]);
+      }else {
+        this.draftJobListData.push(this.jobListData[index]);
+      }
+    }
+  }
+  
+  onJobTypeChange(type: any) {
+    if(type.value === 'scheduled') 
+    {
+      this.dataSource = this.scheduledJobListData;
+    } else {
+      this.dataSource = this.draftJobListData;
+    }
   }
   
 }
