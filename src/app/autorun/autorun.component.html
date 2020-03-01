@@ -1,7 +1,7 @@
 <div style="position: relative; width:96vw; margin:2vh;">
     <h2>&nbsp;Job Scheduler</h2>
     <form>
-        <app-jobform [formval]="jobDetails" (messagetosend)="createRequestBody($event)" (flagtosend)="getflag($event)" (filetosend)="getFile($event)">
+        <app-jobform [formVal]="jobDetails" (requestBodyToSend)="createRequestBody($event)" (validateFlagToSend)="getflag($event)" (fileToSend)="getFile($event)">
         </app-jobform>
         <button type="submit"  class="btn btn-success" style="margin-top: 1vh;" (click)="onSubmit()">
             Submit

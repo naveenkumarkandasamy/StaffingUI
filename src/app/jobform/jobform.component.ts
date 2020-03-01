@@ -19,14 +19,14 @@ export class JobformComponent implements OnInit {
   ngOnInit() {
   }
 
-  @Output() messagetosend = new EventEmitter();
-  @Output() flagtosend = new EventEmitter();
-  @Output() filetosend = new EventEmitter();
+  @Output() requestBodyToSend = new EventEmitter();
+  @Output() validateFlagToSend = new EventEmitter();
+  @Output() fileToSend = new EventEmitter();
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
   @Input()
-  formval: any = {
+  formVal: any = {
     "jobName": "",
     "shiftLength": "8, 6, 4",
     "lowerUtilization": 0.85,
@@ -67,71 +67,71 @@ export class JobformComponent implements OnInit {
 
   responseBody: any = { "message": "" };
   requestBody: any;
-  flag = 0;
-  flag1=0;
+  flagForValidation = 0;
+  checkFlag=0;
 
   //FORM VALIDATION
-  jobname = new FormControl('', [Validators.required]);
-  shiftlength = new FormControl('', [Validators.pattern('^[1-9][0-9]?(,[1-9][0-9]?)*$')])
-  lowerutilization = new FormControl('', [Validators.min(0.5), Validators.max(1.1)]);
-  upperutilization = new FormControl('', [Validators.min(0.8), Validators.max(1.5)]);
+  jobName = new FormControl('', [Validators.required]);
+  shiftLength = new FormControl('', [Validators.pattern('^[1-9][0-9]?(,[1-9][0-9]?)*$')])
+  lowerUtilization = new FormControl('', [Validators.min(0.5), Validators.max(1.1)]);
+  upperUtilization = new FormControl('', [Validators.min(0.8), Validators.max(1.5)]);
   exp1 = new FormControl('', [Validators.required]);
   exp2 = new FormControl('', [Validators.required]);
   exp3 = new FormControl('', [Validators.required]);
-  inputfile = new FormControl('', [Validators.required]);
-  inputftpUrl = new FormControl('', [Validators.required]);
-  inputftpUsername = new FormControl('', [Validators.required]);
-  inputftpPassword = new FormControl('', [Validators.required]);
-  outputftpUrl = new FormControl('', [Validators.required]);
-  outputftpUsername = new FormControl('', [Validators.required]);
-  outputftpPassword = new FormControl('', [Validators.required]);
-  outputemail = new FormControl('', [Validators.required, Validators.email]);
-  cronexp = new FormControl('', [Validators.required]);
+  inputVFile = new FormControl('', [Validators.required]);
+  inputFtpUrl = new FormControl('', [Validators.required]);
+  inputFtpUsername = new FormControl('', [Validators.required]);
+  inputFtpPassword = new FormControl('', [Validators.required]);
+  outputFtpUrl = new FormControl('', [Validators.required]);
+  outputFtpUsername = new FormControl('', [Validators.required]);
+  outputFtpPassword = new FormControl('', [Validators.required]);
+  outputEmail = new FormControl('', [Validators.required, Validators.email]);
+  cronExp = new FormControl('', [Validators.required]);
 
   getFlagStatus() {
-    this.flag1=0;
-    if (this.jobname.hasError('required') || this.shiftlength.hasError('pattern') || 
-      this.lowerutilization.hasError('min') ||
-      this.lowerutilization.hasError('max') || this.upperutilization.hasError('min') ||
-      this.upperutilization.hasError('max') || this.exp1.hasError('required') ||
-      this.exp3.hasError('required') || this.exp2.hasError('required') ||
-      this.outputemail.hasError('required') || this.cronexp.hasError('required')) {
-      this.flag = 1;
-      this.flag1=1;
+    this.checkFlag=0;
+    if (this.jobName.hasError('required') || this.shiftLength.hasError('pattern') || 
+      this.lowerUtilization.hasError('min') || this.lowerUtilization.hasError('max') || 
+      this.upperUtilization.hasError('min') || this.upperUtilization.hasError('max') || 
+      this.exp1.hasError('required') || this.exp3.hasError('required') || 
+      this.exp2.hasError('required') || this.outputEmail.hasError('required') || 
+      this.cronExp.hasError('required')) {
+      this.flagForValidation = 1;
+      this.checkFlag=1;
     }
-    if (this.formval.inputFormat == 'FTP_URL' && (this.inputftpUrl.hasError('required') ||
-      this.inputftpUsername.hasError('required') || this.inputftpPassword.hasError('required'))) {
-      this.flag = 1;
-      this.flag1=1;
+    if (this.formVal.inputFormat == 'FTP_URL' && (this.inputFtpUrl.hasError('required') ||
+      this.inputFtpUsername.hasError('required') || this.inputFtpPassword.hasError('required'))) {
+      this.flagForValidation = 1;
+      this.checkFlag=1;
     }
-    else if (this.formval.inputFormat == 'DATA_FILE' && this.inputfile.hasError('required')) {
-      this.flag = 1;
-      this.flag1=1;
+    else if (this.formVal.inputFormat == 'DATA_FILE' && this.inputVFile.hasError('required')) {
+      this.flagForValidation = 1;
+      this.checkFlag=1;
     }
-    if (this.formval.outputFormat == 'FTP_URL' && (this.outputftpUrl.hasError('required') ||
-      this.outputftpUsername.hasError('required') || this.outputftpPassword.hasError('required'))) {
-      this.flag = 1;
-      this.flag1=1;
+    if (this.formVal.outputFormat == 'FTP_URL' && (this.outputFtpUrl.hasError('required') ||
+      this.outputFtpUsername.hasError('required') || this.outputFtpPassword.hasError('required'))) {
+      this.flagForValidation = 1;
+      this.checkFlag=1;
     }
-    else if (this.formval.outputFormat == 'EMAIL' && this.outputemail.hasError('email')) {
-      this.flag = 1
-      this.flag1=1;
+    else if (this.formVal.outputFormat == 'EMAIL' && this.outputEmail.hasError('email')) {
+      this.flagForValidation = 1
+      this.checkFlag=1;
     }
-    if(this.flag1==0){
-      this.flag=0;
+    if(this.checkFlag==0){
+      this.flagForValidation=0;
     }
   }
 
   sendresponse() {
     this.getFlagStatus();
     this.createRequestBody();
-    this.messagetosend.emit(this.requestBody);
-    this.flagtosend.emit(this.flag);
+    this.requestBodyToSend.emit(this.requestBody);
+    this.validateFlagToSend.emit(this.flagForValidation);
   }
 
   sendFile() {
     this.sendresponse();
-    this.filetosend.emit(this.inputFile);
+    this.fileToSend.emit(this.inputFile);
   }
 
   createRequestBody() {
@@ -163,39 +163,39 @@ export class JobformComponent implements OnInit {
       "status": "",
     }
 
-    if (typeof (this.formval.shiftLength) != "object") {
-      this.formval.shiftLength = this.formval.shiftLength.split(",");
+    if (typeof (this.formVal.shiftLength) != "object") {
+      this.formVal.shiftLength = this.formVal.shiftLength.split(",");
     }
-    this.requestBody.shiftLengthPreferences = this.formval.shiftLength != "" ? this.formval.shiftLength : this.requestBody.shiftLength;
-    this.requestBody.lowerUtilizationFactor = this.formval.lowerUtilization;
-    this.requestBody.upperUtilizationFactor = this.formval.upperUtilization;
-    this.requestBody.name = this.formval.jobName;
+    this.requestBody.shiftLengthPreferences = this.formVal.shiftLength != "" ? this.formVal.shiftLength : this.requestBody.shiftLength;
+    this.requestBody.lowerUtilizationFactor = this.formVal.lowerUtilization;
+    this.requestBody.upperUtilizationFactor = this.formVal.upperUtilization;
+    this.requestBody.name = this.formVal.jobName;
     this.requestBody.clinicians = this.model;
-    this.requestBody.cronExpression = this.formval.cronExpression;
+    this.requestBody.cronExpression = this.formVal.cronExpression;
     this.requestBody.userId = this.authService.currentLoggedInUser;
 
-    this.requestBody.inputFormat = this.formval.inputFormat;
-    if (this.formval.inputFormat == "FTP_URL") {
-      this.requestBody.inputFtpDetails.fileUrl = this.formval.inputFtpUrl;
-      this.requestBody.inputFtpDetails.username = this.formval.inputFtpUsername;
-      this.requestBody.inputFtpDetails.password = this.formval.inputFtpPassword;
-      this.requestBody.inputFileDetails = this.formval.inputFile;
+    this.requestBody.inputFormat = this.formVal.inputFormat;
+    if (this.formVal.inputFormat == "FTP_URL") {
+      this.requestBody.inputFtpDetails.fileUrl = this.formVal.inputFtpUrl;
+      this.requestBody.inputFtpDetails.username = this.formVal.inputFtpUsername;
+      this.requestBody.inputFtpDetails.password = this.formVal.inputFtpPassword;
+      this.requestBody.inputFileDetails = this.formVal.inputFile;
     }
     else {
       this.requestBody.inputFtpDetails = null;
       this.requestBody.inputFileDetails.fileExtension = 'xlsx';  //*** */
     }
-    this.requestBody.outputFormat = this.formval.outputFormat;
-    if (this.formval.outputFormat == "FTP_URL") {
-      this.requestBody.outputFtpDetails.fileUrl = this.formval.outputFtpUrl;
-      this.requestBody.outputFtpDetails.username = this.formval.outputFtpUsername;
-      this.requestBody.outputFtpDetails.password = this.formval.outputFtpPassword;
+    this.requestBody.outputFormat = this.formVal.outputFormat;
+    if (this.formVal.outputFormat == "FTP_URL") {
+      this.requestBody.outputFtpDetails.fileUrl = this.formVal.outputFtpUrl;
+      this.requestBody.outputFtpDetails.username = this.formVal.outputFtpUsername;
+      this.requestBody.outputFtpDetails.password = this.formVal.outputFtpPassword;
     }
     else {
       this.requestBody.outputFtpDetails = null;
-      this.requestBody.outputEmailId = this.formval.emailId;
+      this.requestBody.outputEmailId = this.formVal.emailId;
     }
-    this.requestBody.status = this.formval.jobStatus;
+    this.requestBody.status = this.formVal.jobStatus;
   }
 
   handleFileInput(files: FileList) {
@@ -209,23 +209,23 @@ export class JobformComponent implements OnInit {
   }
 
   inputformatChanged(value) {
-    this.formval.inputFormat = value;
+    this.formVal.inputFormat = value;
   }
 
   outputformatChanged(value) {
-    this.formval.outputFormat = value;
+    this.formVal.outputFormat = value;
   }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CronGeneratorComponent, {
       width: '',
-      data: { cronResult: this.formval.cronExpression }
+      data: { cronResult: this.formVal.cronExpression }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      this.formval.cronExpression = result;
-      console.log(this.formval.cronExpression);
+      this.formVal.cronExpression = result;
+      console.log(this.formVal.cronExpression);
     });
   }
 }

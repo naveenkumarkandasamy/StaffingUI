@@ -14,26 +14,26 @@ import { ActivatedRoute } from '@angular/router';
 
 export class AutorunComponent implements OnInit {
 
-  jobid;
-  flag=1;
-  validateflag=0;
+  jobId;
+  resetFlag=1;
+  validateFlag=0;
 
   constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService,
     private toastr: ToastrService, private _Activatedroute: ActivatedRoute) { }
 
   ngOnInit(): void {
     this._Activatedroute.paramMap.subscribe(params => {
-      this.jobid = params.get('id');
+      this.jobId = params.get('id');
     });
-    if (this.jobid != null) {
-      this.httpClientService.getJobDetailsByid(this.jobid).subscribe(data => {
+    if (this.jobId != null) {
+      this.httpClientService.getJobDetailsByid(this.jobId).subscribe(data => {
         this.editData = data;
-        this.createJobDetails(this.editData,this.flag);
+        this.createJobDetails(this.editData,this.resetFlag);
         console.log(this.editData);
       });
     }
     else {
-      this.createJobDetails(this.editData,this.flag);
+      this.createJobDetails(this.editData,this.resetFlag);
     }
   }
 
@@ -80,20 +80,20 @@ export class AutorunComponent implements OnInit {
 
   createRequestBody($event) {
     this.requestBody = $event;
-    if(this.jobid!=null){
-      this.requestBody['id']= this.jobid;
+    if(this.jobId!=null){
+      this.requestBody['id']= this.jobId;
     }
   }
 
   getflag($event) {
-    this.validateflag = $event;
+    this.validateFlag = $event;
   }
 
   getFile($event){
     this.inputFile = $event;
   }
 
-  createJobDetails(editData,flag) {
+  createJobDetails(editData,resetFlag) {
 
     this.jobDetails = {
       "jobName": "",
@@ -119,29 +119,29 @@ export class AutorunComponent implements OnInit {
       "columnDefs": ""
     }
 
-    this.jobDetails.jobName = (this.jobid==null || flag==0)? "" : editData.name;
-    this.jobDetails.shiftLength = (this.jobid==null || flag==0)? ["8", "6", "4"] :editData.shiftLengthPreferences;
-    this.jobDetails.lowerUtilization = (this.jobid==null || flag==0)? 0.85 :editData.lowerUtilizationFactor;
-    this.jobDetails.upperUtilization = (this.jobid==null || flag==0)? 1.10 :editData.upperUtilizationFactor;
+    this.jobDetails.jobName = (this.jobId==null || resetFlag==0)? "" : editData.name;
+    this.jobDetails.shiftLength = (this.jobId==null || resetFlag==0)? ["8", "6", "4"] :editData.shiftLengthPreferences;
+    this.jobDetails.lowerUtilization = (this.jobId==null || resetFlag==0)? 0.85 :editData.lowerUtilizationFactor;
+    this.jobDetails.upperUtilization = (this.jobId==null || resetFlag==0)? 1.10 :editData.upperUtilizationFactor;
     this.jobDetails.model = this.model1;
 
-    this.jobDetails.inputFormat = (this.jobid==null || flag==0)? -1 :editData.inputFormat;
+    this.jobDetails.inputFormat = (this.jobId==null || resetFlag==0)? -1 :editData.inputFormat;
     if (this.editData.inputFtpDetails != null) {
-      this.jobDetails.inputFtpUrl = (this.jobid==null || flag==0)? null :editData.inputFtpDetails.fileUrl;
-      this.jobDetails.inputFtpUsername = (this.jobid==null || flag==0)? null :editData.inputFtpDetails.username;
-      this.jobDetails.inputFtpPassword = (this.jobid==null || flag==0)? null :editData.inputFtpDetails.password;
+      this.jobDetails.inputFtpUrl = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.fileUrl;
+      this.jobDetails.inputFtpUsername = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.username;
+      this.jobDetails.inputFtpPassword = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.password;
     }
 
-    this.jobDetails.outputFormat = (this.jobid==null || flag==0)? -1 :editData.outputFormat;
+    this.jobDetails.outputFormat = (this.jobId==null || resetFlag==0)? -1 :editData.outputFormat;
     if (this.editData.outputFtpDetails != null) {
-      this.jobDetails.outputFtpUrl = (this.jobid==null || flag==0)? null :editData.outputFtpDetails.fileUrl;
-      this.jobDetails.outputFtpUsername = (this.jobid==null || flag==0)? null :editData.outputFtpDetails.username;
-      this.jobDetails.outputFtpPassword = (this.jobid==null || flag==0)? null :editData.outputFtpDetails.password;
+      this.jobDetails.outputFtpUrl = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.fileUrl;
+      this.jobDetails.outputFtpUsername = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.username;
+      this.jobDetails.outputFtpPassword = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.password;
     }
     
-    this.jobDetails.cronExpression = (this.jobid==null || flag==0)? null :editData.cronExpression;
-    this.jobDetails.emailId = (this.jobid==null || flag==0)? "" :editData.outputEmailId;
-    this.jobDetails.jobStatus = (this.jobid==null || flag==0)? "SCHEDULED" :editData.status;
+    this.jobDetails.cronExpression = (this.jobId==null || resetFlag==0)? null :editData.cronExpression;
+    this.jobDetails.emailId = (this.jobId==null || resetFlag==0)? "" :editData.outputEmailId;
+    this.jobDetails.jobStatus = (this.jobId==null || resetFlag==0)? "SCHEDULED" :editData.status;
     this.jobDetails.expression1 = "1";
     this.jobDetails.expression2 = "1 * physician";
     this.jobDetails.expression3 = "1 * physician, 2 * app";
@@ -179,12 +179,13 @@ export class AutorunComponent implements OnInit {
   }
 
   onReset() {
-    this.flag=0;
-    this.createJobDetails(this.editData,this.flag);
+    this.resetFlag=0;
+    this.createJobDetails(this.editData,this.resetFlag);
   }
 
   onSubmit() {
-    if(this.validateflag ==0){
+    if(this.validateFlag ==0){
+    console.log(this.requestBody);
     this.requestBody.status = "SCHEDULED";
     this.createAndPostJob();
     }
