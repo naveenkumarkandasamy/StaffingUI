@@ -32,7 +32,7 @@ export class MainFormComponent implements OnInit {
   model: Model[] = this.constantsService.model;
 
   expression1 = "1";
-  expression2 = "1 * physician";
+  expression2 = "1 * physician"; 
   expression3 = "1 * physician, 2 * app";
 
   requestBody: any = {
@@ -134,6 +134,8 @@ export class MainFormComponent implements OnInit {
 
   private apiRequestwithTableData() {
     this.dataService.setRequestBody(this.requestBody)
+    console.log(this.requestBody);
+
     this.httpClientService.getGraphDetailsUsingTableData(this.requestBody).pipe(first()).subscribe(data => {
       this.dataService.setData(data);
       this.router.navigateByUrl('/graph');
@@ -152,12 +154,53 @@ export class MainFormComponent implements OnInit {
   }
 
   generateExpressions() {
-    for (let i = 0; i < this.model.length; i++) {
-      this.model[i].expressions = [];
-      for (let j = 0; j < i; j++) {
-        this.model[i].expressions.push("1 * " + this.model[j].name);
+      let splitted1 = this.expression1.split(",");
+      for(let j=0;j<splitted1.length;j++)
+      {
+        
+       var splitted11 =splitted1[j].split(" ");
+       console.log(splitted11.length);
+        if(splitted11.length==1 && splitted1.length==1)
+        {
+          this.model[0].expressions =[];
+        }
+        else{
+        this.model[0].expressions.push(splitted1[j]);
+        }
       }
-    }
+      
+      let splitted2 = this.expression2.split(",");
+      for(let j=0;j<splitted2.length;j++)
+      {
+       var splitted12 =splitted2[j].split(" ");
+       console.log(splitted12.length);
+        if(splitted12.length==1 && splitted2.length==1)
+        {
+          this.model[1].expressions =[];
+        }
+        else{
+        this.model[1].expressions.push(splitted2[j]);
+        }
+      }
+      var splitted3 = this.expression3.split(",")
+      for(let j=0;j<splitted3.length;j++)
+      {
+        var splitted13 =splitted3[j].split(" ");
+        console.log(splitted13.length);
+        if(splitted13.length==1 && splitted3.length==1)
+        {
+          this.model[2].expressions =[];
+        }
+        else{
+        this.model[2].expressions.push(splitted3[j]);
+        }
+      }
+      
+      //for (let i = 0; i < this.model.length; i++) {
+      //console.log("Expr",this.model[i].expressions);
+      
+   
+    
   }
 
   navigateToGraph() {
