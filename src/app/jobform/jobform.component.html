@@ -1,0 +1,186 @@
+<form (ngSubmit)="heroForm.form.valid" #heroForm="ngForm">
+    <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+        <mat-grid-tile class="script-menu">
+            <label class="col-sm">Job Name</label></mat-grid-tile>
+        <mat-grid-tile class="script-menu">
+            <input class="col-sm" required type="text" [(ngModel)]="formVal.jobName" name="jobName"
+                (blur)="sendresponse()" [formControl]="jobName" />
+            <mat-error *ngIf="jobName.hasError('required')">Enter a Valid Name {{getFlagStatus()}}</mat-error>
+        </mat-grid-tile>
+
+        <mat-grid-tile class="script-menu">
+            <label class="col-sm">Enter comma seperted shift preferences</label></mat-grid-tile>
+        <mat-grid-tile class="script-menu">
+            <input class="col-sm" type="text" title="Enter comma separated numbers" [(ngModel)]="formVal.shiftLength"
+                pattern="^[1-9][0-9]?(,[1-9][0-9]?)*$" name="shiftLength" (blur)="sendresponse()"
+                 [formControl]="shiftLength" />
+            <mat-error *ngIf="shiftLength.hasError('pattern')">Enter comma separated numbers</mat-error>
+        </mat-grid-tile>
+
+        <mat-grid-tile class="script-menu">
+            <label class="col-sm">Enter lower limit for utilization</label></mat-grid-tile>
+        <mat-grid-tile class="script-menu">
+            <input class="col-sm" type="number" [(ngModel)]="formVal.lowerUtilization" placeholder="0.85" step="0.05"
+                min="0.5" max="1.1" name="lowerUtilization" (blur)="sendresponse()" [formControl]="lowerUtilization" />
+            <mat-error *ngIf="lowerUtilization.hasError('min') || lowerUtilization.hasError('max')">Enter value in range
+                (0.5-1.1) {{getFlagStatus()}}</mat-error>
+        </mat-grid-tile>
+
+        <mat-grid-tile class="script-menu">
+            <label class="col-sm">Enter upper limit for utilization</label></mat-grid-tile>
+        <mat-grid-tile class="script-menu">
+            <input class="col-sm" type="number" [(ngModel)]="formVal.upperUtilization" placeholder="1.10" step="0.05"
+                min="0.8" max="1.5" name="upperUtilization" (blur)="sendresponse()" [formControl]="upperUtilization" />
+            <mat-error *ngIf="upperUtilization.hasError('min') || upperUtilization.hasError('max')">Enter value in range
+                (0.8-1.5) {{getFlagStatus()}}</mat-error>
+        </mat-grid-tile>
+
+    </mat-grid-list>
+
+    <label class="col-sm">Clinician Relationship</label>
+    <br />
+    <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+        <mat-grid-tile class="script-menu">
+            <label class="col-sm">Physician </label></mat-grid-tile>
+        <mat-grid-tile class="script-menu">
+            <input class="col-sm" required type="text" [(ngModel)]="formVal.expression1" name="expression1"
+                (blur)="sendresponse()" [formControl]="exp1" />
+            <mat-error *ngIf="exp1.hasError('required')">Enter valid Expression {{getFlagStatus()}}</mat-error>
+        </mat-grid-tile>
+
+        <mat-grid-tile class="script-menu">
+            <label class="col-sm">App</label></mat-grid-tile>
+        <mat-grid-tile class="script-menu">
+            <input class="col-sm" required type="text" [(ngModel)]="formVal.expression2" name="expression2"
+                (blur)="sendresponse()" [formControl]="exp2" />
+            <mat-error *ngIf="exp2.hasError('required')">Enter valid Expression {{getFlagStatus()}}</mat-error>
+        </mat-grid-tile>
+
+        <mat-grid-tile class="script-menu">
+            <label class="col-sm">Scribe</label></mat-grid-tile>
+        <mat-grid-tile class="script-menu">
+            <input class="col-sm" required type="text" [(ngModel)]="formVal.expression3" name="expression3"
+                (blur)="sendresponse()" [formControl]="exp3" />
+            <mat-error *ngIf="exp3.hasError('required')">Enter valid Expression {{getFlagStatus()}}</mat-error>
+        </mat-grid-tile>
+
+    </mat-grid-list>
+
+    <label>Coverage Summary</label>
+    <ag-grid-angular domLayout="autoHeight" style="width: 44.1vw; height: 20vh;" class="ag-theme-balham"
+        [rowData]="model" [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef" (blur)="sendresponse()">
+    </ag-grid-angular>
+    <br />
+
+    <div style="width: 30vh;" class="form-group">
+        <label>Arrival Data format</label>
+        <select class="form-control mt-2" required id="inputType" name="inputFormat" #input_Format
+            [(ngModel)]="formVal.inputFormat" (blur)="sendresponse()">
+            <option value="-1">Select Input Format</option>
+            <option [value]="type" *ngFor="let type of inputTypes">
+                {{ type }}
+            </option>
+        </select>
+    </div>
+
+    <div *ngIf="formVal.inputFormat == 'FTP_URL'">
+        <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">FTP URL</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text" [(ngModel)]="formVal.inputFtpUrl" id="inputFtpUrl"
+                    placeholder="ftp://myname@host.dom/2Fetc" name="inputFtpUrl" (blur)="sendresponse()" [formControl]="inputFtpUrl"/>
+                <mat-error *ngIf="inputFtpUrl.hasError('required')">Enter valid FTP URL {{getFlagStatus()}}</mat-error>
+            </mat-grid-tile>
+
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">FTP Username</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text" [(ngModel)]="formVal.inputFtpUsername" id="inputFtpUsername"
+                    placeholder="" name="inputFtpUsername" (blur)="sendresponse()" [formControl]="inputFtpUsername" />
+                <mat-error *ngIf="inputFtpUsername.hasError('required')">Enter valid FTP Username {{getFlagStatus()}}</mat-error>
+            </mat-grid-tile>
+
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">FTP Password</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text" [(ngModel)]="formVal.inputFtpPassword" id="inputFtpPassword"
+                    placeholder="" name="inputFtpPassword" (blur)="sendresponse()" [formControl]="inputFtpPassword"/><br/>
+                <mat-error *ngIf="inputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+
+    <div *ngIf="formVal.inputFormat == 'DATA_FILE'">
+        <label for="file">Choose File</label>
+        <input type="file" required id="file" #fileInput (change)="handleFileInput($event.target.files)"
+            (blur)="sendFile()" [formControl]="inputVFile" />
+        <div *ngIf="inputVFile.hasError('required')" class="error" style="color:red;">
+            Choose File {{getFlagStatus()}}
+        </div>
+    </div>
+
+
+    <div style="width: 30vh;">
+        <label>Output Data format</label>
+        <select class="form-control mt-2" id="outputType" name="outputFormat" #output_Format
+            [(ngModel)]="formVal.outputFormat" (blur)="sendresponse()">
+            (change)="outputformatChanged(outputFormat.value)">
+            <option value="-1">Select Output Format</option>
+            <option [value]="type" *ngFor="let type of outputTypes">
+                {{ type }}
+            </option>
+        </select>
+    </div>
+
+    <div *ngIf="formVal.outputFormat == 'FTP_URL'">
+        <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">FTP URL</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text" [(ngModel)]="formVal.outputFtpUrl" id="outputFtpUrl"
+                    placeholder="ftp://myname@host.dom/2Fetc" name="outputFtpUrl" (blur)="sendresponse()" [formControl]="outputFtpUrl"/>
+                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+            </mat-grid-tile>
+
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">FTP Username</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text" [(ngModel)]="formVal.outputFtpUsername"
+                    id="outputFtpUsername" placeholder="" name="outputFtpUsername" (blur)="sendresponse()" [formControl]="outputFtpUsername"/>
+                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+            </mat-grid-tile>
+
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">FTP Password</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="text" [(ngModel)]="formVal.outputFtpPassword"
+                    id="outputFtpPassword" placeholder="" name="outputFtpPassword" (blur)="sendresponse()" [formControl]="outputFtpPassword"/>
+                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+
+    <div *ngIf="formVal.outputFormat == 'EMAIL'">
+        <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+            <mat-grid-tile class="script-menu">
+                <label class="col-sm">Email ID</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu">
+                <input class="col-sm" required type="email" [(ngModel)]="formVal.emailId" id="emailId" placeholder=""
+                    name="emailId" (blur)="sendresponse()" [formControl]="outputEmail"/>
+                <mat-error *ngIf="outputEmail.hasError('required') || outputEmail.hasError('email')">Enter valid Email {{getFlagStatus()}}</mat-error>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+
+    <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
+        <mat-grid-tile class="script-menu">
+            <label class="col-sm">Cron expression</label></mat-grid-tile>
+        <mat-grid-tile class="script-menu">
+            <input class="col-sm" type="text" required [(ngModel)]="formVal.cronExpression" name="cronExpression"
+                placeholder="0 0 12 ? * SAT *" (blur)="sendresponse()" [formControl]="cronExp" /><img src="assets\clock.png"
+                (click)="openDialog()">
+            <mat-error *ngIf="cronExp.hasError('required')">Enter Cron Expression {{getFlagStatus()}}</mat-error>
+        </mat-grid-tile>
+    </mat-grid-list>
+</form>

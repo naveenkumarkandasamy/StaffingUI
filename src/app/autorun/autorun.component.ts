@@ -4,9 +4,7 @@ import { ConstantsService } from "../services/constants.service";
 import { Model } from '../Models/app.types';
 import { HttpClientService } from '../services/http-client.service';
 import { ToastrService } from 'ngx-toastr';
-import { AuthenticationService } from '../services/authentication.service';
-import { CronGeneratorComponent } from './../cron-generator/cron-generator.component';
-import { MatDialog } from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'autorun',
@@ -16,140 +14,139 @@ import { MatDialog } from '@angular/material';
 
 export class AutorunComponent implements OnInit {
 
+  jobId;
+  resetFlag=1;
+  validateFlag=0;
+
   constructor(private constantsService: ConstantsService, private httpClientService: HttpClientService,
-    private toastr: ToastrService, private authService: AuthenticationService, public dialog: MatDialog) { }
+    private toastr: ToastrService, private _Activatedroute: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.initialize()
+    this._Activatedroute.paramMap.subscribe(params => {
+      this.jobId = params.get('id');
+    });
+    if (this.jobId != null) {
+      this.httpClientService.getJobDetailsByid(this.jobId).subscribe(data => {
+        this.editData = data;
+        this.createJobDetails(this.editData,this.resetFlag);
+        console.log(this.editData);
+      });
+    }
+    else {
+      this.createJobDetails(this.editData,this.resetFlag);
+    }
   }
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
-  inputFtpUrl: string;
-  inputFtpUsername: string;
-  inputFtpPassword: string;
-  outputFtpUrl: string;
-  outputFtpUsername: string;
-  outputFtpPassword: string;
-
-  inputFile: File;
-  jobStatus: string;
-
-  jobName: string;
-  shiftLength: string;
-  lowerUtilization: number;
-  upperUtilization: number;
-  cronExpression: string;
-  emailId: string;
-
-  inputTypes: Array<string> = ["FTP_URL", "DATA_FILE"];
-  inputFormat: any;
-  outputTypes: Array<string> = ["FTP_URL", "EMAIL"];
-  outputFormat: any;
+  inputFile: File; 
 
   model1: Model[] = this.constantsService.model;
   model: Model[] = JSON.parse(JSON.stringify(this.model1));
-  columnDefs: any
 
-  expression1: string;
-  expression2: string;
-  expression3: string;
-
-  defaultColDef = {
-    editable: true,
-    resizable: true
-  }
-
-  responseBody: any = {"message":""};
+  responseBody: any = { "message": "" };
 
   requestBody: any;
 
-  createRequestBody() {
+  jobDetails: any;
 
-    this.requestBody = {
-      "name": "",
-      "shiftLengthPreferences": "8, 6, 4",
-      "lowerUtilizationFactor": 0.85,
-      "upperUtilizationFactor": 1.10,
-      "clinicians": null,
-      "cronExpression": "",
-  
-      "inputFormat": "",
-      "inputFtpDetails": {
-        "fileUrl": "",
-        "username": "",
-        "password": "",
-      },
-      "inputFileDetails": {
-        "inputFile": null,
-        "fileExtension": "",
-      },
-      "outputFormat": "",
-      "outputFtpDetails": {
-        "fileUrl": "",
-        "username": "",
-        "password": ""
-      },
-      "outputEmailId": "",
-      "status": "",
-    }
+  editData: any = {
+    "name": "",
+    "shiftLengthPreferences": "8, 6, 4",
+    "lowerUtilizationFactor": 0.85,
+    "upperUtilizationFactor": 1.10,
+    "clinicians": null,
+    "cronExpression": "",
 
-    this.requestBody.shiftLengthPreferences = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
-    this.requestBody.lowerUtilizationFactor = this.lowerUtilization;
-    this.requestBody.upperUtilizationFactor = this.upperUtilization;
-    this.requestBody.name = this.jobName;
-    this.requestBody.clinicians = this.model;
-    this.requestBody.cronExpression = this.cronExpression;
-    this.requestBody.userId = this.authService.currentLoggedInUser;
+    "inputFormat": "",
+    "inputFtpDetails": {
+      "fileUrl": "",
+      "username": "",
+      "password": "",
+    },
+    "inputFileDetails": {
+      "fileExtension": "",
+      "dataFile": null,
+    },
+    "outputFormat": "",
+    "outputFtpDetails": {
+      "fileUrl": "",
+      "username": "",
+      "password": ""
+    },
+    "outputEmailId": "",
+    "status": "",
+  };
 
-    this.requestBody.inputFormat = this.inputFormat;
-    if (this.inputFormat == "FTP_URL") {
-      this.requestBody.inputFtpDetails.fileUrl = this.inputFtpUrl;
-      this.requestBody.inputFtpDetails.username = this.inputFtpUsername;
-      this.requestBody.inputFtpDetails.password = this.inputFtpPassword;
-      this.requestBody.inputFileDetails = null;
+  createRequestBody($event) {
+    this.requestBody = $event;
+    if(this.jobId!=null){
+      this.requestBody['id']= this.jobId;
     }
-    else {
-      this.requestBody.inputFtpDetails = null;
-      this.requestBody.inputFileDetails.fileExtension = this.inputFile.name.split(".").pop();
-    }
-    this.requestBody.outputFormat = this.outputFormat;
-    if (this.outputFormat == "FTP_URL") {
-      this.requestBody.outputFtpDetails.fileUrl = this.outputFtpUrl;
-      this.requestBody.outputFtpDetails.username = this.outputFtpUsername;
-      this.requestBody.outputFtpDetails.password = this.outputFtpPassword;
-    }
-    else {
-      this.requestBody.outputFtpDetails = null;
-      this.requestBody.outputEmailId = this.emailId;
-    }
-    this.requestBody.status = this.jobStatus;
   }
 
+  getflag($event) {
+    this.validateFlag = $event;
+  }
 
-  initialize() {
-    this.jobName = "";
-    this.shiftLength = "8, 6, 4";
-    this.lowerUtilization = 0.85;
-    this.upperUtilization = 1.10;
-    this.model = this.model1;
-    this.inputFormat = -1;
-    this.inputFtpUrl = null;
-    this.inputFtpUsername = null;
-    this.inputFtpPassword = null;
-    this.inputFile = null;
-    this.outputFormat = -1;
-    this.outputFtpUrl = null;
-    this.outputFtpUsername = null;
-    this.outputFtpPassword = null;
-    this.cronExpression = null;
-    this.emailId = "";
-    this.jobStatus = "SCHEDULED";
-    this.expression1 = "1";
-    this.expression2 = "1 * physician";
-    this.expression3= "1 * physician, 2 * app";
+  getFile($event){
+    this.inputFile = $event;
+  }
 
-    this.columnDefs = [
+  createJobDetails(editData,resetFlag) {
+
+    this.jobDetails = {
+      "jobName": "",
+      "shiftLength": "8, 6, 4",
+      "lowerUtilization": 0.85,
+      "upperUtilization": 1.10,
+      "model": "",
+      "cronExpression": "",
+      "inputFormat": "",
+      "inputFtpUrl": "",
+      "inputFtpUsername": "",
+      "inputFtpPassword": "",
+      "inputFile": null,
+      "outputFormat": "",
+      "outputFtpUrl": "",
+      "outputFtpUsername": "",
+      "outputFtpPassword": "",
+      "emailId": "",
+      "jobStatus": "",
+      "expression1": "",
+      "expression2": "",
+      "expression3": "",
+      "columnDefs": ""
+    }
+
+    this.jobDetails.jobName = (this.jobId==null || resetFlag==0)? "" : editData.name;
+    this.jobDetails.shiftLength = (this.jobId==null || resetFlag==0)? ["8", "6", "4"] :editData.shiftLengthPreferences;
+    this.jobDetails.lowerUtilization = (this.jobId==null || resetFlag==0)? 0.85 :editData.lowerUtilizationFactor;
+    this.jobDetails.upperUtilization = (this.jobId==null || resetFlag==0)? 1.10 :editData.upperUtilizationFactor;
+    this.jobDetails.model = this.model1;
+
+    this.jobDetails.inputFormat = (this.jobId==null || resetFlag==0)? -1 :editData.inputFormat;
+    if (this.editData.inputFtpDetails != null) {
+      this.jobDetails.inputFtpUrl = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.fileUrl;
+      this.jobDetails.inputFtpUsername = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.username;
+      this.jobDetails.inputFtpPassword = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.password;
+    }
+
+    this.jobDetails.outputFormat = (this.jobId==null || resetFlag==0)? -1 :editData.outputFormat;
+    if (this.editData.outputFtpDetails != null) {
+      this.jobDetails.outputFtpUrl = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.fileUrl;
+      this.jobDetails.outputFtpUsername = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.username;
+      this.jobDetails.outputFtpPassword = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.password;
+    }
+    
+    this.jobDetails.cronExpression = (this.jobId==null || resetFlag==0)? null :editData.cronExpression;
+    this.jobDetails.emailId = (this.jobId==null || resetFlag==0)? "" :editData.outputEmailId;
+    this.jobDetails.jobStatus = (this.jobId==null || resetFlag==0)? "SCHEDULED" :editData.status;
+    this.jobDetails.expression1 = "1";
+    this.jobDetails.expression2 = "1 * physician";
+    this.jobDetails.expression3 = "1 * physician, 2 * app";
+
+    this.jobDetails.columnDefs = [
       { headerName: 'Role', field: 'name', editable: true },
       {
         headerName: 'Capacity Per Hr', valueGetter: function (params) {
@@ -181,35 +178,39 @@ export class AutorunComponent implements OnInit {
     ];
   }
 
-
   onReset() {
-    this.initialize();
+    this.resetFlag=0;
+    this.createJobDetails(this.editData,this.resetFlag);
   }
 
   onSubmit() {
+    if(this.validateFlag ==0){
+    console.log(this.requestBody);
+    this.requestBody.status = "SCHEDULED";
     this.createAndPostJob();
+    }
+    else{
+      this.toastr.error("Please Enter Valid Field Values");
+    }
   }
 
   onSaveDraft() {
-    this.jobStatus = "DRAFT";
+    this.requestBody.status = "DRAFT";
     this.createAndPostJob();
   }
 
   createAndPostJob() {
-    if (this.inputFormat == -1) {
+    if (this.requestBody.inputFormat == -1) {
       this.toastr.error("Please select a valid input format");
     }
-    else if (this.outputFormat == -1) {
+    else if (this.requestBody.outputFormat == -1) {
       this.toastr.error("Please select a valid output format");
-
     }
     else {
-      this.createRequestBody();
       const formData = new FormData();
       formData.append('file', this.inputFile);
       formData.append('input', JSON.stringify(this.requestBody));
-
-      this.httpClientService.saveJobDetails(formData).subscribe(data => { 
+      this.httpClientService.saveJobDetails(formData).subscribe(data => {
         this.responseBody = data;
         this.toastr.success(this.responseBody.message); // ***
       }, error => {
@@ -217,40 +218,4 @@ export class AutorunComponent implements OnInit {
       });
     }
   }
-
-  handleFileInput(files: FileList) {
-    this.inputFile = files.item(0);
-    var ext = this.inputFile.name.split(".").pop();
-    if (ext != "xlsx") {
-      this.toastr.error('file format not supported , upload only xlsx files');
-      this.fileInput.nativeElement.value = null;
-      this.inputFile = undefined;
-    }
-  }
-
-  inputformatChanged(value) {
-    this.inputFormat = value;
-  }
-
-  outputformatChanged(value) {
-    this.outputFormat = value;
-  }
-
-  openDialog(): void {
-    const dialogRef = this.dialog.open(CronGeneratorComponent, {
-      width: '',
-      data: { cronResult: this.cronExpression }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      this.cronExpression = result;
-      console.log(this.cronExpression);
-    });
-  }
-
-}
-
-export interface DialogData {
-  cronResult: string;
 }

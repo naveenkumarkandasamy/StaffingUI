@@ -3,7 +3,7 @@ import { CronOptions } from 'ngx-cron-editor';
 import { CronGenComponent } from 'ngx-cron-editor';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DialogData } from '../autorun/autorun.component';
+import { DialogData } from '../jobform/jobform.component';
 
 
 @Component({

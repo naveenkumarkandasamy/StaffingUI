@@ -31,12 +31,16 @@ export class HttpClientService {
 
   saveJobDetails(requestBody) {
     const apiLink = this.apiUrl+'/Staffing/api/jobDetails/add';
-    // console.log(requestBody);
     return this.http.post(apiLink, requestBody);
   }
-
+  
   deleteJobDetails(requestBody){
     const apiLink = this.apiUrl+'/Staffing/api/jobList/delete';
     return this.http.post(apiLink, requestBody);
   }  
+
+  getJobDetailsByid(jobId){
+    const apiLink = this.apiUrl+'/Staffing/api/jobDetails/get?jobId=';
+    return this.http.get(apiLink+jobId);
+  }
 }

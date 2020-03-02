@@ -42,9 +42,6 @@ export class MainFormComponent implements OnInit {
     "dayWorkload": this.data,
   }
 
-
-
-
   columnDefs = [
     { headerName: 'Role', field: 'name', editable: true },
     {

@@ -1,13 +1,20 @@
 <div style="position: relative
 ;width:96vw;margin:2vh;">
-    <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+    <form (ngSubmit)="onSubmit()" #heroForm="ngForm" ngNativeValidate>
         <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
-            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter comma seperted shift preferences</label></mat-grid-tile>
-            <mat-grid-tile class="script-menu"> <input class="col-sm" required type="text" [(ngModel)]="shiftLength" placeholder="12, 8, 10, 4" name="shiftLength" #name="ngModel"></mat-grid-tile>
-            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter lower limit for utilization</label></mat-grid-tile>
-            <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="upperUtilization" placeholder="0.85" name="upperUtilization"/></mat-grid-tile>
-            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter upper limit for utilization</label></mat-grid-tile>
-            <mat-grid-tile class="script-menu"> <input class="col-sm" type="text" [(ngModel)]="utilization" placeholder="1.10" name="utilzation"></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter comma seperted shift preferences</label>
+            </mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <input class="col-sm" required type="text" [(ngModel)]="shiftLength"
+                    placeholder="12, 8, 10, 4" name="shiftLength" #name="ngModel" pattern="^[1-9][0-9]?(,[1-9][0-9]?)*$"
+                    required></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter lower limit for utilization</label>
+            </mat-grid-tile>
+            <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="upperUtilization"
+                    name="upperUtilization" min="0.5" max="1.1" placeholder="0.85" step="0.05" required /></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter upper limit for utilization</label>
+            </mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <input class="col-sm" type="number" [(ngModel)]="utilization"
+                    placeholder="1.10" name="utilzation" step = "0.05" min="0.8" max="1.5"required></mat-grid-tile>
         </mat-grid-list>
 
         <br />
@@ -17,39 +24,45 @@
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Physician</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" required type="text" [(ngModel)]="expression1" name = "expression1" /></mat-grid-tile>
+                <input class="col-sm" required type="text" [(ngModel)]="expression1" name="expression1" required />
+            </mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">App</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" required type="text"  [(ngModel)]="expression2" name = "expression2"/></mat-grid-tile>
+                <input class="col-sm" required type="text" [(ngModel)]="expression2" name="expression2" required />
+            </mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">Scribe</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
-                <input class="col-sm" required type="text" [(ngModel)]="expression3" name = "expression3"/></mat-grid-tile>
+                <input class="col-sm" required type="text" [(ngModel)]="expression3" name="expression3" required />
+            </mat-grid-tile>
         </mat-grid-list>
 
         <br />
         <div style="height:30vh; position: relative;  ">
             <label>Clinician Summary</label>
 
-            <ag-grid-angular domLayout='autoHeight' style="width: 44.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
+            <ag-grid-angular domLayout='autoHeight' style="width: 44.1vw; height: 20vh;" class="ag-theme-balham"
+                [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
             </ag-grid-angular>
-            
+
             <div style="width: 30vh;">
                 <label>Arrival Data format</label>
-                <select class="form-control mt-2" id="inputType" name="inputFormat" #t (change)="formatChanged(t.value)">
-                   
+                <select class="form-control mt-2" id="inputType" name="inputFormat" #t (change)="formatChanged(t.value)"
+                    required>
+
                     <option [value]="type" *ngFor="let type of inputTypes"> {{ type }} </option>
                 </select>
             </div>
             <div *ngIf="inputFormat == 'Provide Online'">
                 <label>Hourly Data</label>
-                <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="data" [columnDefs]="transposedColumnDef" [defaultColDef]="defaultColDef">
+                <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="data"
+                    [columnDefs]="transposedColumnDef" [defaultColDef]="defaultColDef">
                 </ag-grid-angular>
             </div>
             <div *ngIf="inputFormat == 'File Upload'">
                 <label for="file">Choose File</label>
-                <input type="file" id="file" #fileInput (change)="handleFileInput($event.target.files)">
+                <input type="file" id="file" #fileInput (change)="handleFileInput($event.target.files)" required>
             </div>
             <button type="submit" class="btn btn-success" style="margin-top: 1vh;">Submit</button>
 

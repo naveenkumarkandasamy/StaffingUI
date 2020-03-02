@@ -9,6 +9,7 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { JobListComponent } from './job-list/job-list.component';
 import { Role } from './Models/Role';
 import { CronGeneratorComponent } from './cron-generator/cron-generator.component';
+import { JobformComponent } from './jobform/jobform.component';
 
 
 const routes: Routes = [
@@ -24,7 +25,7 @@ const routes: Routes = [
     canActivate:[AuthGuardService]
   },
   {
-    path: 'autorun',
+    path: 'job',
     component: AutorunComponent,
     canActivate:[AuthGuardService],
     data: { roles: [Role.Admin] }
@@ -34,11 +35,22 @@ const routes: Routes = [
     component: JobListComponent,
     canActivate:[AuthGuardService]
   },
+  {
+    path: 'job/:id',
+    component: AutorunComponent,
+    canActivate:[AuthGuardService],
+    data: { roles: [Role.Admin] }
+  },
   { path: 'login', component: LoginComponent,  },
   { path: 'logout', component: LogoutComponent ,canActivate:[AuthGuardService] },
   {
     path: 'crongen',
     component: CronGeneratorComponent,
+    canActivate:[AuthGuardService]
+  },
+  {
+    path: 'jobform',
+    component: JobformComponent,
     canActivate:[AuthGuardService]
   },
 

@@ -36,6 +36,7 @@ import { HttpClientService } from './services/http-client.service';
 import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
 
 import { CronGeneratorComponent } from './cron-generator/cron-generator.component';
+import { JobformComponent } from './jobform/jobform.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { CronGeneratorComponent } from './cron-generator/cron-generator.componen
     LogoutComponent,
     JobListComponent,
     CronGeneratorComponent,
+    JobformComponent,
     JobListPopupComponent
   ],
   imports: [
