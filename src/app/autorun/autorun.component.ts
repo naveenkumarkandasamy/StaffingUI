@@ -118,7 +118,12 @@ export class AutorunComponent implements OnInit {
       "expression3": "",
       "columnDefs": ""
     }
-
+    if(editData.inputFormat == 'NULL'){
+      editData.inputFormat = -1;
+    }
+    if(editData.outputFormat == 'NULL'){
+      editData.outputFormat = -1;
+    }
     this.jobDetails.jobName = (this.jobId==null || resetFlag==0)? "" : editData.name;
     this.jobDetails.shiftLength = (this.jobId==null || resetFlag==0)? ["8", "6", "4"] :editData.shiftLengthPreferences;
     this.jobDetails.lowerUtilization = (this.jobId==null || resetFlag==0)? 0.85 :editData.lowerUtilizationFactor;
