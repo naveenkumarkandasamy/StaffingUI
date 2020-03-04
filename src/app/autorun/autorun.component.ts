@@ -118,7 +118,12 @@ export class AutorunComponent implements OnInit {
       "expression3": "",
       "columnDefs": ""
     }
-
+    if(editData.inputFormat == 'NULL'){
+      editData.inputFormat = -1;
+    }
+    if(editData.outputFormat == 'NULL'){
+      editData.outputFormat = -1;
+    }
     this.jobDetails.jobName = (this.jobId==null || resetFlag==0)? "" : editData.name;
     this.jobDetails.shiftLength = (this.jobId==null || resetFlag==0)? ["8", "6", "4"] :editData.shiftLengthPreferences;
     this.jobDetails.lowerUtilization = (this.jobId==null || resetFlag==0)? 0.85 :editData.lowerUtilizationFactor;
@@ -131,7 +136,7 @@ export class AutorunComponent implements OnInit {
       this.jobDetails.inputFtpUsername = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.username;
       this.jobDetails.inputFtpPassword = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.password;
     }
-
+  
     this.jobDetails.outputFormat = (this.jobId==null || resetFlag==0)? -1 :editData.outputFormat;
     if (this.editData.outputFtpDetails != null) {
       this.jobDetails.outputFtpUrl = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.fileUrl;
@@ -200,13 +205,19 @@ export class AutorunComponent implements OnInit {
   }
 
   createAndPostJob() {
-    if (this.requestBody.inputFormat == -1) {
+    if (this.requestBody.status == "SCHEDULED" && this.requestBody.inputFormat == -1) {
       this.toastr.error("Please select a valid input format");
     }
-    else if (this.requestBody.outputFormat == -1) {
+    else if (this.requestBody.status == "SCHEDULED" && this.requestBody.outputFormat == -1) {
       this.toastr.error("Please select a valid output format");
     }
     else {
+      if(this.requestBody.inputFormat==-1){
+        this.requestBody.inputFormat = 'NULL';
+      }
+      if(this.requestBody.outputFormat==-1){
+        this.requestBody.outputFormat = 'NULL';
+      }
       const formData = new FormData();
       formData.append('file', this.inputFile);
       formData.append('input', JSON.stringify(this.requestBody));
