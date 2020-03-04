@@ -213,7 +213,6 @@ export class AutorunComponent implements OnInit {
       if(this.requestBody.outputFormat==-1){
         this.requestBody.outputFormat = 'NULL';
       }
-      console.log(this.requestBody);
       const formData = new FormData();
       formData.append('file', this.inputFile);
       formData.append('input', JSON.stringify(this.requestBody));
