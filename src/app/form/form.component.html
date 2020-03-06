@@ -15,28 +15,67 @@
             </mat-grid-tile>
             <mat-grid-tile class="script-menu"> <input class="col-sm" type="number" [(ngModel)]="utilization"
                     placeholder="1.10" name="utilzation" step = "0.05" min="0.8" max="1.5"required></mat-grid-tile>
+             <mat-grid-tile class="script-menu"> <label class="col-sm">Enter start time for cannot allocate</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="from" placeholder="1" step = "1" min="1" max="23"required name="from"/></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter End time for cannot allocate</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="to" placeholder="6" step = "1" min="1" max="23"required name="to"/></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter Number of hourwait</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="hourwait" step = "1" min="1" max="167"required placeholder="2" name="hourwait"/></mat-grid-tile>       
         </mat-grid-list>
 
         <br />
         <label class="col-sm">Clinician Relationship</label>
-
-        <mat-grid-list cols="2" rowHeight="5vh" style="width: 50vw;">
-            <mat-grid-tile class="script-menu">
-                <label class="col-sm">Physician</label></mat-grid-tile>
-            <mat-grid-tile class="script-menu">
-                <input class="col-sm" required type="text" [(ngModel)]="expression1" name="expression1" required />
-            </mat-grid-tile>
-            <mat-grid-tile class="script-menu">
-                <label class="col-sm">App</label></mat-grid-tile>
-            <mat-grid-tile class="script-menu">
-                <input class="col-sm" required type="text" [(ngModel)]="expression2" name="expression2" required />
-            </mat-grid-tile>
-            <mat-grid-tile class="script-menu">
-                <label class="col-sm">Scribe</label></mat-grid-tile>
-            <mat-grid-tile class="script-menu">
-                <input class="col-sm" required type="text" [(ngModel)]="expression3" name="expression3" required />
-            </mat-grid-tile>
-        </mat-grid-list>
+        
+        <select  (change)="onSelect($event.target.value)" >
+            <option value="" hidden>Select</option>
+            <option  *ngFor="let a of customerData ; let i = index"  >{{a}}
+            </option>
+          </select>
+           <br />
+          
+          <div  *ngIf="selected">
+          <select  (change)="onChange($event.target.value)" >
+            <option value="" hidden>Select</option>
+            <option  *ngFor="let a of copyData ; let i = index"  >{{a}}
+            </option>
+          </select>
+          
+          <input type="text" [(ngModel)]="text1" name="text1">
+          <input type="text" value="*">
+           <select  >
+           <option  *ngFor="let a of selectedData ; let i = index"  >{{a}}
+            </option>
+          </select>
+          <button type="button" (click)="onOK1()">OK</button>
+          </div>
+          
+          <div  *ngIf="refBoolean" >
+            <select  >
+              <option value="" hidden>Select</option>
+              <option  *ngFor="let a of refArray ; let i = index"  >{{a}}
+              </option>
+            </select>
+            
+            <input type="text" [(ngModel)]="text2" name="text2">
+            <input type="text" value="*">
+           
+            <select  (change)="onChange1($event.target.value)">
+                <option value="" hidden>Select</option>
+            <option  *ngFor="let a of selectedRef ; let i = index"  >{{a}}
+              </option>
+            </select>
+            <button type="button" (click)="onOK2()">OK</button>
+            <button type="button" (click)="onadd()">ADD</button>
+            <div  *ngIf="refBoolean1" >&nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;  
+            <input type="text" [(ngModel)]="text3" name="text3">
+            <input type="text" value="*">
+            <select  (change)="onChange2($event.target.value)">
+            <option  *ngFor="let a of refArray1 ; let i = index"  >{{a}}
+              </option>
+            </select>
+            <button type="button" (click)="onOK3()">OK</button>
+            </div>
+        </div>
 
         <br />
         <div style="height:30vh; position: relative;  ">

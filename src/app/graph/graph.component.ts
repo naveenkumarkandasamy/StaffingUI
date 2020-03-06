@@ -89,41 +89,6 @@ export class GraphComponent implements OnInit {
     shift.shiftLength = shiftLength;
     return shift;
   }
-
-  calculateWaitLoss(currentHourlyData: HourlyDetail, prevHourlyData: HourlyDetail) {
-    if (prevHourlyData.wait == 0 && prevHourlyData.differnceBetweenCapacityAndWorkload < 0) {
-      if (currentHourlyData.differnceBetweenCapacityAndWorkload > 0)
-        currentHourlyData.wait = Math.min(0, currentHourlyData.differnceBetweenCapacityAndWorkload + prevHourlyData.differnceBetweenCapacityAndWorkload);
-      else
-        currentHourlyData.wait = prevHourlyData.differnceBetweenCapacityAndWorkload
-      currentHourlyData.loss = 0;
-    }
-    else if (prevHourlyData.wait < 0 && currentHourlyData.differnceBetweenCapacityAndWorkload < 0) {
-      currentHourlyData.loss = prevHourlyData.wait;
-      currentHourlyData.wait = prevHourlyData.differnceBetweenCapacityAndWorkload;
-    }
-    else if (prevHourlyData.wait < 0) {
-      let sum = prevHourlyData.wait + prevHourlyData.differnceBetweenCapacityAndWorkload;
-      if (Math.abs(sum) < currentHourlyData.differnceBetweenCapacityAndWorkload) {
-        currentHourlyData.wait = 0;
-        currentHourlyData.loss = 0;
-      }
-      else {
-        currentHourlyData.loss = Math.min(0, currentHourlyData.differnceBetweenCapacityAndWorkload - Math.abs(prevHourlyData.wait));
-        currentHourlyData.wait = Math.max(prevHourlyData.differnceBetweenCapacityAndWorkload, currentHourlyData.differnceBetweenCapacityAndWorkload + sum - currentHourlyData.loss);
-      }
-    }
-    else {
-      currentHourlyData.wait = 0;
-      currentHourlyData.loss = 0;
-    }
-
-    if (currentHourlyData.wait > 0) currentHourlyData.wait = 0;
-
-    currentHourlyData.wait = Math.round(currentHourlyData.wait * 100) / 100;
-    currentHourlyData.loss = Math.round(currentHourlyData.loss * 100) / 100;
-  }
-
   processData() {
     this.hourlyDetailData.forEach((detail, index) => {
       detail.totalCoverage = detail.numberOfAPPs + detail.numberOfPhysicians + detail.numberOfScribes;
@@ -133,18 +98,9 @@ export class GraphComponent implements OnInit {
       detail.expectedPatientsPerProvider = Math.round(detail.expectedWorkLoad / detail.totalCoverage * 100) / 100;
       detail.coveredPatientsPerProvider = Math.round(detail.capacityWorkLoad / detail.totalCoverage * 100) / 100;
       detail.differnceBetweenCapacityAndWorkload = Math.round((detail.capacityWorkLoad - detail.expectedWorkLoad) * 100) / 100;
-      if (index == 0) {
-        detail.wait = 0;
-        detail.loss = 0;
-      }
-      if (index == 1) {
-        detail.wait = Math.abs(this.hourlyDetailData[0].differnceBetweenCapacityAndWorkload) + detail.differnceBetweenCapacityAndWorkload;
-        detail.loss = 0;
-      }
-      if (index > 1) {
-        this.calculateWaitLoss(detail, this.hourlyDetailData[index - 1])
-      }
-      if (detail.wait > 0) detail.wait = 0;
+      detail.wait = Math.round(detail.wait * 100) / 100;
+      detail.loss = Math.round(detail.loss * 100) / 100;
+      
     })
 
 
@@ -323,7 +279,7 @@ export class GraphComponent implements OnInit {
     { headerName: 'Expected Patient Per Provider', field: 'expectedPatientsPerProvider' },
     { headerName: 'Covered Patient Per Provider', field: 'coveredPatientsPerProvider' },
     { headerName: 'Cost ', field: 'costPerHour' },
-    { headerName: 'Two Hour Wait ', field: 'wait' },
+    { headerName: 'Hour Wait ', field: 'wait' },
     { headerName: 'Patient Lost ', field: 'loss' },
   ];
 
