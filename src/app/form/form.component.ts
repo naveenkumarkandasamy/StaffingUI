@@ -16,17 +16,18 @@ import { first } from 'rxjs/operators';
 })
 
 export class MainFormComponent implements OnInit {
-  public customerData : any;
-  copyData=[];
-  refArray =[];
-  selectedData =[];
-  selected=false;
-  index:number;
-  selectedRef =[];
-  refBoolean =false;
-  refArray1 =[];
-  selectedRef1 =[];
-  refBoolean1 =false;
+  public customerData: any;
+  public operator: any;
+  copyData = [];
+  refArray = [];
+  selectedData = [];
+  selected = false;
+  index: number;
+  selectedRef = [];
+  refBoolean = false;
+  refArray1 = [];
+  selectedRef1 = [];
+  refBoolean1 = false;
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
@@ -39,15 +40,14 @@ export class MainFormComponent implements OnInit {
   inputFormat: string = "Provide Online";
   fileToUpload: File = null;
   utilization = "";
-  upperUtilization="";
-  from="";
-  to="";
-  hourwait="";
-  text1="";text2="";text3="";
-  string1="";
-  string2="";string3="";
+  op1 = ""; op2 = ""; op3 = "";
+  upperUtilization = "";
+  from = "";
+  to = "";
+  hourwait = "";
+  text1 = ""; text2 = ""; text3 = "";
+  string1 = ""; string2 = ""; string3 = "";
   model: Model[] = this.constantsService.model;
-
   expression1 = "1";
   expression2 = "1 * physician";
   expression3 = "1 * physician,1 * app";
@@ -55,10 +55,10 @@ export class MainFormComponent implements OnInit {
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
     "lowerLimitFactor": 0.85, // *** ADD UPPER LIMIT
-    "upperLimitFactor":1.10,
-    "from":1,
-    "to":6,
-    "hourwait":2,
+    "upperLimitFactor": 1.10,
+    "from": 1,
+    "to": 6,
+    "hourwait": 2,
     "clinician": this.model,
     "dayWorkload": this.data,
   }
@@ -107,122 +107,113 @@ export class MainFormComponent implements OnInit {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
     this.customerData = [
-      'physician' , 
+      'physician',
       'app',
       'scribe'
     ]
+    this.operator = ['*']
     this.copyData = this.customerData.slice(0);
   }
-  onSelect(value){ 
-    if(value=='physician')
-    {
-     this.model[0].expressions =[];
-     console.log('physician',this.model[0].expressions);
+  onSelect(value) {
+    if (value == 'physician') {
+      this.model[0].expressions = [];
+      console.log('physician', this.model[0].expressions);
     }
-    if(value=='app')
-    {
-     this.model[1].expressions =[];
-     console.log('apps',this.model[1].expressions);
+    if (value == 'app') {
+      this.model[1].expressions = [];
+      console.log('apps', this.model[1].expressions);
     }
-    if(value=='scribe')
-    {
-     this.model[2].expressions =[];
-     console.log('scribe',this.model[2].expressions);
+    if (value == 'scribe') {
+      this.model[2].expressions = [];
+      console.log('scribe', this.model[2].expressions);
     }
     var idx = this.copyData.indexOf(value);
-    this.copyData.splice(idx , 1);
+    this.copyData.splice(idx, 1);
     console.log(this.copyData)
     this.selectedData.push(value);
     this.selected = true;
-   }
- 
-   onChange(value){
-    
-     this.refArray = this.copyData.slice(0);
-     var idx = this.refArray.indexOf(value);
-     this.refArray.splice(idx ,1);
-     this.selectedRef= this.selectedData.slice(0);
-     this.selectedRef.push(value);
-    this.string1=value;
-    
-   }
-   onOK1()
-   {
-    if(this.string1=='physician')
-    {
-     this.model[0].expressions =[this.text1 +" * "+this.selectedData[0]];
-     console.log('physician',this.model[0].expressions);
+  }
+
+  onChange(value) {
+
+    this.refArray = this.copyData.slice(0);
+    var idx = this.refArray.indexOf(value);
+    this.refArray.splice(idx, 1);
+    this.selectedRef = this.selectedData.slice(0);
+    this.selectedRef.push(value);
+    this.string1 = value;
+
+  }
+  onOK1() {
+    if (this.string1 == 'physician') {
+      this.model[0].expressions = [this.text1 + " " + this.op1 + " " + this.selectedData[0]];
+      console.log('physician', this.model[0].expressions);
     }
-    if(this.string1=='app')
-    {
-     this.model[1].expressions =[this.text1 +" * "+this.selectedData[0]];
-     console.log('apps',this.model[1].expressions);
+    if (this.string1 == 'app') {
+      this.model[1].expressions = [this.text1 + " " + this.op1 + " " + this.selectedData[0]];
+      console.log('apps', this.model[1].expressions);
     }
-    if(this.string1=='scribe')
-    {
-     this.model[2].expressions =[this.text1 +" * "+this.selectedData[0]];
-     console.log('scribe',this.model[2].expressions);
+    if (this.string1 == 'scribe') {
+      this.model[2].expressions = [this.text1 + " " + this.op1 + " " + this.selectedData[0]];
+      console.log('scribe', this.model[2].expressions);
     }
     this.refBoolean = true;
-   }
-  onChange1(value)
-  {
-    this.string2=value;
+  }
+  onChange1(value) {
+    this.string2 = value;
     console.log(value);
     this.refArray1 = this.selectedRef.slice(0);
     console.log(this.refArray1);
     var idx = this.refArray1.indexOf(value);
-    this.refArray1.splice(idx ,1);
+    this.refArray1.splice(idx, 1);
     console.log(this.refArray1);
 
   }
-  onadd()
-  {
+  onadd() {
     this.refBoolean1 = true;
   }
-  onChange2(value)
-  {
-    this.string3=value;
+  onChange2(value) {
+    this.string3 = value;
   }
 
- onOK2()
- {
-  if(this.refArray[0]=='physician')
-  {
-   this.model[0].expressions =[this.text2 +" * "+this.string2];
-   console.log('physician',this.model[0].expressions);
+  onOK2() {
+    if (this.refArray[0] == 'physician') {
+      this.model[0].expressions = [this.text2 + " " + this.op2 + " " + this.string2];
+      console.log('physician', this.model[0].expressions);
+    }
+    if (this.refArray[0] == 'app') {
+      this.model[1].expressions = [this.text2 + " " + this.op2 + " " + this.string2];
+      console.log('apps', this.model[1].expressions);
+    }
+    if (this.refArray[0] == 'scribe') {
+      this.model[2].expressions = [this.text2 + " " + this.op2 + " " + this.string2];
+      console.log('scribe', this.model[2].expressions);
+    }
   }
-  if(this.refArray[0]=='app')
-  {
-   this.model[1].expressions =[this.text2 +" * "+this.string2];
-   console.log('apps',this.model[1].expressions);
+  onOK3() {
+    if (this.refArray[0] == 'physician') {
+      this.model[0].expressions.push(this.text3 + " " + this.op3 + " " + this.refArray1[0]);
+      console.log('physician', this.model[0].expressions);
+    }
+    if (this.refArray[0] == 'app') {
+      this.model[1].expressions.push(this.text3 + " " + this.op3 + " " + this.refArray1[0]);
+      console.log('apps', this.model[1].expressions);
+    }
+    if (this.refArray[0] == 'scribe') {
+      this.model[2].expressions.push(this.text3 + " " + this.op3 + " " + this.refArray1[0]);
+      console.log('scribe', this.model[2].expressions);
+    }
   }
-  if(this.refArray[0]=='scribe')
-  {
-   this.model[2].expressions =[this.text2 +" * "+this.string2];
-   console.log('scribe',this.model[2].expressions);
-  }
- }
- onOK3()
- {
-  if(this.refArray[0]=='physician')
-  {
-   this.model[0].expressions.push(this.text3 +" * "+this.refArray1[0]);
-   console.log('physician',this.model[0].expressions);
-  }
-  if(this.refArray[0]=='app')
-  {
-   this.model[1].expressions.push(this.text3 +" * "+this.refArray1[0]);
-   console.log('apps',this.model[1].expressions);
-  }
-  if(this.refArray[0]=='scribe')
-  {
-   this.model[2].expressions.push(this.text3 +" * "+this.refArray1[0]);
-   console.log('scribe',this.model[2].expressions);
-  }
- }
 
-
+  onop1(value) {
+    this.op1 = value;
+  }
+  onop2(value) {
+    this.op2 = value;
+  }
+  onop3(value) {
+    this.op3 = value;
+  }
   formatChanged(value) {
     this.inputFormat = value;
   }
@@ -241,9 +232,9 @@ export class MainFormComponent implements OnInit {
     this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerLimitFactor = this.upperUtilization != "" ? this.upperUtilization : this.requestBody.lowerLimitFactor;
     this.requestBody.upperLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.upperLimitFactor;
-    this.requestBody.from = this.from !="" ? this.from :this.requestBody.from;
-    this.requestBody.to = this.to !="" ? this.to :this.requestBody.to;
-    this.requestBody.hourwait = this.hourwait !="" ? this.hourwait :this.requestBody.hourwait;
+    this.requestBody.from = this.from != "" ? this.from : this.requestBody.from;
+    this.requestBody.to = this.to != "" ? this.to : this.requestBody.to;
+    this.requestBody.hourwait = this.hourwait != "" ? this.hourwait : this.requestBody.hourwait;
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
@@ -286,7 +277,7 @@ export class MainFormComponent implements OnInit {
     }
   }
 
-  
+
   navigateToGraph() {
     this.router.navigateByUrl('/graph');
   }
@@ -305,7 +296,7 @@ export class MainFormComponent implements OnInit {
     ];
 
     for (let i = 0; i < 24; i++) {
-     
+
       this.transposedColumnDef.push({
 
         headerName: i + "",
@@ -317,7 +308,7 @@ export class MainFormComponent implements OnInit {
         },
         width: 60
       })
-      
+
     }
   }
 }
