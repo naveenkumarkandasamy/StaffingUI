@@ -19,11 +19,11 @@
             <mat-grid-tile class="script-menu"> <label class="col-sm">Enter start time for cannot allocate</label>
             </mat-grid-tile>
             <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="from" placeholder="1"
-                    step="1" min="1" max="23" required name="from" /></mat-grid-tile>
+                    step="1" min="0" max="23" required name="from" /></mat-grid-tile>
             <mat-grid-tile class="script-menu"> <label class="col-sm">Enter End time for cannot allocate</label>
             </mat-grid-tile>
             <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="to" placeholder="6"
-                    step="1" min="1" max="23" required name="to" /></mat-grid-tile>
+                    step="1" min="0" max="23" required name="to" /></mat-grid-tile>
             <mat-grid-tile class="script-menu"> <label class="col-sm">Enter Number of hourwait</label></mat-grid-tile>
             <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="hourwait" step="1"
                     min="1" max="167" required placeholder="2" name="hourwait" /></mat-grid-tile>

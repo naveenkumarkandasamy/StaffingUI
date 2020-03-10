@@ -42,8 +42,8 @@ export class MainFormComponent implements OnInit {
   utilization = "";
   op1 = ""; op2 = ""; op3 = "";
   upperUtilization = "";
-  from = "";
-  to = "";
+  from = 1;
+  to = 6;
   hourwait = "";
   text1 = ""; text2 = ""; text3 = "";
   string1 = ""; string2 = ""; string3 = "";
@@ -56,8 +56,6 @@ export class MainFormComponent implements OnInit {
     "shiftLength": [12, 8, 10, 4],
     "lowerLimitFactor": 0.85, // *** ADD UPPER LIMIT
     "upperLimitFactor": 1.10,
-    "from": 1,
-    "to": 6,
     "hourwait": 2,
     "clinician": this.model,
     "dayWorkload": this.data,
@@ -232,8 +230,8 @@ export class MainFormComponent implements OnInit {
     this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerLimitFactor = this.upperUtilization != "" ? this.upperUtilization : this.requestBody.lowerLimitFactor;
     this.requestBody.upperLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.upperLimitFactor;
-    this.requestBody.from = this.from != "" ? this.from : this.requestBody.from;
-    this.requestBody.to = this.to != "" ? this.to : this.requestBody.to;
+    this.requestBody.from =  this.from;
+    this.requestBody.to = this.to;
     this.requestBody.hourwait = this.hourwait != "" ? this.hourwait : this.requestBody.hourwait;
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
