@@ -48,8 +48,6 @@ export class JobListComponent implements OnInit {
       this.dataSource.data = ((this.isScheduled === 'scheduled') ? this.scheduledJobListData : this.draftJobListData);
       this.dataSource.sort = this.sort;
       setTimeout(() => this.dataSource.paginator = this.paginator);
-      console.log(this.dataSource);
-
       this.dataSource.filterPredicate = function (data: any, filter: string): boolean {
         return data.name.toLowerCase().includes(filter);
       };
@@ -110,13 +108,11 @@ export class JobListComponent implements OnInit {
     if(type.value === 'scheduled') 
     {
       this.dataSource.data = this.scheduledJobListData;
-      this.dataSource.sort = this.sort;
-      setTimeout(() => this.dataSource.paginator = this.paginator);
     } else {
       this.dataSource.data = this.draftJobListData;
-      this.dataSource.sort = this.sort;
-      setTimeout(() => this.dataSource.paginator = this.paginator);
     }
+    this.dataSource.sort = this.sort;
+    setTimeout(() => this.dataSource.paginator = this.paginator);
   }
   
 }
