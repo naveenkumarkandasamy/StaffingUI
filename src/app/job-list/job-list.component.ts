@@ -20,6 +20,8 @@ export class JobListComponent implements OnInit {
   jobListData: any;
   scheduledJobListData: any = [];
   draftJobListData: any = [];
+  private idColumn = 'id';
+  private dsData: any;
   isScheduled: string = "scheduled";
 
   displayedColumnsScheduled: string[] = ['name', 'userId', 'cronExpression','infoButton', 'deleteButton', 'editButton'];
@@ -27,8 +29,8 @@ export class JobListComponent implements OnInit {
   dataSource: any;
   responseBody: any = {"message":""};
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService,
     private router: Router, private dataService: DataService, private dialog: MatDialog) { }
@@ -42,9 +44,11 @@ export class JobListComponent implements OnInit {
     this.httpClientService.getJobDetails().subscribe(data => {
       this.jobListData = data;
       this.getSegregatedData();
-      this.dataSource = new MatTableDataSource(this.scheduledJobListData);
+      this.dataSource = new MatTableDataSource();
+      this.dataSource.data = ((this.isScheduled === 'scheduled') ? this.scheduledJobListData : this.draftJobListData);
       this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
+      setTimeout(() => this.dataSource.paginator = this.paginator);
+      console.log(this.dataSource);
 
       this.dataSource.filterPredicate = function (data: any, filter: string): boolean {
         return data.name.toLowerCase().includes(filter);
@@ -68,7 +72,10 @@ export class JobListComponent implements OnInit {
     this.httpClientService.deleteJobDetails(jobId).subscribe(data => { 
       this.responseBody = data;
       this.toastr.success(this.responseBody.message);
-      // this.toastr.success(data.toString()) 
+      this.dsData = this.dataSource.data;
+      const itemIndex = this.dsData.findIndex(obj => obj[this.idColumn] === jobId);
+      this.dataSource.data.splice(itemIndex, 1);
+      this.dataSource.paginator = this.paginator;
     }, error => {
       this.toastr.error(error.message);
     });
@@ -87,6 +94,8 @@ export class JobListComponent implements OnInit {
 
   getSegregatedData()
   {
+    this.scheduledJobListData = [];
+    this.draftJobListData = [];
     for (let index = 0; index < this.jobListData.length; index++) {
       if(this.jobListData[index].status === 'SCHEDULED')
       {
@@ -100,9 +109,13 @@ export class JobListComponent implements OnInit {
   onJobTypeChange(type) {
     if(type.value === 'scheduled') 
     {
-      this.dataSource = this.scheduledJobListData;
+      this.dataSource.data = this.scheduledJobListData;
+      this.dataSource.sort = this.sort;
+      setTimeout(() => this.dataSource.paginator = this.paginator);
     } else {
-      this.dataSource = this.draftJobListData;
+      this.dataSource.data = this.draftJobListData;
+      this.dataSource.sort = this.sort;
+      setTimeout(() => this.dataSource.paginator = this.paginator);
     }
   }
   
