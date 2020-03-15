@@ -8,7 +8,7 @@ import { ConstantsService } from "../services/constants.service";
 import { HttpClientService } from "../services/http-client.service";
 import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs/operators';
-
+import { FormGroup, FormControl, FormArray, FormBuilder } from '@angular/forms';
 @Component({
   selector: 'mainForm',
   templateUrl: './form.component.html',
@@ -16,18 +16,20 @@ import { first } from 'rxjs/operators';
 })
 
 export class MainFormComponent implements OnInit {
-  public customerData: any;
-  public operator: any;
-  copyData = [];
-  refArray = [];
-  selectedData = [];
-  selected = false;
-  index: number;
-  selectedRef = [];
-  refBoolean = false;
-  refArray1 = [];
-  selectedRef1 = [];
-  refBoolean1 = false;
+  firstDropDown: boolean = false;
+  myForm: FormGroup;
+  clinicianData = [];
+  isaddbutton: boolean = false;
+  initiallySelected: String;
+  clinicianDataRemaining = [][10];
+  operator = [];
+  selectedData = [][10];
+  addMoreRequired = [];
+  selected: boolean = false;
+  checking: boolean = false;
+  checkedOk = [];
+  checkedButton = [];
+  expression: String;
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
@@ -40,23 +42,17 @@ export class MainFormComponent implements OnInit {
   inputFormat: string = "Provide Online";
   fileToUpload: File = null;
   utilization = "";
-  op1 = ""; op2 = ""; op3 = "";
   upperUtilization = "";
-  from = 1;
-  to = 6;
-  hourwait = "";
-  text1 = ""; text2 = ""; text3 = "";
-  string1 = ""; string2 = ""; string3 = "";
+  notAllocatedStartTime = 1;
+  notAllocatedEndTime = 6;
+  patientHourWait = "";
   model: Model[] = this.constantsService.model;
-  expression1 = "1";
-  expression2 = "1 * physician";
-  expression3 = "1 * physician,1 * app";
 
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
     "lowerLimitFactor": 0.85, // *** ADD UPPER LIMIT
     "upperLimitFactor": 1.10,
-    "hourwait": 2,
+    "patientHourWait": 2,
     "clinician": this.model,
     "dayWorkload": this.data,
   }
@@ -98,119 +94,160 @@ export class MainFormComponent implements OnInit {
   }
 
 
-  constructor(private router: Router, private http: HttpClient,
+  constructor(private fb: FormBuilder, private router: Router, private http: HttpClient,
     private dataService: DataService, private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService) { }
 
   ngOnInit() {
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
-    this.customerData = [
-      'physician',
-      'app',
-      'scribe'
-    ]
-    this.operator = ['*']
-    this.copyData = this.customerData.slice(0);
+    this.clinicianData = ['physician', 'app', 'scribe']
+    for (var i = 0; i < this.model.length; i++) {
+      this.model[i].expressions = [];
+    }
+    this.clinicianDataRemaining = [['physician', 'app', 'scribe']]
+    this.selectedData = [[]];
+    this.operator = ['*'];
+    this.myForm = this.fb.group({
+      times: this.fb.array([
+        this.initTimes()
+      ])
+    });
   }
+  trackByFn(index: number, item: any) {
+    return item.trackingId;
+  }
+
+  initTimes() {
+    return this.fb.group({
+      cliniciansDropDown: this.fb.control(''),
+      numberOfClinician: this.fb.control(''),
+      operatorChosen: this.fb.control(''),
+      selectedDataDropDown: this.fb.control(''),
+      trackingId: this.generateUniqueId()
+    });
+  }
+
+  generateUniqueId() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  }
+
   onSelect(value) {
-    if (value == 'physician') {
-      this.model[0].expressions = [];
-      console.log('physician', this.model[0].expressions);
-    }
-    if (value == 'app') {
-      this.model[1].expressions = [];
-      console.log('apps', this.model[1].expressions);
-    }
-    if (value == 'scribe') {
-      this.model[2].expressions = [];
-      console.log('scribe', this.model[2].expressions);
-    }
-    var idx = this.copyData.indexOf(value);
-    this.copyData.splice(idx, 1);
-    console.log(this.copyData)
-    this.selectedData.push(value);
+    let index = value.options.selectedIndex - 1;
+    this.clinicianDataRemaining[0].splice(index, 1);
+    this.selectedData[0].push(value.value);
+    this.checkedOk[0] = false;
+    this.initiallySelected = value.value;
     this.selected = true;
+    this.firstDropDown = true;
   }
+  onOK1(index) {
+    let value = this.myForm.value.times[index].cliniciansDropDown;
+    let clinician = this.myForm.value.times[index].selectedDataDropDown;
 
-  onChange(value) {
+    if (value !== '' && this.myForm.value.times[index].numberOfClinician !== '' && this.myForm.value.times[index].operatorChosen !== '' && clinician !== '') {
+      this.checkedOk[index] = true;
+      this.checkedOk[index + 1] = false;
+      this.expression = this.myForm.value.times[index].numberOfClinician + " " + this.myForm.value.times[index].operatorChosen + " " + clinician;
+      if (value == 'physician') {
+        var idx1 = this.clinicianData.indexOf(value);
+        this.model[idx1].expressions.push(this.expression);
+      }
+      if (value == 'app') {
+        var idx1 = this.clinicianData.indexOf(value);
+        this.model[idx1].expressions.push(this.expression);
+      }
+      if (value == 'scribe') {
+        var idx1 = this.clinicianData.indexOf(value);
+        this.model[idx1].expressions.push(this.expression);
+      }
+      if (this.selectedData[index].length <= 1) {
+        this.removingPreviousOne(index, value);
 
-    this.refArray = this.copyData.slice(0);
-    var idx = this.refArray.indexOf(value);
-    this.refArray.splice(idx, 1);
-    this.selectedRef = this.selectedData.slice(0);
-    this.selectedRef.push(value);
-    this.string1 = value;
+        this.selectedData[index + 1] = this.selectedData[index].slice();
+        this.selectedData[index + 1].push(value);
 
-  }
-  onOK1() {
-    if (this.string1 == 'physician') {
-      this.model[0].expressions = [this.text1 + " " + this.op1 + " " + this.selectedData[0]];
-      console.log('physician', this.model[0].expressions);
-    }
-    if (this.string1 == 'app') {
-      this.model[1].expressions = [this.text1 + " " + this.op1 + " " + this.selectedData[0]];
-      console.log('apps', this.model[1].expressions);
-    }
-    if (this.string1 == 'scribe') {
-      this.model[2].expressions = [this.text1 + " " + this.op1 + " " + this.selectedData[0]];
-      console.log('scribe', this.model[2].expressions);
-    }
-    this.refBoolean = true;
-  }
-  onChange1(value) {
-    this.string2 = value;
-    console.log(value);
-    this.refArray1 = this.selectedRef.slice(0);
-    console.log(this.refArray1);
-    var idx = this.refArray1.indexOf(value);
-    this.refArray1.splice(idx, 1);
-    console.log(this.refArray1);
+        if (this.clinicianDataRemaining[index + 1].length === 0) {
+          for (var i = 0; i < this.clinicianData.length; i++) {
+            this.checking = false;
+            for (var j = 0; j <= index; j++) {
+              if (this.myForm.value.times[j].cliniciansDropDown === this.clinicianData[i]) {
+                this.checking = true;
+                break;
+              }
+            }
+            if (!this.checking) {
+              this.clinicianDataRemaining[index + 1].push(this.clinicianData[i]);
+            }
+          }
 
-  }
-  onadd() {
-    this.refBoolean1 = true;
-  }
-  onChange2(value) {
-    this.string3 = value;
-  }
+          this.clinicianDataRemaining[index + 1].splice(this.clinicianDataRemaining[index + 1].find(x => x == this.initiallySelected), 1);
+          this.selectedData[index + 1].push(this.initiallySelected);
+        }
+        if (this.clinicianDataRemaining[index + 1].length !== 0 && this.selectedData[index].length <= 1) {
+          this.selectedData[index + 1] = [];
+          this.selectedData[index + 1].push(this.initiallySelected);
+          for (var j = 0; j <= index; j++) {
+            this.selectedData[index + 1].push(this.myForm.value.times[j].cliniciansDropDown);
+          }
+          this.selectedData[index + 1] = this.removeDuplicate(this.selectedData[index + 1]);
+        }
+        this.addMoreRequired[index] = false;
 
-  onOK2() {
-    if (this.refArray[0] == 'physician') {
-      this.model[0].expressions = [this.text2 + " " + this.op2 + " " + this.string2];
-      console.log('physician', this.model[0].expressions);
-    }
-    if (this.refArray[0] == 'app') {
-      this.model[1].expressions = [this.text2 + " " + this.op2 + " " + this.string2];
-      console.log('apps', this.model[1].expressions);
-    }
-    if (this.refArray[0] == 'scribe') {
-      this.model[2].expressions = [this.text2 + " " + this.op2 + " " + this.string2];
-      console.log('scribe', this.model[2].expressions);
-    }
-  }
-  onOK3() {
-    if (this.refArray[0] == 'physician') {
-      this.model[0].expressions.push(this.text3 + " " + this.op3 + " " + this.refArray1[0]);
-      console.log('physician', this.model[0].expressions);
-    }
-    if (this.refArray[0] == 'app') {
-      this.model[1].expressions.push(this.text3 + " " + this.op3 + " " + this.refArray1[0]);
-      console.log('apps', this.model[1].expressions);
-    }
-    if (this.refArray[0] == 'scribe') {
-      this.model[2].expressions.push(this.text3 + " " + this.op3 + " " + this.refArray1[0]);
-      console.log('scribe', this.model[2].expressions);
+      } else {
+        this.selectedData[index + 1] = this.selectedData[index].slice();
+        var idx = this.selectedData[index + 1].indexOf(clinician);
+        this.selectedData[index + 1].splice(idx, 1);
+        this.addMoreRequired[index] = true;
+      }
+      this.selectedData[index + 1] = this.removeDuplicate(this.selectedData[index + 1]);
+
+      const control = <FormArray>this.myForm.controls['times'];
+      if (!this.addMoreRequired[index] && this.clinicianDataRemaining[index + 1].length !== 0) {
+        control.push(this.initTimes());
+      }
+
     }
   }
 
-  onop1(value) {
-    this.op1 = value;
+  private removingPreviousOne(index: any, value: any) {
+    this.clinicianDataRemaining[index + 1] = this.clinicianDataRemaining[index].slice();
+    var idx = this.clinicianDataRemaining[index + 1].indexOf(value);
+    this.clinicianDataRemaining[index + 1].splice(idx, 1);
+
   }
-  onop2(value) {
-    this.op2 = value;
+
+  addForm(index): void {
+    let idx = this.myForm.value.times.length - 1;
+    this.addMoreRequired[index] = true;
+    this.clinicianDataRemaining[index + 1] = [];
+    this.clinicianDataRemaining[index + 1].push(this.myForm.value.times[idx].cliniciansDropDown);
+    this.selectedData[index + 1] = this.removeDuplicate(this.selectedData[index + 1]);
+    this.addingForm(index);
   }
-  onop3(value) {
-    this.op3 = value;
+
+  noAddForm(index): void {
+    let value = this.myForm.value.times[index].cliniciansDropDown;
+    this.removingPreviousOne(index, value);
+    this.selectedData[index + 1] = [];
+    this.selectedData[index + 1].push(this.initiallySelected);
+    for (var j = 0; j <= index; j++) {
+      this.selectedData[index + 1].push(this.myForm.value.times[j].cliniciansDropDown);
+    }
+    this.selectedData[index + 1] = this.removeDuplicate(this.selectedData[index + 1]);
+    this.addingForm(index);
+  }
+
+  private addingForm(index: any) {
+    const control = <FormArray>this.myForm.controls['times'];
+    if (this.clinicianDataRemaining[index + 1].length !== 0) {
+      control.push(this.initTimes());
+    }
+    this.checkedButton[index] = true;
+    this.checkedButton[index + 1] = false;
+  }
+
+  removeDuplicate(array) {
+    return array.filter((a, b) => array.indexOf(a) === b);
   }
   formatChanged(value) {
     this.inputFormat = value;
@@ -230,9 +267,9 @@ export class MainFormComponent implements OnInit {
     this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
     this.requestBody.lowerLimitFactor = this.upperUtilization != "" ? this.upperUtilization : this.requestBody.lowerLimitFactor;
     this.requestBody.upperLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.upperLimitFactor;
-    this.requestBody.from =  this.from;
-    this.requestBody.to = this.to;
-    this.requestBody.hourwait = this.hourwait != "" ? this.hourwait : this.requestBody.hourwait;
+    this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
+    this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
+    this.requestBody.patientHourWait = this.patientHourWait != "" ? this.patientHourWait : this.requestBody.patientHourWait;
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
