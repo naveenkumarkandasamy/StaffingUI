@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { response, Model } from "../Models/app.types"
+import { response, Model, Efficiency } from "../Models/app.types"
 import { ViewChild, ElementRef } from '@angular/core';
 import { DataService } from "../services/data.service"
 import { ConstantsService } from "../services/constants.service";
@@ -30,7 +30,7 @@ export class MainFormComponent implements OnInit {
   fileToUpload: File = null;
   utilization = "";
   model: Model[] = this.constantsService.model;
-
+  efficiencyModel: Efficiency[] = this.constantsService.efficiencyModel;
   expression1 = "1";
   expression2 = "1 * physician";
   expression3 = "1 * physician, 2 * app";
@@ -65,6 +65,51 @@ export class MainFormComponent implements OnInit {
       valueSetter: function (params) {
         if (params.data.cost !== params.newValue) {
           params.data.cost = params.newValue;
+          return true;
+        } else {
+          return false;
+        }
+      },
+    }
+  ];
+
+  columnDefs1 = [
+    { headerName: 'Role', field: 'name', editable: true },
+    {
+      headerName: 'FirstHour', valueGetter: function (params) {
+        return params.data.firstHour;
+      },
+      valueSetter: function (params) {
+        if (params.data.firstHour !== params.newValue) {
+          params.data.firstHour = params.newValue;
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+    {
+      headerName: 'MidHour',
+      valueGetter: function (params) {
+        return params.data.midHour;
+      },
+      valueSetter: function (params) {
+        if (params.data.midHour !== params.newValue) {
+          params.data.midHour = params.newValue;
+          return true;
+        } else {
+          return false;
+        }
+      },
+    },
+    {
+      headerName: 'LastHour',
+      valueGetter: function (params) {
+        return params.data.lastHour;
+      },
+      valueSetter: function (params) {
+        if (params.data.lastHour !== params.newValue) {
+          params.data.lastHour = params.newValue;
           return true;
         } else {
           return false;
@@ -141,10 +186,12 @@ export class MainFormComponent implements OnInit {
   }
 
   calculateCapacity() {
-    for (let i = 1; i < this.model.length; i++) {
-      this.model[i].capacity[0] = this.model[i].patientsPerHour / this.model[0].patientsPerHour;
-      this.model[i].capacity[1] = this.model[i].capacity[0] * this.model[0].capacity[1];
-      this.model[i].capacity[2] = this.model[i].capacity[0] * this.model[0].capacity[2];
+    for (let i = 0; i < this.model.length; i++) {
+
+      this.model[i].capacity[0] = this.efficiencyModel[i].firstHour;
+      this.model[i].capacity[1] = this.efficiencyModel[i].midHour;
+      this.model[i].capacity[2] = this.efficiencyModel[i].lastHour;
+
     }
   }
 
