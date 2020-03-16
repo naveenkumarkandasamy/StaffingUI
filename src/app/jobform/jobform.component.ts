@@ -223,9 +223,8 @@ export class JobformComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       this.formVal.cronExpression = result;
-      console.log(this.formVal.cronExpression);
+      this.sendresponse();
     });
   }
 }

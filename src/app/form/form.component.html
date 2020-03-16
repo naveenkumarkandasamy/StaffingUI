@@ -72,11 +72,17 @@
 
 
         <br />
+
         <div style="height:30vh; position: relative;  ">
             <label>Clinician Summary</label>
 
             <ag-grid-angular domLayout='autoHeight' style="width: 44.1vw; height: 20vh;" class="ag-theme-balham"
                 [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
+            </ag-grid-angular>
+
+            <label>Clinician Efficiency</label>
+            <ag-grid-angular domLayout='autoHeight' style="width: 50vw; height: 20vh;" class="ag-theme-balham"
+                [rowData]="efficiencyModel" [columnDefs]="columnDefs1" [defaultColDef]="defaultColDef">
             </ag-grid-angular>
 
             <div style="width: 30vh;">
