@@ -16,15 +16,16 @@
             </mat-grid-tile>
             <mat-grid-tile class="script-menu"> <input class="col-sm" type="number" [(ngModel)]="utilization"
                     placeholder="1.10" name="utilzation" step="0.05" min="0.8" max="1.5" required></mat-grid-tile>
-            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter start time for cannot allocate</label>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter Restriction start time</label>
             </mat-grid-tile>
             <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="notAllocatedStartTime"
                     placeholder="1" step="1" min="0" max="23" required name="notAllocatedStartTime" /></mat-grid-tile>
-            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter End time for cannot allocate</label>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter Restriction End time </label>
             </mat-grid-tile>
             <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="notAllocatedEndTime"
                     placeholder="6" step="1" min="0" max="23" required name="notAllocatedEndTime" /></mat-grid-tile>
-            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter Number of hourwait</label></mat-grid-tile>
+            <mat-grid-tile class="script-menu"> <label class="col-sm">Enter Number of patientHourWait</label>
+            </mat-grid-tile>
             <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="patientHourWait"
                     step="1" min="1" max="167" required placeholder="2" name="patientHourWait" /></mat-grid-tile>
         </mat-grid-list>
@@ -33,36 +34,36 @@
 
         <label class="col-sm">Clinician Relationship</label>
 
-        <select [disabled]="firstDropDown" (change)="onSelect($event.target)">
+        <select [disabled]="firstDropDown" (change)="afterSelectedPriorClinician($event.target)">
             <option value="" hidden>Select</option>
             <option *ngFor="let a of clinicianData">{{a}}</option>
         </select>
 
-        <form *ngIf="selected" [formGroup]="formGroup">
+        <form *ngIf="selected" [formGroup]="expressionFormGroup">
 
-            <div formArrayName="form"
-                *ngFor="let time of formGroup.controls.form?.value; let i = index; trackBy:trackByForm">
+            <div formArrayName="expressionForm"
+                *ngFor="let itr of expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
                 <div [formGroupName]="i">
 
                     <select formControlName="cliniciansDropDown">
                         <option value="" hidden>Select</option>
-                        <option *ngFor="let a of clinicianDataRemaining[i]">{{a}}</option>
+                        <option *ngFor="let a of clinicianRemaining[i]">{{a}}</option>
                     </select>
                     <input type="number" placeholder="1" step="1" min="0" max="100" formControlName="numberOfClinician">
                     <select formControlName="operatorChosen">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of operator ; let i = index">{{a}}</option>
                     </select>
-                    <select formControlName="selectedDataDropDown">
+                    <select formControlName="selectedClinicianDropDown">
                         <option value="" hidden>Select</option>
-                        <option *ngFor="let a of previousSelectedData[i] ; let i = index">{{a}}</option>
+                        <option *ngFor="let a of alreadySelectedClinician[i] ; let i = index">{{a}}</option>
                     </select>
 
-                    <button type="submit" [disabled]="checkedOk[i]" (click)="onOK(i)">OK</button>
-                    <button type="button" [disabled]="checkedButton[i]" *ngIf="addMoreRequired[i]"
-                        (click)="addButton(i)">ADD</button>
-                    <button type="button" [disabled]="checkedButton[i]" *ngIf="addMoreRequired[i]"
-                        (click)="noButton(i)">No</button>
+                    <button type="submit" [disabled]="isRead[i]" (click)="readingData(i)">OK</button>
+                    <button type="button" [disabled]="isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
+                        (click)="addingExpressionForm(i)">ADD</button>
+                    <button type="button" [disabled]="isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
+                        (click)="notAddingExpressionForm(i)">No</button>
 
 
                 </div>
