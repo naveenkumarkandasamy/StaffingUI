@@ -10,11 +10,12 @@
             <mat-grid-tile class="script-menu"> <label class="col-sm">Enter lower limit for utilization</label>
             </mat-grid-tile>
             <mat-grid-tile class="script-menu"><input class="col-sm" type="number" [(ngModel)]="upperUtilization"
-                    name="upperUtilization" min="0.5" max="1.1" placeholder="0.85" step="0.05" required /></mat-grid-tile>
+                    name="upperUtilization" min="0.5" max="1.1" placeholder="0.85" step="0.05" required />
+            </mat-grid-tile>
             <mat-grid-tile class="script-menu"> <label class="col-sm">Enter upper limit for utilization</label>
             </mat-grid-tile>
             <mat-grid-tile class="script-menu"> <input class="col-sm" type="number" [(ngModel)]="utilization"
-                    placeholder="1.10" name="utilzation" step = "0.05" min="0.8" max="1.5"required></mat-grid-tile>
+                    placeholder="1.10" name="utilzation" step="0.05" min="0.8" max="1.5" required></mat-grid-tile>
         </mat-grid-list>
 
         <br />
@@ -39,11 +40,17 @@
         </mat-grid-list>
 
         <br />
+
         <div style="height:30vh; position: relative;  ">
             <label>Clinician Summary</label>
 
             <ag-grid-angular domLayout='autoHeight' style="width: 44.1vw; height: 20vh;" class="ag-theme-balham"
                 [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
+            </ag-grid-angular>
+
+            <label>Clinician Efficiency</label>
+            <ag-grid-angular domLayout='autoHeight' style="width: 50vw; height: 20vh;" class="ag-theme-balham"
+                [rowData]="efficiencyModel" [columnDefs]="columnDefs1" [defaultColDef]="defaultColDef">
             </ag-grid-angular>
 
             <div style="width: 30vh;">

@@ -51,3 +51,9 @@ export class Model {
   name: String;
   expressions: Array<String>
 }
+export class Efficiency {
+  name: String;
+  firstHour: number;
+  midHour: number;
+  lastHour: number;
+}
