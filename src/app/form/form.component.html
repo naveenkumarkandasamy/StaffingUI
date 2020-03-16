@@ -38,10 +38,10 @@
             <option *ngFor="let a of clinicianData">{{a}}</option>
         </select>
 
-        <form *ngIf="selected" [formGroup]="myForm">
+        <form *ngIf="selected" [formGroup]="formGroup">
 
-            <div formArrayName="times"
-                *ngFor="let time of myForm.controls.times?.value; let i = index; trackBy:trackByFn">
+            <div formArrayName="form"
+                *ngFor="let time of formGroup.controls.form?.value; let i = index; trackBy:trackByForm">
                 <div [formGroupName]="i">
 
                     <select formControlName="cliniciansDropDown">
@@ -55,14 +55,14 @@
                     </select>
                     <select formControlName="selectedDataDropDown">
                         <option value="" hidden>Select</option>
-                        <option *ngFor="let a of selectedData[i] ; let i = index">{{a}}</option>
+                        <option *ngFor="let a of previousSelectedData[i] ; let i = index">{{a}}</option>
                     </select>
 
-                    <button type="submit" [disabled]="checkedOk[i]" (click)="onOK1(i)">OK</button>
+                    <button type="submit" [disabled]="checkedOk[i]" (click)="onOK(i)">OK</button>
                     <button type="button" [disabled]="checkedButton[i]" *ngIf="addMoreRequired[i]"
-                        (click)="addForm(i)">ADD</button>
+                        (click)="addButton(i)">ADD</button>
                     <button type="button" [disabled]="checkedButton[i]" *ngIf="addMoreRequired[i]"
-                        (click)="noAddForm(i)">No</button>
+                        (click)="noButton(i)">No</button>
 
 
                 </div>

@@ -17,13 +17,13 @@ import { FormGroup, FormControl, FormArray, FormBuilder } from '@angular/forms';
 
 export class MainFormComponent implements OnInit {
   firstDropDown: boolean = false;
-  myForm: FormGroup;
+  formGroup: FormGroup;
   clinicianData = [];
   isaddbutton: boolean = false;
   initiallySelected: String;
   clinicianDataRemaining = [][10];
   operator = [];
-  selectedData = [][10];
+  previousSelectedData = [][10];
   addMoreRequired = [];
   selected: boolean = false;
   checking: boolean = false;
@@ -105,19 +105,19 @@ export class MainFormComponent implements OnInit {
       this.model[i].expressions = [];
     }
     this.clinicianDataRemaining = [['physician', 'app', 'scribe']]
-    this.selectedData = [[]];
+    this.previousSelectedData = [[]];
     this.operator = ['*'];
-    this.myForm = this.fb.group({
-      times: this.fb.array([
-        this.initTimes()
+    this.formGroup = this.fb.group({
+      form: this.fb.array([
+        this.initialization()
       ])
     });
   }
-  trackByFn(index: number, item: any) {
-    return item.trackingId;
+  trackByForm(index: number, data: any) {
+    return data.trackingId;
   }
 
-  initTimes() {
+  initialization() {
     return this.fb.group({
       cliniciansDropDown: this.fb.control(''),
       numberOfClinician: this.fb.control(''),
@@ -134,43 +134,43 @@ export class MainFormComponent implements OnInit {
   onSelect(value) {
     let index = value.options.selectedIndex - 1;
     this.clinicianDataRemaining[0].splice(index, 1);
-    this.selectedData[0].push(value.value);
+    this.previousSelectedData[0].push(value.value);
     this.checkedOk[0] = false;
     this.initiallySelected = value.value;
     this.selected = true;
     this.firstDropDown = true;
   }
-  onOK1(index) {
-    let value = this.myForm.value.times[index].cliniciansDropDown;
-    let clinician = this.myForm.value.times[index].selectedDataDropDown;
+  onOK(index) {
+    let value = this.formGroup.value.form[index].cliniciansDropDown;
+    let clinician = this.formGroup.value.form[index].selectedDataDropDown;
 
-    if (value !== '' && this.myForm.value.times[index].numberOfClinician !== '' && this.myForm.value.times[index].operatorChosen !== '' && clinician !== '') {
+    if (value !== '' && this.formGroup.value.form[index].numberOfClinician !== '' && this.formGroup.value.form[index].operatorChosen !== '' && clinician !== '') {
       this.checkedOk[index] = true;
       this.checkedOk[index + 1] = false;
-      this.expression = this.myForm.value.times[index].numberOfClinician + " " + this.myForm.value.times[index].operatorChosen + " " + clinician;
+      this.expression = this.formGroup.value.form[index].numberOfClinician + " " + this.formGroup.value.form[index].operatorChosen + " " + clinician;
       if (value == 'physician') {
-        var idx1 = this.clinicianData.indexOf(value);
-        this.model[idx1].expressions.push(this.expression);
+        var iterator = this.clinicianData.indexOf(value);
+        this.model[iterator].expressions.push(this.expression);
       }
       if (value == 'app') {
-        var idx1 = this.clinicianData.indexOf(value);
-        this.model[idx1].expressions.push(this.expression);
+        var iterator = this.clinicianData.indexOf(value);
+        this.model[iterator].expressions.push(this.expression);
       }
       if (value == 'scribe') {
-        var idx1 = this.clinicianData.indexOf(value);
-        this.model[idx1].expressions.push(this.expression);
+        var iterator = this.clinicianData.indexOf(value);
+        this.model[iterator].expressions.push(this.expression);
       }
-      if (this.selectedData[index].length <= 1) {
+      if (this.previousSelectedData[index].length <= 1) {
         this.removingPreviousOne(index, value);
 
-        this.selectedData[index + 1] = this.selectedData[index].slice();
-        this.selectedData[index + 1].push(value);
+        this.previousSelectedData[index + 1] = this.previousSelectedData[index].slice();
+        this.previousSelectedData[index + 1].push(value);
 
         if (this.clinicianDataRemaining[index + 1].length === 0) {
           for (var i = 0; i < this.clinicianData.length; i++) {
             this.checking = false;
             for (var j = 0; j <= index; j++) {
-              if (this.myForm.value.times[j].cliniciansDropDown === this.clinicianData[i]) {
+              if (this.formGroup.value.form[j].cliniciansDropDown === this.clinicianData[i]) {
                 this.checking = true;
                 break;
               }
@@ -181,29 +181,29 @@ export class MainFormComponent implements OnInit {
           }
 
           this.clinicianDataRemaining[index + 1].splice(this.clinicianDataRemaining[index + 1].find(x => x == this.initiallySelected), 1);
-          this.selectedData[index + 1].push(this.initiallySelected);
+          this.previousSelectedData[index + 1].push(this.initiallySelected);
         }
-        if (this.clinicianDataRemaining[index + 1].length !== 0 && this.selectedData[index].length <= 1) {
-          this.selectedData[index + 1] = [];
-          this.selectedData[index + 1].push(this.initiallySelected);
+        if (this.clinicianDataRemaining[index + 1].length !== 0 && this.previousSelectedData[index].length <= 1) {
+          this.previousSelectedData[index + 1] = [];
+          this.previousSelectedData[index + 1].push(this.initiallySelected);
           for (var j = 0; j <= index; j++) {
-            this.selectedData[index + 1].push(this.myForm.value.times[j].cliniciansDropDown);
+            this.previousSelectedData[index + 1].push(this.formGroup.value.form[j].cliniciansDropDown);
           }
-          this.selectedData[index + 1] = this.removeDuplicate(this.selectedData[index + 1]);
+          this.previousSelectedData[index + 1] = this.removeDuplicate(this.previousSelectedData[index + 1]);
         }
         this.addMoreRequired[index] = false;
 
       } else {
-        this.selectedData[index + 1] = this.selectedData[index].slice();
-        var idx = this.selectedData[index + 1].indexOf(clinician);
-        this.selectedData[index + 1].splice(idx, 1);
+        this.previousSelectedData[index + 1] = this.previousSelectedData[index].slice();
+        var index1 = this.previousSelectedData[index + 1].indexOf(clinician);
+        this.previousSelectedData[index + 1].splice(index1, 1);
         this.addMoreRequired[index] = true;
       }
-      this.selectedData[index + 1] = this.removeDuplicate(this.selectedData[index + 1]);
+      this.previousSelectedData[index + 1] = this.removeDuplicate(this.previousSelectedData[index + 1]);
 
-      const control = <FormArray>this.myForm.controls['times'];
+      const control = <FormArray>this.formGroup.controls['form'];
       if (!this.addMoreRequired[index] && this.clinicianDataRemaining[index + 1].length !== 0) {
-        control.push(this.initTimes());
+        control.push(this.initialization());
       }
 
     }
@@ -211,36 +211,36 @@ export class MainFormComponent implements OnInit {
 
   private removingPreviousOne(index: any, value: any) {
     this.clinicianDataRemaining[index + 1] = this.clinicianDataRemaining[index].slice();
-    var idx = this.clinicianDataRemaining[index + 1].indexOf(value);
-    this.clinicianDataRemaining[index + 1].splice(idx, 1);
+    var index1 = this.clinicianDataRemaining[index + 1].indexOf(value);
+    this.clinicianDataRemaining[index + 1].splice(index1, 1);
 
   }
 
-  addForm(index): void {
-    let idx = this.myForm.value.times.length - 1;
+  addButton(index): void {
+    let index1 = this.formGroup.value.form.length - 1;
     this.addMoreRequired[index] = true;
     this.clinicianDataRemaining[index + 1] = [];
-    this.clinicianDataRemaining[index + 1].push(this.myForm.value.times[idx].cliniciansDropDown);
-    this.selectedData[index + 1] = this.removeDuplicate(this.selectedData[index + 1]);
+    this.clinicianDataRemaining[index + 1].push(this.formGroup.value.form[index1].cliniciansDropDown);
+    this.previousSelectedData[index + 1] = this.removeDuplicate(this.previousSelectedData[index + 1]);
     this.addingForm(index);
   }
 
-  noAddForm(index): void {
-    let value = this.myForm.value.times[index].cliniciansDropDown;
+  noButton(index): void {
+    let value = this.formGroup.value.form[index].cliniciansDropDown;
     this.removingPreviousOne(index, value);
-    this.selectedData[index + 1] = [];
-    this.selectedData[index + 1].push(this.initiallySelected);
+    this.previousSelectedData[index + 1] = [];
+    this.previousSelectedData[index + 1].push(this.initiallySelected);
     for (var j = 0; j <= index; j++) {
-      this.selectedData[index + 1].push(this.myForm.value.times[j].cliniciansDropDown);
+      this.previousSelectedData[index + 1].push(this.formGroup.value.form[j].cliniciansDropDown);
     }
-    this.selectedData[index + 1] = this.removeDuplicate(this.selectedData[index + 1]);
+    this.previousSelectedData[index + 1] = this.removeDuplicate(this.previousSelectedData[index + 1]);
     this.addingForm(index);
   }
 
   private addingForm(index: any) {
-    const control = <FormArray>this.myForm.controls['times'];
+    const control = <FormArray>this.formGroup.controls['form'];
     if (this.clinicianDataRemaining[index + 1].length !== 0) {
-      control.push(this.initTimes());
+      control.push(this.initialization());
     }
     this.checkedButton[index] = true;
     this.checkedButton[index + 1] = false;
