@@ -68,6 +68,8 @@ export class AuthenticationService {
   }
 
   logOut() {
-    localStorage.removeItem('currentUser')
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('Bearer');
+
   }
 }
