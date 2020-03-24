@@ -3,11 +3,12 @@ import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse
 import { Observable, throwError, empty, Subject } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { catchError, tap, switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class BasicAuthInterceptor implements HttpInterceptor {
 
-    constructor(private authService: AuthenticationService) { }
+    constructor(private authService: AuthenticationService,  private router: Router) { }
     refreshingAccessToken: boolean = false;
     accessTokenRefreshed: Subject<any> = new Subject();
 
@@ -31,6 +32,7 @@ export class BasicAuthInterceptor implements HttpInterceptor {
                     }),
                     catchError((err: any) => {
                       this.authService.logOut();
+                      this.router.navigate(['login']);
                       return empty();
                     })
                   )
