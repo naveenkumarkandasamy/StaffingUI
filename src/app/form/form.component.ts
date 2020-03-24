@@ -47,7 +47,7 @@ export class MainFormComponent implements OnInit {
   notAllocatedEndTime = 6;
   patientHourWait = "";
   model: Model[] = this.constantsService.model;
-
+  efficiencyModel: Efficiency[]= this.constantsService.efficiencyModel;
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
     "lowerLimitFactor": 0.85, // *** ADD UPPER LIMIT
