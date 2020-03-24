@@ -8,19 +8,20 @@ import { catchError, tap, switchMap } from 'rxjs/operators';
 export class BasicAuthInterceptor implements HttpInterceptor {
 
     constructor(private authService: AuthenticationService) { }
-    refreshingAccessToken: boolean;
+    refreshingAccessToken: boolean = false;
     accessTokenRefreshed: Subject<any> = new Subject();
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
         // add authorization header with basic auth credentials if available
         let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (currentUser && currentUser.authData && currentUser.accessToken) {
+        if (currentUser && currentUser.authData && currentUser.accessToken && !request.url.includes("token") 
+        && !request.url.includes("login")) {
             request = this.addAuthHeader(request);
         }
 
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
-              if (error.status === 401) {
+              if (error.status === 401 || error.status === 403) {
                  // refresh the access token
                  return this.refreshAccessToken()
                   .pipe(

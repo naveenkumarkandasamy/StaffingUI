@@ -88,20 +88,18 @@ export class AuthenticationService {
   setBearerToken(accessToken: string) {
     let currentUser = JSON.parse(this.getCurrentUser());
     currentUser.accessToken = accessToken;
-    localStorage.setItem('currentUser', currentUser);
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
   }
 
   getNewAccessToken() {
-    return this.httpClient.get(this.apiUrl+'/Staffing/api/token', {
-      headers: {
-        'refresh-token': this.getRefreshToken(),
-        'current-user': (JSON.parse(this.getCurrentUser())).name
-      },
-      observe: 'response'
-    }).pipe(
-      tap((res: HttpResponse<any>) => {
-        this.setBearerToken(res.headers.get('accessToken'));
-      })
+    let refreshToken =  this.getRefreshToken();
+    let currentUser =  (JSON.parse(this.getCurrentUser())).name;
+    return this.httpClient.post(this.apiUrl+'/Staffing/api/token?refresh-token=' + refreshToken + "&current-user=" + currentUser, "").pipe(
+      map(
+        data => {
+          this.setBearerToken(data['accessToken']);
+        }
+      )
     )
   }
 }
