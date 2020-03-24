@@ -69,13 +69,16 @@ export class AuthenticationService {
 
   logOut() {
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('access-token');
-    localStorage.removeItem('refresh-token');
-
   }
 
   getRefreshToken() {
-    return localStorage.getItem('refresh-token');
+    let currentUser = JSON.parse(this.getCurrentUser());
+    return currentUser.refreshToken;
+  }
+
+  getBearerToken() {
+    let currentUser = JSON.parse(this.getCurrentUser());
+    return currentUser.accessToken;
   }
 
   getCurrentUser() {
@@ -83,14 +86,16 @@ export class AuthenticationService {
   } 
 
   setBearerToken(accessToken: string) {
-    localStorage.setItem('access-token', accessToken);
+    let currentUser = JSON.parse(this.getCurrentUser());
+    currentUser.accessToken = accessToken;
+    localStorage.setItem('currentUser', currentUser);
   }
 
   getNewAccessToken() {
     return this.httpClient.get(this.apiUrl+'/Staffing/api/token', {
       headers: {
         'refresh-token': this.getRefreshToken(),
-        'current-user': this.getCurrentUser()
+        'current-user': (JSON.parse(this.getCurrentUser())).name
       },
       observe: 'response'
     }).pipe(

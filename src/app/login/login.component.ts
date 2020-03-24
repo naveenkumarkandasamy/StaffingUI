@@ -22,8 +22,6 @@ export class LoginComponent implements OnInit {
   checkLogin() {
     (this.loginservice.authenticate(this.username, this.password).subscribe(
       data => {
-        localStorage.setItem('access-token', data['accessToken']);
-        localStorage.setItem('refresh-token', data['refreshToken']);
         this.router.navigate([''])
         this.invalidLogin = false
       },
