@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { map, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -69,7 +69,34 @@ export class AuthenticationService {
 
   logOut() {
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('Bearer');
+    localStorage.removeItem('access-token');
+    localStorage.removeItem('refresh-token');
 
+  }
+
+  getRefreshToken() {
+    return localStorage.getItem('refresh-token');
+  }
+
+  getCurrentUser() {
+    return localStorage.getItem('currentUser');
+  } 
+
+  setBearerToken(accessToken: string) {
+    localStorage.setItem('access-token', accessToken);
+  }
+
+  getNewAccessToken() {
+    return this.httpClient.get(this.apiUrl+'/Staffing/api/token', {
+      headers: {
+        'refresh-token': this.getRefreshToken(),
+        'current-user': this.getCurrentUser()
+      },
+      observe: 'response'
+    }).pipe(
+      tap((res: HttpResponse<any>) => {
+        this.setBearerToken(res.headers.get('accessToken'));
+      })
+    )
   }
 }
