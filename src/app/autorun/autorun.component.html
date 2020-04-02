@@ -1,9 +1,10 @@
 <div style="position: relative; width:96vw; margin:2vh;">
     <h2>&nbsp;Job Scheduler</h2>
     <form>
-        <app-jobform [formVal]="jobDetails" (requestBodyToSend)="createRequestBody($event)" (validateFlagToSend)="getflag($event)" (fileToSend)="getFile($event)">
+        <app-jobform [formVal]="jobDetails" (requestBodyToSend)="createRequestBody($event)"
+            (validateFlagToSend)="getflag($event)" (fileToSend)="getFile($event)" [data]="expressionRowData" [reset]="reset">
         </app-jobform>
-        <button type="submit"  class="btn btn-success" style="margin-top: 1vh;" (click)="onSubmit()">
+        <button type="submit" class="btn btn-success" style="margin-top: 1vh;" (click)="onSubmit()">
             Submit
         </button> &nbsp;
         <button type="reset" class="btn btn-success" style="margin-top: 1vh;" (click)="onReset()">

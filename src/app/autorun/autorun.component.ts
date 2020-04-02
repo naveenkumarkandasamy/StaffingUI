@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewChild, ElementRef } from '@angular/core';
 import { ConstantsService } from "../services/constants.service";
-import { Model,Efficiency } from '../Models/app.types';
+import { Model, Efficiency } from '../Models/app.types';
 import { HttpClientService } from '../services/http-client.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, Validators,FormBuilder ,FormArray,FormGroup} from '@angular/forms';
+import { FormControl, Validators, FormBuilder, FormArray, FormGroup, NgForm } from '@angular/forms';
 @Component({
   selector: 'autorun',
   templateUrl: './autorun.component.html',
@@ -15,91 +15,103 @@ import { FormControl, Validators,FormBuilder ,FormArray,FormGroup} from '@angula
 export class AutorunComponent implements OnInit {
 
   jobId;
-  resetFlag=1;
-  validateFlag=0;
+  resetFlag = 1;
+  validateFlag = 0;
   expressionFormGroup: FormGroup;
-  clinicianData:any;
-  first=2;
-  cliniciansRowData:any=[];
+  clinicianData: any;
+  cliniciansRowData: any = [];
   cliniciansColumnDefs = [
-    {field : 'Role'},
-    {field : 'Capacity Per Hr'},
-    {field : 'Cost'}
+    { field: 'name' },
+    { field: 'patientsPerHour' },
+    { field: 'cost' }
   ];
-  cliniciansRowData1:any=[];
+  cliniciansRowData1: any = [];
+  expressionRowData: any = [];
+  expressionRowData2: any = [];
   cliniciansColumnDefs1 = [
-    {field : 'Role'},
-    {field : 'FirstHour'},
-    {field : 'MidHour'},
-    {field : 'LastHour'}
+    { field: 'name' },
+    { field: 'firstHour' },
+    { field: 'midHour' },
+    { field: 'lastHour' }
   ];
-  constructor(private fb: FormBuilder,private constantsService: ConstantsService, private httpClientService: HttpClientService,
+  defaultData: any;
+  reset:boolean=false;
+
+  constructor(private fb: FormBuilder, private constantsService: ConstantsService, private httpClientService: HttpClientService,
     private toastr: ToastrService, private _Activatedroute: ActivatedRoute) { }
 
   ngOnInit(): void {
+
     this._Activatedroute.paramMap.subscribe(params => {
       this.jobId = params.get('id');
     });
     if (this.jobId != null) {
       this.httpClientService.getJobDetailsByid(this.jobId).subscribe(data => {
         this.editData = data;
-        this.cliniciansRowData=this.createCliniciansData(this.editData.clinicians);
-        this.cliniciansRowData1=this.createEfficiencyData(this.editData.clinicians);
-        console.log(this.cliniciansRowData);
-        this.createJobDetails(this.editData,this.resetFlag);
-        
-        console.log(this.editData);
+        this.cliniciansRowData = this.createCliniciansData(this.editData.clinicians);
+        this.cliniciansRowData1 = this.createEfficiencyData(this.editData.clinicians);
+        this.expressionRowData = this.editData.clinicians;
+        this.expressionRowData2 = this.createExpressionRowData(this.editData.clinicians);
+        this.createJobDetails(this.editData, this.resetFlag);
       });
     }
     else {
-      this.createJobDetails(this.editData,this.resetFlag);
+      this.createJobDetails(this.editData, this.resetFlag);
     }
-    this.clinicianData = ['physician', 'app', 'scribe'];
-    this.expressionFormGroup = this.fb.group({
-      expressionForm: this.fb.array([
-        this.initialization()
-      ])
-    });
+
+
   }
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
-  inputFile: File; 
-
+  inputFile: File;
   model1: Model[] = this.constantsService.model;
-
   responseBody: any = { "message": "" };
   requestBody: any;
-  is: boolean = false;
   jobDetails: any;
 
-  createCliniciansData(data : any) {
+  createCliniciansData(data: any) {
     for (let index = 0; index < data.length; index++) {
-      this.cliniciansRowData.push({ 'Role': data[index].name, 'Capacity Per Hr' : data[index].patientsPerHour, 'Cost': data[index].cost});
-      console.log("as",data[index].name,data[index].patientsPerHour,data[index].cost);
+      this.cliniciansRowData.push({ 'name': data[index].name, 'patientsPerHour': data[index].patientsPerHour, 'cost': data[index].cost });
     }
-     return this.cliniciansRowData;
+    return this.cliniciansRowData;
   }
-  createEfficiencyData(data : any) {
+  createEfficiencyData(data: any) {
     for (let index = 0; index < data.length; index++) {
-      this.cliniciansRowData1.push({ 'Role': data[index].name, 'FirstHour' : data[index].capacity[0], 'MidHour': data[index].capacity[1], 'LastHour':data[index].capacity[2]});
-      console.log("as1",data[index].name,data[index].capacity[0],data[index].capacity[1],data[index].capacity[2]);
+      this.cliniciansRowData1.push({ 'name': data[index].name, 'firstHour': data[index].capacity[0], 'midHour': data[index].capacity[1], 'lastHour': data[index].capacity[2] });
     }
-     return this.cliniciansRowData1;
+
+    return this.cliniciansRowData1;
+    
+  }
+  createExpressionRowData(data: any) {
+    for (let index1 = 0; index1 < data.length; index1++) {
+      for (let j = 0; j < data.length; j++) {
+        if (index1 == data[j].expressions[0]) {
+          if (data[j].expressions.length == 1) {
+            this.expressionRowData2.push(data[j].name);
+          }
+          for (let index2 = 1; index2 < data[j].expressions.length; index2++) {
+
+            this.expressionRowData2.push(data[j].name + "," + data[j].expressions[index2]);
+          }
+        }
+      }
+    }
+    return this.expressionRowData2;
   }
   editData: any = {
     "name": "",
     "shiftLengthPreferences": "8, 6, 4",
     "lowerUtilizationFactor": 0.85,
     "upperUtilizationFactor": 1.10,
-    "notAllocatedStartTime":1,
-     "notAllocatedEndTime":6,
-     "patientHourWait":2,
-     "first":  2,
+    "notAllocatedStartTime": 1,
+    "notAllocatedEndTime": 6,
+    "patientHourWait": 2,
     "clinicians": null,
     "cronExpression": "",
-    "model":"",
-    "expressionModel":"",
+    "model": "",
+    "expressionModel": "",
     "inputFormat": "",
     "inputFtpDetails": {
       "fileUrl": "",
@@ -119,7 +131,7 @@ export class AutorunComponent implements OnInit {
     "outputEmailId": "",
     "status": "",
   };
-  
+
   initialization() {
     return this.fb.group({
       cliniciansDropDown: this.fb.control(''),
@@ -134,8 +146,8 @@ export class AutorunComponent implements OnInit {
   }
   createRequestBody($event) {
     this.requestBody = $event;
-    if(this.jobId!=null){
-      this.requestBody['id']= this.jobId;
+    if (this.jobId != null) {
+      this.requestBody['id'] = this.jobId;
     }
   }
 
@@ -143,20 +155,20 @@ export class AutorunComponent implements OnInit {
     this.validateFlag = $event;
   }
 
-  getFile($event){
+  getFile($event) {
     this.inputFile = $event;
-  }  
+  }
 
-  createJobDetails(editData,resetFlag) {
+  createJobDetails(editData, resetFlag) {
 
     this.jobDetails = {
       "jobName": "",
       "shiftLength": "8, 6, 4",
       "lowerUtilization": 0.85,
       "upperUtilization": 1.10,
-      "notAllocatedStartTime":1,
-      "notAllocatedEndTime":6,
-      "patientHourWait":2,
+      "notAllocatedStartTime": 1,
+      "notAllocatedEndTime": 6,
+      "patientHourWait": 2,
       "model": "",
       "cronExpression": "",
       "inputFormat": "",
@@ -174,62 +186,83 @@ export class AutorunComponent implements OnInit {
       "expression2": "",
       "expression3": "",
       "columnDefs": "",
-      "firstDropDown":false,
-      "selected":false,
-      "clinicianData":"",
-      "clinicianRemaining":"",
-      "alreadySelectedClinician":"",
-      "operator":"",
+      "firstDropDown": false,
+      "selected": false,
+      "clinicianData": "",
+      "clinicianRemaining": "",
+      "alreadySelectedClinician": "",
+      "operator": "",
+      "isRequiredToDelete": "",
+      "expressionRowData": "",
 
     }
+    this.jobDetails.jobName = (this.jobId == null || resetFlag == 0) ? "" : editData.name;
+    this.jobDetails.shiftLength = (this.jobId == null || resetFlag == 0) ? ["8", "6", "4"] : editData.shiftLengthPreferences;
+    this.jobDetails.lowerUtilization = (this.jobId == null || resetFlag == 0) ? 0.85 : editData.lowerUtilizationFactor;
+    this.jobDetails.upperUtilization = (this.jobId == null || resetFlag == 0) ? 1.10 : editData.upperUtilizationFactor;
+    this.jobDetails.notAllocatedStartTime = (this.jobId == null || resetFlag == 0) ? 1 : editData.notAllocatedStartTime;
+    this.jobDetails.notAllocatedEndTime = (this.jobId == null || resetFlag == 0) ? 6 : editData.notAllocatedEndTime;
+    this.jobDetails.patientHourWait = (this.jobId == null || resetFlag == 0) ? 2 : editData.patientHourWait;
+    this.jobDetails.model = (this.jobId == null || resetFlag == 0 || this.reset==true) ? JSON.parse(JSON.stringify(this.constantsService.model)) : this.cliniciansRowData;
+    this.jobDetails.efficiencyModel = (this.jobId == null || resetFlag == 0 || this.reset==true) ? JSON.parse(JSON.stringify(this.constantsService.efficiencyModel)) : this.cliniciansRowData1;
 
-    this.jobDetails.jobName = (this.jobId==null || resetFlag==0)? "" : editData.name;
-    this.jobDetails.shiftLength = (this.jobId==null || resetFlag==0)? ["8", "6", "4"] :editData.shiftLengthPreferences;
-    this.jobDetails.lowerUtilization = (this.jobId==null || resetFlag==0)? 0.85 :editData.lowerUtilizationFactor;
-    this.jobDetails.upperUtilization = (this.jobId==null || resetFlag==0)? 1.10 :editData.upperUtilizationFactor;
-    this.jobDetails.notAllocatedStartTime = (this.jobId==null || resetFlag==0)? 1 :editData.notAllocatedStartTime;
-    this.jobDetails.notAllocatedEndTime = (this.jobId==null || resetFlag==0)? 6 :editData.notAllocatedEndTime;
-    this.jobDetails.patientHourWait = (this.jobId==null || resetFlag==0)? 2 :editData.patientHourWait;
-    this.jobDetails.model =(this.jobId==null || resetFlag==0)? JSON.parse(JSON.stringify(this.constantsService.model)) : this.cliniciansRowData;
-    this.jobDetails.efficiencyModel =(this.jobId==null || resetFlag==0)? JSON.parse(JSON.stringify(this.constantsService.efficiencyModel)): this.cliniciansRowData1;
-    
-    this.jobDetails.firstDropDown= false;
-    this.jobDetails.selected= false;
-    this.jobDetails.clinicianData = ['physician', 'app', 'scribe'];
-    this.jobDetails.clinicianRemaining = [['physician', 'app', 'scribe']]
-    this.jobDetails.alreadySelectedClinician = [[]];
-    this.jobDetails.operator = ['*'];
-    this.jobDetails.expressionFormGroup="";
-    this.jobDetails.expressionFormGroup = this.fb.group({
-      expressionForm: this.fb.array([
-        this.initialization()
-      ])
-    });
-    this.jobDetails.isRead = [];
-    this.jobDetails.isRequiredToAddExpForm=[];
-    
+    if (this.jobId == null || resetFlag == 0 || this.reset==true) {
+      this.jobDetails.isRequiredToDelete = false;
+      this.jobDetails.selected = false;
+      this.jobDetails.firstDropDown = false;
+      this.jobDetails.clinicianData = ['physician', 'app', 'scribe'];
+      this.jobDetails.selectedExp = "";
+      this.jobDetails.clinicianRemaining = [['physician', 'app', 'scribe']];
+      this.jobDetails.alreadySelectedClinician = [[]];
+      this.jobDetails.operator = ['*'];
+      this.jobDetails.expressionFormGroup = this.fb.group({
+        expressionForm: this.fb.array([
+        ])
+      });
+      this.jobDetails.isRead = [[]];
+      this.jobDetails.isRequiredToAddExpForm = [];
+    }
+    else {
 
-    this.jobDetails.inputFormat = (this.jobId==null || resetFlag==0)? -1 :editData.inputFormat;
+      this.jobDetails.firstDropDown = false;
+      this.jobDetails.selected = true;
+      this.jobDetails.selectedExp = this.expressionRowData2[0];
+      this.jobDetails.expressionFormGroup = this.fb.group({
+        expressionForm: this.fb.array([
+
+        ])
+      });
+      this.jobDetails.clinicianData = ['physician', 'app', 'scribe'];
+      this.jobDetails.clinicianRemaining = [[]];
+      this.jobDetails.alreadySelectedClinician = [[]];
+      this.jobDetails.isRead = [[]];
+      this.jobDetails.operator = ['*'];
+      this.jobDetails.firstDropDown = true;
+      this.jobDetails.isRequiredToDelete = true;
+      this.jobDetails.isRequiredToAddExpForm = [];
+
+    }
+    this.jobDetails.inputFormat = (this.jobId == null || resetFlag == 0) ? -1 : editData.inputFormat;
     if (this.editData.inputFtpDetails != null) {
-      this.jobDetails.inputFtpUrl = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.fileUrl;
-      this.jobDetails.inputFtpUsername = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.username;
-      this.jobDetails.inputFtpPassword = (this.jobId==null || resetFlag==0)? null :editData.inputFtpDetails.password;
+      this.jobDetails.inputFtpUrl = (this.jobId == null || resetFlag == 0) ? null : editData.inputFtpDetails.fileUrl;
+      this.jobDetails.inputFtpUsername = (this.jobId == null || resetFlag == 0) ? null : editData.inputFtpDetails.username;
+      this.jobDetails.inputFtpPassword = (this.jobId == null || resetFlag == 0) ? null : editData.inputFtpDetails.password;
     }
 
-    this.jobDetails.outputFormat = (this.jobId==null || resetFlag==0)? -1 :editData.outputFormat;
+    this.jobDetails.outputFormat = (this.jobId == null || resetFlag == 0) ? -1 : editData.outputFormat;
     if (this.editData.outputFtpDetails != null) {
-      this.jobDetails.outputFtpUrl = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.fileUrl;
-      this.jobDetails.outputFtpUsername = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.username;
-      this.jobDetails.outputFtpPassword = (this.jobId==null || resetFlag==0)? null :editData.outputFtpDetails.password;
+      this.jobDetails.outputFtpUrl = (this.jobId == null || resetFlag == 0) ? null : editData.outputFtpDetails.fileUrl;
+      this.jobDetails.outputFtpUsername = (this.jobId == null || resetFlag == 0) ? null : editData.outputFtpDetails.username;
+      this.jobDetails.outputFtpPassword = (this.jobId == null || resetFlag == 0) ? null : editData.outputFtpDetails.password;
     }
-    
-    this.jobDetails.cronExpression = (this.jobId==null || resetFlag==0)? null :editData.cronExpression;
-    this.jobDetails.emailId = (this.jobId==null || resetFlag==0)? "" :editData.outputEmailId;
-    this.jobDetails.jobStatus = (this.jobId==null || resetFlag==0)? "SCHEDULED" :editData.status;
-    this.jobDetails.columnDefs = (this.jobId==null || resetFlag==0)? [
-      { headerName: 'Role', field: 'name', editable: true },
+
+    this.jobDetails.cronExpression = (this.jobId == null || resetFlag == 0) ? null : editData.cronExpression;
+    this.jobDetails.emailId = (this.jobId == null || resetFlag == 0) ? "" : editData.outputEmailId;
+    this.jobDetails.jobStatus = (this.jobId == null || resetFlag == 0) ? "SCHEDULED" : editData.status;
+    this.jobDetails.columnDefs = (this.jobId == null || resetFlag == 0) ? [
+      { headerName: 'name', field: 'name', editable: true },
       {
-        headerName: 'Capacity Per Hr', valueGetter: function (params) {
+        headerName: 'patientsPerHour', valueGetter: function (params) {
           return params.data.patientsPerHour;
         },
         valueSetter: function (params) {
@@ -242,7 +275,7 @@ export class AutorunComponent implements OnInit {
         }
       },
       {
-        headerName: 'Cost',
+        headerName: 'cost',
         valueGetter: function (params) {
           return params.data.cost;
         },
@@ -255,11 +288,11 @@ export class AutorunComponent implements OnInit {
           }
         },
       }
-    ]: this.cliniciansColumnDefs;
-    this.jobDetails.columnDefs1 = (this.jobId==null || resetFlag==0)? [
-      { headerName: 'Role', field: 'name', editable: true },
+    ] : this.cliniciansColumnDefs;
+    this.jobDetails.columnDefs1 = (this.jobId == null || resetFlag == 0) ? [
+      { headerName: 'name', field: 'name', editable: true },
       {
-        headerName: 'FirstHour', valueGetter: function (params) {
+        headerName: 'firstHour', valueGetter: function (params) {
           return params.data.firstHour;
         },
         valueSetter: function (params) {
@@ -272,7 +305,7 @@ export class AutorunComponent implements OnInit {
         }
       },
       {
-        headerName: 'MidHour',
+        headerName: 'midHour',
         valueGetter: function (params) {
           return params.data.midHour;
         },
@@ -286,7 +319,7 @@ export class AutorunComponent implements OnInit {
         },
       },
       {
-        headerName: 'LastHour',
+        headerName: 'lastHour',
         valueGetter: function (params) {
           return params.data.lastHour;
         },
@@ -299,23 +332,25 @@ export class AutorunComponent implements OnInit {
           }
         },
       }
-    ]:this.cliniciansColumnDefs1;
-  
-  }
-  
-  onReset() {
-    this.resetFlag=0;
-    this.createJobDetails(this.editData,this.resetFlag);
-  }
+    ] : this.cliniciansColumnDefs1;
 
+  }
+  onReset() {
+    this.resetFlag = 0;
+    this.reset=true;
+    this.createJobDetails(this.editData, this.resetFlag);
+  }
+  removeDuplicate(array) {
+    return array.filter((a, b) => array.indexOf(a) === b);
+  }
   onSubmit() {
-    if(this.validateFlag ==0){
-    console.log(this.requestBody);
-    this.requestBody.status = "SCHEDULED";
-    this.createAndPostJob();
+    if (this.validateFlag == 0) {
+      console.log(this.requestBody);
+      this.requestBody.status = "SCHEDULED";
+      this.createAndPostJob();
     }
-    else{
-       console.log(this.requestBody);
+    else {
+      console.log(this.requestBody);
       this.toastr.error("Please Enter Valid Field Values");
     }
   }

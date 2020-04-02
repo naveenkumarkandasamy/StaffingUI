@@ -4,7 +4,7 @@
             <label class="col-sm">Job Name</label></mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <input class="col-sm" required type="text" [(ngModel)]="formVal.jobName" name="jobName"
-                [formControl]="jobName" />
+                (blur)="sendresponse()" [formControl]="jobName" />
             <mat-error *ngIf="jobName.hasError('required')">Enter a Valid Name {{getFlagStatus()}}</mat-error>
         </mat-grid-tile>
 
@@ -12,8 +12,8 @@
             <label class="col-sm">Enter comma seperted shift preferences</label></mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <input class="col-sm" type="text" title="Enter comma separated numbers" [(ngModel)]="formVal.shiftLength"
-                pattern="^[1-9][0-9]?(,[1-9][0-9]?)*$" name="shiftLength" 
-                 [formControl]="shiftLength" />
+                pattern="^[1-9][0-9]?(,[1-9][0-9]?)*$" name="shiftLength" (blur)="sendresponse()"
+                [formControl]="shiftLength" />
             <mat-error *ngIf="shiftLength.hasError('pattern')">Enter comma separated numbers</mat-error>
         </mat-grid-tile>
 
@@ -21,7 +21,7 @@
             <label class="col-sm">Enter lower limit for utilization</label></mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <input class="col-sm" type="number" [(ngModel)]="formVal.lowerUtilization" placeholder="0.85" step="0.05"
-                min="0.5" max="1.1" name="lowerUtilization"  [formControl]="lowerUtilization" />
+                min="0.5" max="1.1" name="lowerUtilization" (blur)="sendresponse()" [formControl]="lowerUtilization" />
             <mat-error *ngIf="lowerUtilization.hasError('min') || lowerUtilization.hasError('max')">Enter value in range
                 (0.5-1.1) {{getFlagStatus()}}</mat-error>
         </mat-grid-tile>
@@ -30,7 +30,7 @@
             <label class="col-sm">Enter upper limit for utilization</label></mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <input class="col-sm" type="number" [(ngModel)]="formVal.upperUtilization" placeholder="1.10" step="0.05"
-                min="0.8" max="1.5" name="upperUtilization"  [formControl]="upperUtilization" />
+                min="0.8" max="1.5" name="upperUtilization" (blur)="sendresponse()" [formControl]="upperUtilization" />
             <mat-error *ngIf="upperUtilization.hasError('min') || upperUtilization.hasError('max')">Enter value in range
                 (0.8-1.5) {{getFlagStatus()}}</mat-error>
         </mat-grid-tile>
@@ -38,36 +38,44 @@
             <label class="col-sm">Enter Restriction start time</label></mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <input class="col-sm" type="number" [(ngModel)]="formVal.notAllocatedStartTime" placeholder="1" step="1"
-                min="0" max="23" name="notAllocatedStartTime" [formControl]="notAllocatedStartTime" />
-            <mat-error *ngIf="notAllocatedStartTime.hasError('min') || notAllocatedStartTime.hasError('max')">Enter value in range
+                min="0" max="23" name="notAllocatedStartTime" (blur)="sendresponse()"
+                [formControl]="notAllocatedStartTime" />
+            <mat-error *ngIf="notAllocatedStartTime.hasError('min') || notAllocatedStartTime.hasError('max')">Enter
+                value in range
                 (0-23) {{getFlagStatus()}}</mat-error>
         </mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <label class="col-sm">Enter Restriction End time</label></mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <input class="col-sm" type="number" [(ngModel)]="formVal.notAllocatedEndTime" placeholder="6" step="1"
-                min="0" max="23" name="notAllocatedEndTime"  [formControl]="notAllocatedEndTime" />
-            <mat-error *ngIf="notAllocatedEndTime.hasError('min') || notAllocatedEndTime.hasError('max')">Enter value in range
+                min="0" max="23" name="notAllocatedEndTime" (blur)="sendresponse()"
+                [formControl]="notAllocatedEndTime" />
+            <mat-error *ngIf="notAllocatedEndTime.hasError('min') || notAllocatedEndTime.hasError('max')">Enter value in
+                range
                 (0-23) {{getFlagStatus()}}</mat-error>
         </mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <label class="col-sm">Enter number of PatientHourWait</label></mat-grid-tile>
         <mat-grid-tile class="script-menu">
-            <input class="col-sm" type="number" [(ngModel)]="formVal.patientHourWait" placeholder="2" step="1"
-                min="1" max="167" name="patientHourWait"  [formControl]="patientHourWait" />
+            <input class="col-sm" type="number" name="patientHourWait" [(ngModel)]="formVal.patientHourWait"
+                placeholder="2" step="1" min="1" max="167" (blur)="sendresponse()" [formControl]="patientHourWait" />
             <mat-error *ngIf="patientHourWait.hasError('min') || patientHourWait.hasError('max')">Enter value in range
                 (1-167) {{getFlagStatus()}}</mat-error>
         </mat-grid-tile>
-        
+
     </mat-grid-list>
-    
+
     <label class="col-sm">Clinician Relationship</label>
-   <form>
-    <select  id="id" [disabled]="formVal.firstDropDown" (change)="afterSelectedPriorClinician($event.target)">
-        <option  >Select</option> 
-        <option *ngFor="let a of formVal.clinicianData">{{a}}</option>
-    </select> 
-   </form>
+
+
+
+    <select name="clinicianId" [(ngModel)]="formVal.selectedExp" [disabled]="formVal.firstDropDown" (change)="afterSelectedPriorClinician(formVal.
+    selectedExp)">
+        <option value="" hidden>Select</option>
+        <option *ngFor="let listItem of formVal.clinicianData" [ngValue]="listItem">{{ listItem}}</option>
+    </select>
+
+
 
     <form *ngIf="formVal.selected" [formGroup]="formVal.expressionFormGroup">
 
@@ -75,17 +83,20 @@
             *ngFor="let itr of formVal.expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
             <div [formGroupName]="i">
 
-                <select formControlName="cliniciansDropDown" (change)="readingData2(i)">
-                    <option value="" hidden>Select</option>
+                <select [value]="selected1[i].cliniciansDropDown" formControlName="cliniciansDropDown"
+                    (change)="readingData2(i)">
+                    <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.clinicianRemaining[i]">{{a}}</option>
                 </select>
-                <input type="number" placeholder="1" step="1" min="0" max="100" formControlName="numberOfClinician">
-                <select formControlName="operatorChosen">
-                    <option value="" hidden>Select</option>
+                <input [value]="selected2[i].numberOfClinician" type="number" placeholder="1" step="1" min="0" max="100"
+                    formControlName="numberOfClinician">
+                <select [value]="selected3[i].operatorChosen" formControlName="operatorChosen">
+                    <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.operator ; let i = index">{{a}}</option>
                 </select>
-                <select formControlName="selectedClinicianDropDown">
-                    <option value="" hidden>Select</option>
+                <select [value]="selected4[i].selectedClinicianDropDown" name="selectedClinicianDropDownId"
+                    formControlName="selectedClinicianDropDown">
+                    <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.alreadySelectedClinician[i] ; let i = index">{{a}}</option>
                 </select>
 
@@ -94,29 +105,29 @@
                     (click)="addingExpressionForm(i)">ADD</button>
                 <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
                     (click)="notAddingExpressionForm(i)">No</button>
-
-
             </div>
         </div>
     </form>
-
-
+    <button type="submit" *ngIf="formVal.isRequiredToDelete" (click)="removingExpression()">Delete</button>
+    <button type="submit" *ngIf="toAddExp" (click)="addingExpression()">Add</button>
     <br />
-    
+
     <label>Coverage Summary</label>
     <ag-grid-angular domLayout="autoHeight" style="width: 44.1vw; height: 20vh;" class="ag-theme-balham"
-        [rowData]="formVal.model" [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef" >
+        [rowData]="formVal.model" [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef"
+        (blur)="sendresponse()">
     </ag-grid-angular>
     <br />
     <label>Clinician Efficiency</label>
     <ag-grid-angular domLayout='autoHeight' style="width: 50vw; height: 20vh;" class="ag-theme-balham"
-        [rowData]="formVal.efficiencyModel" [columnDefs]="formVal.columnDefs1" [defaultColDef]="defaultColDef">
+        [rowData]="formVal.efficiencyModel" [columnDefs]="formVal.columnDefs1" [defaultColDef]="defaultColDef"
+        (blur)="sendresponse()">
     </ag-grid-angular>
     <br />
     <div style="width: 30vh;" class="form-group">
         <label>Arrival Data format</label>
         <select class="form-control mt-2" required id="inputType" name="inputFormat" #input_Format
-            [(ngModel)]="formVal.inputFormat" >
+            [(ngModel)]="formVal.inputFormat" (blur)="sendresponse()">
             <option value="-1">Select Input Format</option>
             <option [value]="type" *ngFor="let type of inputTypes">
                 {{ type }}
@@ -130,7 +141,8 @@
                 <label class="col-sm">FTP URL</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <input class="col-sm" required type="text" [(ngModel)]="formVal.inputFtpUrl" id="inputFtpUrl"
-                    placeholder="ftp://myname@host.dom/2Fetc" name="inputFtpUrl"  [formControl]="inputFtpUrl"/>
+                    placeholder="ftp://myname@host.dom/2Fetc" name="inputFtpUrl" (blur)="sendresponse()"
+                    [formControl]="inputFtpUrl" />
                 <mat-error *ngIf="inputFtpUrl.hasError('required')">Enter valid FTP URL {{getFlagStatus()}}</mat-error>
             </mat-grid-tile>
 
@@ -138,16 +150,19 @@
                 <label class="col-sm">FTP Username</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <input class="col-sm" required type="text" [(ngModel)]="formVal.inputFtpUsername" id="inputFtpUsername"
-                    placeholder="" name="inputFtpUsername"  [formControl]="inputFtpUsername" />
-                <mat-error *ngIf="inputFtpUsername.hasError('required')">Enter valid FTP Username {{getFlagStatus()}}</mat-error>
+                    placeholder="" name="inputFtpUsername" (blur)="sendresponse()" [formControl]="inputFtpUsername" />
+                <mat-error *ngIf="inputFtpUsername.hasError('required')">Enter valid FTP Username {{getFlagStatus()}}
+                </mat-error>
             </mat-grid-tile>
 
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">FTP Password</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <input class="col-sm" required type="text" [(ngModel)]="formVal.inputFtpPassword" id="inputFtpPassword"
-                    placeholder="" name="inputFtpPassword"  [formControl]="inputFtpPassword"/><br/>
-                <mat-error *ngIf="inputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+                    placeholder="" name="inputFtpPassword" (blur)="sendresponse()"
+                    [formControl]="inputFtpPassword" /><br />
+                <mat-error *ngIf="inputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}
+                </mat-error>
             </mat-grid-tile>
         </mat-grid-list>
     </div>
@@ -155,7 +170,7 @@
     <div *ngIf="formVal.inputFormat == 'DATA_FILE'">
         <label for="file">Choose File</label>
         <input type="file" required id="file" #fileInput (change)="handleFileInput($event.target.files)"
-            (blur)="sendFile()" [formControl]="inputVFile" />
+            (blur)="sendresponse()" (blur)="sendFile()" [formControl]="inputVFile" />
         <div *ngIf="inputVFile.hasError('required')" class="error" style="color:red;">
             Choose File {{getFlagStatus()}}
         </div>
@@ -165,7 +180,7 @@
     <div style="width: 30vh;">
         <label>Output Data format</label>
         <select class="form-control mt-2" id="outputType" name="outputFormat" #output_Format
-            [(ngModel)]="formVal.outputFormat" >
+            [(ngModel)]="formVal.outputFormat" (blur)="sendresponse()">
             (change)="outputformatChanged(outputFormat.value)">
             <option value="-1">Select Output Format</option>
             <option [value]="type" *ngFor="let type of outputTypes">
@@ -180,24 +195,30 @@
                 <label class="col-sm">FTP URL</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <input class="col-sm" required type="text" [(ngModel)]="formVal.outputFtpUrl" id="outputFtpUrl"
-                    placeholder="ftp://myname@host.dom/2Fetc" name="outputFtpUrl" [formControl]="outputFtpUrl"/>
-                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+                    placeholder="ftp://myname@host.dom/2Fetc" name="outputFtpUrl" (blur)="sendresponse()"
+                    [formControl]="outputFtpUrl" />
+                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}
+                </mat-error>
             </mat-grid-tile>
 
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">FTP Username</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <input class="col-sm" required type="text" [(ngModel)]="formVal.outputFtpUsername"
-                    id="outputFtpUsername" placeholder="" name="outputFtpUsername"  [formControl]="outputFtpUsername"/>
-                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+                    id="outputFtpUsername" placeholder="" name="outputFtpUsername" (blur)="sendresponse()"
+                    [formControl]="outputFtpUsername" />
+                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}
+                </mat-error>
             </mat-grid-tile>
 
             <mat-grid-tile class="script-menu">
                 <label class="col-sm">FTP Password</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <input class="col-sm" required type="text" [(ngModel)]="formVal.outputFtpPassword"
-                    id="outputFtpPassword" placeholder="" name="outputFtpPassword" (blur)="sendresponse()" [formControl]="outputFtpPassword"/>
-                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+                    id="outputFtpPassword" placeholder="" name="outputFtpPassword" (blur)="sendresponse()"
+                    [formControl]="outputFtpPassword" />
+                <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}
+                </mat-error>
             </mat-grid-tile>
         </mat-grid-list>
     </div>
@@ -208,8 +229,9 @@
                 <label class="col-sm">Email ID</label></mat-grid-tile>
             <mat-grid-tile class="script-menu">
                 <input class="col-sm" required type="email" [(ngModel)]="formVal.emailId" id="emailId" placeholder=""
-                    name="emailId" (blur)="sendresponse()" [formControl]="outputEmail"/>
-                <mat-error *ngIf="outputEmail.hasError('required') || outputEmail.hasError('email')">Enter valid Email {{getFlagStatus()}}</mat-error>
+                    name="emailId" (blur)="sendresponse()" [formControl]="outputEmail" />
+                <mat-error *ngIf="outputEmail.hasError('required') || outputEmail.hasError('email')">Enter valid Email
+                    {{getFlagStatus()}}</mat-error>
             </mat-grid-tile>
         </mat-grid-list>
     </div>
@@ -219,8 +241,8 @@
             <label class="col-sm">Cron expression</label></mat-grid-tile>
         <mat-grid-tile class="script-menu">
             <input class="col-sm" type="text" required [(ngModel)]="formVal.cronExpression" name="cronExpression"
-                placeholder="0 0 12 ? * SAT *"  (blur)="sendresponse()" [formControl]="cronExp" /><img src="assets\clock.png"
-                (click)="openDialog()">
+                placeholder="0 0 12 ? * SAT *" (blur)="sendresponse()" [formControl]="cronExp" /><img
+                src="assets\clock.png" (click)="openDialog()">
             <mat-error *ngIf="cronExp.hasError('required')">Enter Cron Expression {{getFlagStatus()}}</mat-error>
         </mat-grid-tile>
     </mat-grid-list>

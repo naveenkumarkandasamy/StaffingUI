@@ -16,10 +16,11 @@ import { FormGroup, FormControl, FormArray, FormBuilder } from '@angular/forms';
 })
 
 export class MainFormComponent implements OnInit {
+
   firstDropDown: boolean = false;
   expressionFormGroup: FormGroup;
   clinicianData = [];
-  isaddbutton: boolean = false;
+  selectedExp: any;
   initiallySelected: String;
   clinicianRemaining = [][10];
   operator = [];
@@ -30,6 +31,8 @@ export class MainFormComponent implements OnInit {
   isRead = [];
   isRequiredToAddExpForm = [];
   expression: String;
+  num: any;
+  itr: any;
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
@@ -47,7 +50,8 @@ export class MainFormComponent implements OnInit {
   notAllocatedEndTime = 6;
   patientHourWait = "";
   model: Model[] = this.constantsService.model;
-
+  isRequiredToDelete: boolean;
+  toAddExp: boolean;
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
     "lowerLimitFactor": 0.85, // *** ADD UPPER LIMIT
@@ -93,23 +97,24 @@ export class MainFormComponent implements OnInit {
     resizable: true
   }
 
-
   constructor(private fb: FormBuilder, private router: Router, private http: HttpClient,
     private dataService: DataService, private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService) { }
 
   ngOnInit() {
+
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
     this.clinicianData = ['physician', 'app', 'scribe']
     for (var i = 0; i < this.model.length; i++) {
       this.model[i].expressions = [];
     }
+
     this.clinicianRemaining = [['physician', 'app', 'scribe']]
     this.alreadySelectedClinician = [[]];
     this.operator = ['*'];
     this.expressionFormGroup = this.fb.group({
       expressionForm: this.fb.array([
-        this.initialization()
+
       ])
     });
   }
@@ -132,108 +137,85 @@ export class MainFormComponent implements OnInit {
   }
 
   afterSelectedPriorClinician(value) {
-    let index = value.options.selectedIndex - 1;
-    this.clinicianRemaining[0].splice(index, 1);
-    this.alreadySelectedClinician[0].push(value.value);
-    this.isRead[0] = false;
-    this.initiallySelected = value.value;
+
+    this.clinicianRemaining[0] = this.clinicianData.slice(0);
+    var index1 = this.clinicianRemaining[0].indexOf(value);
+    this.clinicianRemaining[0].splice(index1, 1);
+    this.alreadySelectedClinician[0] = [];
+    this.alreadySelectedClinician[0].push(value);
     this.selected = true;
     this.firstDropDown = true;
+    this.itr = 0;
+    this.num = this.clinicianData.length;
+    this.isRead[0] = false;
+    this.num = this.num * (this.num + 1) / 2;
+    for (let i = 0; i < this.num; i++) {
+      this.isRequiredToAddExpForm[i] = true;
+      this.addMoreRequired[i] = false;
+    }
+    for (let i = 0; i < this.model.length; i++) {
+      this.model[i].expressions = [];
+    }
+    for (let i = 0; i < this.model.length; i++) {
+      if (this.model[i].name == value) {
+        this.model[i].expressions.push(this.itr);
+      }
+    }
+    this.isRequiredToDelete = true;
+    if (this.expressionFormGroup.value.expressionForm.length - 1 == -1) {
+      const control = <FormArray>this.expressionFormGroup.controls['expressionForm'];
+      control.push(this.initialization());
+
+    }
   }
   readingData(index) {
     let clinician = this.expressionFormGroup.value.expressionForm[index].cliniciansDropDown;
     let selectedClinician = this.expressionFormGroup.value.expressionForm[index].selectedClinicianDropDown;
-
     if (clinician !== '' && this.expressionFormGroup.value.expressionForm[index].numberOfClinician !== '' && this.expressionFormGroup.value.expressionForm[index].operatorChosen !== '' && selectedClinician !== '') {
+      for (let i = 0; i < this.model.length; i++) {
+        if (this.model[i].name == clinician) {
+          if (this.model[i].expressions.length == 0) {
+            this.itr++;
+            this.model[i].expressions.push(this.itr);
+
+          }
+          this.model[i].expressions.push(this.expressionFormGroup.value.expressionForm[index].numberOfClinician + " " + this.expressionFormGroup.value.expressionForm[index].operatorChosen + " " + selectedClinician);
+        }
+      }
       this.isRead[index] = true;
       this.isRead[index + 1] = false;
-      this.expression = this.expressionFormGroup.value.expressionForm[index].numberOfClinician + " " + this.expressionFormGroup.value.expressionForm[index].operatorChosen + " " + selectedClinician;
-      if (clinician == 'physician') {
-        var iterator = this.clinicianData.indexOf(clinician);
-        this.model[iterator].expressions.push(this.expression);
-      }
-      if (clinician == 'app') {
-        var iterator = this.clinicianData.indexOf(clinician);
-        this.model[iterator].expressions.push(this.expression);
-      }
-      if (clinician == 'scribe') {
-        var iterator = this.clinicianData.indexOf(clinician);
-        this.model[iterator].expressions.push(this.expression);
-      }
-      if (this.alreadySelectedClinician[index].length <= 1) {
-        this.removingSelectedClinician(index, clinician);
 
-        this.alreadySelectedClinician[index + 1] = this.alreadySelectedClinician[index].slice();
-        this.alreadySelectedClinician[index + 1].push(clinician);
-
-        if (this.clinicianRemaining[index + 1].length === 0) {
-          for (var i = 0; i < this.clinicianData.length; i++) {
-            this.checking = false;
-            for (var j = 0; j <= index; j++) {
-              if (this.expressionFormGroup.value.expressionForm[j].cliniciansDropDown === this.clinicianData[i]) {
-                this.checking = true;
-                break;
-              }
-            }
-            if (!this.checking) {
-              this.clinicianRemaining[index + 1].push(this.clinicianData[i]);
-            }
-          }
-
-          this.clinicianRemaining[index + 1].splice(this.clinicianRemaining[index + 1].find(x => x == this.initiallySelected), 1);
-          this.alreadySelectedClinician[index + 1].push(this.initiallySelected);
-        }
-        if (this.clinicianRemaining[index + 1].length !== 0 && this.alreadySelectedClinician[index].length <= 1) {
-          this.alreadySelectedClinician[index + 1] = [];
-          this.alreadySelectedClinician[index + 1].push(this.initiallySelected);
-          for (var j = 0; j <= index; j++) {
-            this.alreadySelectedClinician[index + 1].push(this.expressionFormGroup.value.expressionForm[j].cliniciansDropDown);
-          }
-          this.alreadySelectedClinician[index + 1] = this.removeDuplicate(this.alreadySelectedClinician[index + 1]);
-        }
+      this.settingValueForNextForm(index);
+      if (this.alreadySelectedClinician[index].length == 1) {
         this.addMoreRequired[index] = false;
-
-      } else {
-        this.alreadySelectedClinician[index + 1] = this.alreadySelectedClinician[index].slice();
-        var index1 = this.alreadySelectedClinician[index + 1].indexOf(selectedClinician);
-        this.alreadySelectedClinician[index + 1].splice(index1, 1);
-        this.addMoreRequired[index] = true;
       }
-      this.alreadySelectedClinician[index + 1] = this.removeDuplicate(this.alreadySelectedClinician[index + 1]);
-
+      else {
+        this.addMoreRequired[index] = true;
+        this.isRequiredToAddExpForm[index] = false;
+      }
       const control = <FormArray>this.expressionFormGroup.controls['expressionForm'];
       if (!this.addMoreRequired[index] && this.clinicianRemaining[index + 1].length !== 0) {
         control.push(this.initialization());
+        this.addMoreRequired[index + 1] = false;
       }
-
     }
   }
 
-  private removingSelectedClinician(index: any, value: any) {
-    this.clinicianRemaining[index + 1] = this.clinicianRemaining[index].slice();
-    var index1 = this.clinicianRemaining[index + 1].indexOf(value);
-    this.clinicianRemaining[index + 1].splice(index1, 1);
-
-  }
-
   addingExpressionForm(index): void {
-    let index1 = this.expressionFormGroup.value.expressionForm.length - 1;
-    this.addMoreRequired[index] = true;
+    let value = this.expressionFormGroup.value.expressionForm[index].selectedClinicianDropDown;
     this.clinicianRemaining[index + 1] = [];
-    this.clinicianRemaining[index + 1].push(this.expressionFormGroup.value.expressionForm[index1].cliniciansDropDown);
+    this.clinicianRemaining[index + 1].push(this.expressionFormGroup.value.expressionForm[index].cliniciansDropDown);
+
+    this.alreadySelectedClinician[index + 1] = [];
+    this.alreadySelectedClinician[index + 1] = this.alreadySelectedClinician[index].slice();
+    var index1 = this.alreadySelectedClinician[index + 1].indexOf(value);
+    this.alreadySelectedClinician[index + 1].splice(index1, 1);
     this.alreadySelectedClinician[index + 1] = this.removeDuplicate(this.alreadySelectedClinician[index + 1]);
     this.addingExpForm(index);
   }
 
   notAddingExpressionForm(index): void {
-    let value = this.expressionFormGroup.value.expressionForm[index].cliniciansDropDown;
-    this.removingSelectedClinician(index, value);
-    this.alreadySelectedClinician[index + 1] = [];
-    this.alreadySelectedClinician[index + 1].push(this.initiallySelected);
-    for (var j = 0; j <= index; j++) {
-      this.alreadySelectedClinician[index + 1].push(this.expressionFormGroup.value.expressionForm[j].cliniciansDropDown);
-    }
-    this.alreadySelectedClinician[index + 1] = this.removeDuplicate(this.alreadySelectedClinician[index + 1]);
+    this.settingValueForNextForm(index);
     this.addingExpForm(index);
   }
 
@@ -243,9 +225,83 @@ export class MainFormComponent implements OnInit {
       control.push(this.initialization());
     }
     this.isRequiredToAddExpForm[index] = true;
+    this.addMoreRequired[index + 1] = false;
     this.isRequiredToAddExpForm[index + 1] = false;
   }
 
+  private settingValueForNextForm(index: any) {
+    this.clinicianRemaining[index + 1] = [];
+    for (var i = 0; i < this.clinicianData.length; i++) {
+      this.checking = false;
+      for (var j = 0; j <= index; j++) {
+        if (this.expressionFormGroup.value.expressionForm[j].cliniciansDropDown === this.clinicianData[i]) {
+          this.checking = true;
+          break;
+        }
+      }
+      if (!this.checking) {
+        this.clinicianRemaining[index + 1].push(this.clinicianData[i]);
+      }
+    }
+    var index1 = this.clinicianRemaining[index + 1].indexOf(this.selectedExp);
+    this.clinicianRemaining[index + 1].splice(index1, 1);
+
+    this.alreadySelectedClinician[index + 1] = [];
+    this.alreadySelectedClinician[index + 1].push(this.selectedExp);
+    for (var j = 0; j <= index; j++) {
+      this.alreadySelectedClinician[index + 1].push(this.expressionFormGroup.value.expressionForm[j].cliniciansDropDown);
+    }
+    this.alreadySelectedClinician[index + 1] = this.removeDuplicate(this.alreadySelectedClinician[index + 1]);
+  }
+
+  removingExpression() {
+    this.toAddExp = false;
+    this.num = this.expressionFormGroup.value.expressionForm.length - 1;
+    for (let i = 0; i < this.model.length; i++) {
+      if (this.model[i].name == (this.expressionFormGroup.value.expressionForm[this.num].cliniciansDropDown)) {
+        if (this.model[i].expressions.length == 2) {
+          this.model[i].expressions = [];
+          this.itr--;
+        }
+        else {
+          this.model[i].expressions.splice(this.model[i].expressions.length - 1, 1);
+        }
+      }
+    }
+    this.expressionFormGroup.controls.expressionForm.value.pop()
+    const control = <FormArray>this.expressionFormGroup.controls.expressionForm;
+    control.removeAt(this.num);
+    this.num = this.num - 1;
+    if (this.num >= 0) {
+      if (this.alreadySelectedClinician[this.num].length > 1) {
+        this.addMoreRequired[this.num] = true;
+        this.isRequiredToAddExpForm[this.num] = false;
+      }
+      this.isRead[this.num] = true;
+      if (this.addMoreRequired[this.num] != true && this.clinicianRemaining[this.num + 1].length != 0) {
+        this.toAddExp = true;
+      }
+    }
+    if (this.num == -1) {
+      for (let i = 0; i < this.model.length; i++) {
+        this.model[i].expressions = [];
+        this.itr = 0;
+      }
+      this.clinicianRemaining = [['physician', 'app', 'scribe']]
+      this.alreadySelectedClinician = [[]];
+      this.firstDropDown = false;
+      this.selectedExp = "";
+      this.isRequiredToDelete = false;
+    }
+  }
+  addingExpression() {
+    const control = <FormArray>this.expressionFormGroup.controls['expressionForm'];
+    control.push(this.initialization());
+    this.num = this.expressionFormGroup.value.expressionForm.length - 1;
+    this.isRead[this.num] = false;
+    this.addMoreRequired[this.num] = false;
+    this.toAddExp = false;
+  }
   removeDuplicate(array) {
     return array.filter((a, b) => array.indexOf(a) === b);
   }
