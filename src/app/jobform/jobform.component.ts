@@ -69,6 +69,7 @@ export class JobformComponent implements OnInit {
   requestBody: any;
   flagForValidation = 0;
   checkFlag=0;
+  cronValid =0;
 
   //FORM VALIDATION
   jobName = new FormControl('', [Validators.required]);
@@ -95,7 +96,7 @@ export class JobformComponent implements OnInit {
       this.lowerUtilization.hasError('min') || this.lowerUtilization.hasError('max') || 
       this.upperUtilization.hasError('min') || this.upperUtilization.hasError('max') || 
       this.exp1.hasError('required') || this.exp3.hasError('required') || 
-      this.exp2.hasError('required') || this.cronExp.hasError('required')) {
+      this.exp2.hasError('required')){
       this.flagForValidation = 1;
       this.checkFlag=1;
     }
@@ -115,6 +116,10 @@ export class JobformComponent implements OnInit {
     }
     else if (this.formVal.outputFormat == 'EMAIL' && (this.outputEmail.hasError('email') || 
     this.outputEmail.hasError('required'))) {
+      this.flagForValidation = 1
+      this.checkFlag=1;
+    }
+    else if (this.cronValid == 0 && this.cronExp.hasError('required')){
       this.flagForValidation = 1
       this.checkFlag=1;
     }
@@ -230,6 +235,7 @@ export class JobformComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.formVal.cronExpression = result;
+      this.cronValid = 1;
       this.sendresponse();
     });
   }
