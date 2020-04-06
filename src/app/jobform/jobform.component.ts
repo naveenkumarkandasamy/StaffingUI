@@ -88,14 +88,14 @@ export class JobformComponent implements OnInit {
   outputEmail = new FormControl('', [Validators.required, Validators.email]);
   cronExp = new FormControl('', [Validators.required]);
 
+  // Form Validation
   getFlagStatus() {
     this.checkFlag=0;
     if (this.jobName.hasError('required') || this.shiftLength.hasError('pattern') || 
       this.lowerUtilization.hasError('min') || this.lowerUtilization.hasError('max') || 
       this.upperUtilization.hasError('min') || this.upperUtilization.hasError('max') || 
       this.exp1.hasError('required') || this.exp3.hasError('required') || 
-      this.exp2.hasError('required') || this.outputEmail.hasError('required') || 
-      this.cronExp.hasError('required')) {
+      this.exp2.hasError('required') || this.cronExp.hasError('required')) {
       this.flagForValidation = 1;
       this.checkFlag=1;
     }
@@ -113,7 +113,8 @@ export class JobformComponent implements OnInit {
       this.flagForValidation = 1;
       this.checkFlag=1;
     }
-    else if (this.formVal.outputFormat == 'EMAIL' && this.outputEmail.hasError('email')) {
+    else if (this.formVal.outputFormat == 'EMAIL' && (this.outputEmail.hasError('email') || 
+    this.outputEmail.hasError('required'))) {
       this.flagForValidation = 1
       this.checkFlag=1;
     }
@@ -179,12 +180,17 @@ export class JobformComponent implements OnInit {
       this.requestBody.inputFtpDetails.fileUrl = this.formVal.inputFtpUrl;
       this.requestBody.inputFtpDetails.username = this.formVal.inputFtpUsername;
       this.requestBody.inputFtpDetails.password = this.formVal.inputFtpPassword;
-      this.requestBody.inputFileDetails = this.formVal.inputFile;
+      this.requestBody.inputFileDetails = null;
     }
-    else {
+    else if (this.formVal.inputFormat == "DATA_FILE") {
       this.requestBody.inputFtpDetails = null;
       this.requestBody.inputFileDetails.fileExtension = 'xlsx';  //*** */
     }
+    else{
+      this.requestBody.inputFileDetails = null;
+      this.requestBody.inputFtpDetails = null;
+    }
+    
     this.requestBody.outputFormat = this.formVal.outputFormat;
     if (this.formVal.outputFormat == "FTP_URL") {
       this.requestBody.outputFtpDetails.fileUrl = this.formVal.outputFtpUrl;
