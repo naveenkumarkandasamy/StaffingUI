@@ -19,23 +19,22 @@ export class AutorunComponent implements OnInit {
   validateFlag = 0;
   expressionFormGroup: FormGroup;
   clinicianData: any;
-  cliniciansRowData: any = [];
+  cliniciansDataFromDb: any = [];
+  cliniciansEfficiencyDataFromDb: any = [];
   cliniciansColumnDefs = [
     { field: 'name' },
     { field: 'patientsPerHour' },
     { field: 'cost' }
   ];
-  cliniciansRowData1: any = [];
-  expressionRowData: any = [];
-  expressionRowData2: any = [];
-  cliniciansColumnDefs1 = [
+  cliniciansEfficiencyColumnDefs = [
     { field: 'name' },
     { field: 'firstHour' },
     { field: 'midHour' },
     { field: 'lastHour' }
   ];
-  defaultData: any;
-  reset:boolean=false;
+  expressionDataFromDb: any = [];
+  mostPriorClinician: any;
+  reset: boolean = false;
 
   constructor(private fb: FormBuilder, private constantsService: ConstantsService, private httpClientService: HttpClientService,
     private toastr: ToastrService, private _Activatedroute: ActivatedRoute) { }
@@ -48,57 +47,41 @@ export class AutorunComponent implements OnInit {
     if (this.jobId != null) {
       this.httpClientService.getJobDetailsByid(this.jobId).subscribe(data => {
         this.editData = data;
-        this.cliniciansRowData = this.createCliniciansData(this.editData.clinicians);
-        this.cliniciansRowData1 = this.createEfficiencyData(this.editData.clinicians);
-        this.expressionRowData = this.editData.clinicians;
-        this.expressionRowData2 = this.createExpressionRowData(this.editData.clinicians);
+        this.createCliniciansData(this.editData.clinicians);
+        this.createEfficiencyData(this.editData.clinicians);
+        this.expressionDataFromDb = this.editData.clinicians;
+        this.createExpressionsData(this.editData.clinicians);
         this.createJobDetails(this.editData, this.resetFlag);
       });
     }
     else {
       this.createJobDetails(this.editData, this.resetFlag);
     }
-
-
   }
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
   inputFile: File;
-  model1: Model[] = this.constantsService.model;
   responseBody: any = { "message": "" };
   requestBody: any;
   jobDetails: any;
 
   createCliniciansData(data: any) {
     for (let index = 0; index < data.length; index++) {
-      this.cliniciansRowData.push({ 'name': data[index].name, 'patientsPerHour': data[index].patientsPerHour, 'cost': data[index].cost });
+      this.cliniciansDataFromDb.push({ 'name': data[index].name, 'patientsPerHour': data[index].patientsPerHour, 'cost': data[index].cost });
     }
-    return this.cliniciansRowData;
   }
   createEfficiencyData(data: any) {
     for (let index = 0; index < data.length; index++) {
-      this.cliniciansRowData1.push({ 'name': data[index].name, 'firstHour': data[index].capacity[0], 'midHour': data[index].capacity[1], 'lastHour': data[index].capacity[2] });
+      this.cliniciansEfficiencyDataFromDb.push({ 'name': data[index].name, 'firstHour': data[index].capacity[0], 'midHour': data[index].capacity[1], 'lastHour': data[index].capacity[2] });
     }
-
-    return this.cliniciansRowData1;
-    
   }
-  createExpressionRowData(data: any) {
+  createExpressionsData(data: any) {
     for (let index1 = 0; index1 < data.length; index1++) {
-      for (let j = 0; j < data.length; j++) {
-        if (index1 == data[j].expressions[0]) {
-          if (data[j].expressions.length == 1) {
-            this.expressionRowData2.push(data[j].name);
-          }
-          for (let index2 = 1; index2 < data[j].expressions.length; index2++) {
-
-            this.expressionRowData2.push(data[j].name + "," + data[j].expressions[index2]);
-          }
-        }
+      if (data[index1].expressions.length == 1) {
+        this.mostPriorClinician = data[index1].name;
       }
     }
-    return this.expressionRowData2;
   }
   editData: any = {
     "name": "",
@@ -186,7 +169,7 @@ export class AutorunComponent implements OnInit {
       "expression2": "",
       "expression3": "",
       "columnDefs": "",
-      "firstDropDown": false,
+      "priorClinicianDropDown": false,
       "selected": false,
       "clinicianData": "",
       "clinicianRemaining": "",
@@ -203,45 +186,32 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.notAllocatedStartTime = (this.jobId == null || resetFlag == 0) ? 1 : editData.notAllocatedStartTime;
     this.jobDetails.notAllocatedEndTime = (this.jobId == null || resetFlag == 0) ? 6 : editData.notAllocatedEndTime;
     this.jobDetails.patientHourWait = (this.jobId == null || resetFlag == 0) ? 2 : editData.patientHourWait;
-    this.jobDetails.model = (this.jobId == null || resetFlag == 0 || this.reset==true) ? JSON.parse(JSON.stringify(this.constantsService.model)) : this.cliniciansRowData;
-    this.jobDetails.efficiencyModel = (this.jobId == null || resetFlag == 0 || this.reset==true) ? JSON.parse(JSON.stringify(this.constantsService.efficiencyModel)) : this.cliniciansRowData1;
+    this.jobDetails.model = (this.jobId == null || resetFlag == 0 || this.reset == true) ? JSON.parse(JSON.stringify(this.constantsService.model)) : this.cliniciansDataFromDb;
+    this.jobDetails.efficiencyModel = (this.jobId == null || resetFlag == 0 || this.reset == true) ? JSON.parse(JSON.stringify(this.constantsService.efficiencyModel)) : this.cliniciansEfficiencyDataFromDb;
 
-    if (this.jobId == null || resetFlag == 0 || this.reset==true) {
+    if (this.jobId == null || resetFlag == 0 || this.reset == true) {
       this.jobDetails.isRequiredToDelete = false;
       this.jobDetails.selected = false;
-      this.jobDetails.firstDropDown = false;
-      this.jobDetails.clinicianData = ['physician', 'app', 'scribe'];
-      this.jobDetails.selectedExp = "";
-      this.jobDetails.clinicianRemaining = [['physician', 'app', 'scribe']];
-      this.jobDetails.alreadySelectedClinician = [[]];
-      this.jobDetails.operator = ['*'];
-      this.jobDetails.expressionFormGroup = this.fb.group({
-        expressionForm: this.fb.array([
-        ])
-      });
-      this.jobDetails.isRead = [[]];
-      this.jobDetails.isRequiredToAddExpForm = [];
+      this.jobDetails.priorClinicianDropDown = false;
+      this.jobDetails.selectedPriorClinician = "";
     }
     else {
-
-      this.jobDetails.firstDropDown = false;
-      this.jobDetails.selected = true;
-      this.jobDetails.selectedExp = this.expressionRowData2[0];
-      this.jobDetails.expressionFormGroup = this.fb.group({
-        expressionForm: this.fb.array([
-
-        ])
-      });
-      this.jobDetails.clinicianData = ['physician', 'app', 'scribe'];
-      this.jobDetails.clinicianRemaining = [[]];
-      this.jobDetails.alreadySelectedClinician = [[]];
-      this.jobDetails.isRead = [[]];
-      this.jobDetails.operator = ['*'];
-      this.jobDetails.firstDropDown = true;
       this.jobDetails.isRequiredToDelete = true;
-      this.jobDetails.isRequiredToAddExpForm = [];
-
+      this.jobDetails.selected = true;
+      this.jobDetails.priorClinicianDropDown = true;
+      this.jobDetails.selectedPriorClinician = this.mostPriorClinician;
     }
+    this.jobDetails.expressionFormGroup = this.fb.group({
+      expressionForm: this.fb.array([
+      ])
+    });
+    this.jobDetails.clinicianData = ['physician', 'app', 'scribe'];
+    this.jobDetails.clinicianRemaining = [['physician', 'app', 'scribe']];
+    this.jobDetails.alreadySelectedClinician = [[]];
+    this.jobDetails.operator = ['*'];
+    this.jobDetails.disableToReadData = [[]];
+    this.jobDetails.isRequiredToAddExpForm = [];
+    
     this.jobDetails.inputFormat = (this.jobId == null || resetFlag == 0) ? -1 : editData.inputFormat;
     if (this.editData.inputFtpDetails != null) {
       this.jobDetails.inputFtpUrl = (this.jobId == null || resetFlag == 0) ? null : editData.inputFtpDetails.fileUrl;
@@ -289,7 +259,7 @@ export class AutorunComponent implements OnInit {
         },
       }
     ] : this.cliniciansColumnDefs;
-    this.jobDetails.columnDefs1 = (this.jobId == null || resetFlag == 0) ? [
+    this.jobDetails.efficiencyColumnDefs = (this.jobId == null || resetFlag == 0) ? [
       { headerName: 'name', field: 'name', editable: true },
       {
         headerName: 'firstHour', valueGetter: function (params) {
@@ -332,12 +302,12 @@ export class AutorunComponent implements OnInit {
           }
         },
       }
-    ] : this.cliniciansColumnDefs1;
+    ] : this.cliniciansEfficiencyColumnDefs;
 
   }
   onReset() {
     this.resetFlag = 0;
-    this.reset=true;
+    this.reset = true;
     this.createJobDetails(this.editData, this.resetFlag);
   }
   removeDuplicate(array) {

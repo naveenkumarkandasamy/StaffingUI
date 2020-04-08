@@ -2,7 +2,8 @@
     <h2>&nbsp;Job Scheduler</h2>
     <form>
         <app-jobform [formVal]="jobDetails" (requestBodyToSend)="createRequestBody($event)"
-            (validateFlagToSend)="getflag($event)" (fileToSend)="getFile($event)" [data]="expressionRowData" [reset]="reset">
+            (validateFlagToSend)="getflag($event)" (fileToSend)="getFile($event)" [expData]="expressionDataFromDb"
+            [reset]="reset">
         </app-jobform>
         <button type="submit" class="btn btn-success" style="margin-top: 1vh;" (click)="onSubmit()">
             Submit

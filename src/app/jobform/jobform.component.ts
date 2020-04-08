@@ -15,12 +15,11 @@ import { NgForm } from '@angular/forms';
 })
 export class JobformComponent implements OnInit, OnChanges {
 
-  selected1: any[] = [];
-  selected2: any[] = [];
-  selected3: any[] = [];
-  selected4: any[] = [];
+  selectedClinician: any[] = [];
+  selectedNumOfClinician: any[] = [];
+  selectedOperator: any[] = [];
+  selectedCinincianForExp: any[] = [];
   check: boolean = false;
-  initiallySelected: String;
   addMoreRequired = [];
   checking: boolean = false;
   expression: String;
@@ -30,7 +29,7 @@ export class JobformComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.itr = 1;
   }
-  @Input() data: any;
+  @Input() expData: any;
   @Input() reset: any;
   @Output() requestBodyToSend = new EventEmitter();
   @Output() validateFlagToSend = new EventEmitter();
@@ -47,7 +46,6 @@ export class JobformComponent implements OnInit, OnChanges {
     "notAllocatedStartTime": 1,
     "notAllocatedEndTime": 6,
     "patientHourWait": 2,
-    "model": "",
     "cronExpression": "",
     "inputFormat": "",
     "inputFtpUrl": "",
@@ -63,9 +61,8 @@ export class JobformComponent implements OnInit, OnChanges {
     "expression1": "",
     "expression2": "",
     "expression3": "",
-    "columnDefs1": "",
     "efficiencyModel": "",
-    "firstDropDown": false,
+    "priorClinicianDropDown": false,
     "selected": false,
     "clinicianData": "",
     "clinicianRemaining": "",
@@ -75,13 +72,13 @@ export class JobformComponent implements OnInit, OnChanges {
   };
 
   inputFile: File;
-  num: any; exp: any = [];
+  numOfForm: any; exp: any = [];
   inputTypes: Array<string> = ["FTP_URL", "DATA_FILE"];
   outputTypes: Array<string> = ["FTP_URL", "EMAIL"];
   itr: any;
-  model1: Model[] = this.constantsService.model;
+  model: Model[] = this.constantsService.model;
   efficiencyModel: Efficiency[] = this.constantsService.efficiencyModel;
-  model: Model[] = JSON.parse(JSON.stringify(this.model1));
+
   columnDefs: any
   powerPlantTypes: any;
   defaultColDef = {
@@ -118,27 +115,27 @@ export class JobformComponent implements OnInit, OnChanges {
     if (this.reset != true) {
 
       this.exp = [];
-      for (let index1 = 0; index1 < this.data.length; index1++) {
-        for (let j = 0; j < this.data.length; j++) {
-          if (index1 == this.data[j].expressions[0]) {
-            if (this.data[j].expressions.length == 1) {
-              this.exp.push(this.data[j].name);
+      for (let index1 = 0; index1 < this.expData.length; index1++) {
+        for (let j = 0; j < this.expData.length; j++) {
+          if (index1 == this.expData[j].expressions[0]) {
+            if (this.expData[j].expressions.length == 1) {
+              this.exp.push(this.expData[j].name);
             }
-            for (let index2 = 1; index2 < this.data[j].expressions.length; index2++) {
-              this.exp.push(this.data[j].name + "," + this.data[j].expressions[index2]);
+            for (let index2 = 1; index2 < this.expData[j].expressions.length; index2++) {
+              this.exp.push(this.expData[j].name + "," + this.expData[j].expressions[index2]);
             }
           }
         }
       }
-      for (let index1 = 0; index1 < this.data.length; index1++) {
-        for (let i = 0; i < this.model1.length; i++) {
-          if (this.model1[i].name == this.data[index1].name) {
-            this.model1[i].expressions = this.data[index1].expressions;
+      for (let index1 = 0; index1 < this.expData.length; index1++) {//storing the expData into model
+        for (let i = 0; i < this.model.length; i++) {
+          if (this.model[i].name == this.expData[index1].name) {
+            this.model[i].expressions = this.expData[index1].expressions;
           }
         }
       }
-      this.itr = this.model1.length - 1;
-      for (let i = 1; i < this.exp.length; i++) {
+      this.itr = this.model.length - 1;
+      for (let i = 1; i < this.exp.length; i++) {//creating the expression form using data from db
         this.check = true;
         this.formVal.clinicianRemaining[i - 1] = ['physician', 'app', 'scribe'];
         this.formVal.alreadySelectedClinician[i - 1] = [];
@@ -146,9 +143,9 @@ export class JobformComponent implements OnInit, OnChanges {
         this.exp[i] = [];
         this.exp[i].push(splittedData[0]);
         this.exp[i].push(splittedData[1]);
-        var splitted = splittedData[1].split(" ");
+        var splittedDataBySpace = splittedData[1].split(" ");
 
-        if (this.exp[i][0] == this.exp[i - 1][0]) {
+        if (this.exp[i][0] == this.exp[i - 1][0]) { //setting values for clinicianRemaining
           this.formVal.clinicianRemaining[i - 1] = [];
           this.formVal.clinicianRemaining[i - 1].push(this.exp[i - 1][0]);
         }
@@ -157,11 +154,11 @@ export class JobformComponent implements OnInit, OnChanges {
             var index1 = this.formVal.clinicianRemaining[i - 1].indexOf(this.exp[j][0]);
             this.formVal.clinicianRemaining[i - 1].splice(index1, 1);
           }
-          var index1 = this.formVal.clinicianRemaining[i - 1].indexOf(this.formVal.selectedExp);
+          var index1 = this.formVal.clinicianRemaining[i - 1].indexOf(this.formVal.selectedPriorClinician);
           this.formVal.clinicianRemaining[i - 1].splice(index1, 1);
         }
 
-        if (this.exp[i][0] == this.exp[i - 1][0] && i >= 2) {
+        if (this.exp[i][0] == this.exp[i - 1][0] && i >= 2) {//setting values for already selected clincian
           this.formVal.alreadySelectedClinician[i - 1] = this.formVal.alreadySelectedClinician[i - 2].slice();
           var splitted1 = this.exp[i - 1][1].split(" ");
           var index1 = this.formVal.alreadySelectedClinician[i - 1].indexOf(splitted1[2]);
@@ -169,23 +166,23 @@ export class JobformComponent implements OnInit, OnChanges {
         }
         else {
           for (let j = i - 1; j >= 1; j--) {
-
             this.formVal.alreadySelectedClinician[i - 1].push(this.exp[j][0]);
           }
-          this.formVal.alreadySelectedClinician[i - 1].push(this.formVal.selectedExp);
+          this.formVal.alreadySelectedClinician[i - 1].push(this.formVal.selectedPriorClinician);
         }
         this.formVal.alreadySelectedClinician[i - 1] = this.removeDuplicate(this.formVal.alreadySelectedClinician[i - 1]);
-        const control = this.formVal.expressionFormGroup.controls.expressionForm as FormArray;
+
+        const control = this.formVal.expressionFormGroup.controls.expressionForm as FormArray;//creating a expression Form
         control.push(this.initialization());
-        this.selected1.push({ cliniciansDropDown: splittedData[0] });
-        this.selected2.push({ numberOfClinician: splitted[0] });
-        this.selected3.push({ operatorChosen: splitted[1] });
-        this.selected4.push({ selectedClinicianDropDown: splitted[2] });
+        this.selectedClinician.push({ cliniciansDropDown: splittedData[0] });
+        this.selectedNumOfClinician.push({ numberOfClinician: splittedDataBySpace[0] });
+        this.selectedOperator.push({ operatorChosen: splittedDataBySpace[1] });
+        this.selectedCinincianForExp.push({ selectedClinicianDropDown: splittedDataBySpace[2] });
 
         this.formVal.expressionFormGroup.value.expressionForm[i - 1].cliniciansDropDown = splittedData[0];
-        this.formVal.expressionFormGroup.value.expressionForm[i - 1].numberOfClinician = splitted[0];
-        this.formVal.expressionFormGroup.value.expressionForm[i - 1].operatorChosen = splitted[1];
-        this.formVal.expressionFormGroup.value.expressionForm[i - 1].selectedClinicianDropDown = splitted[2];
+        this.formVal.expressionFormGroup.value.expressionForm[i - 1].numberOfClinician = splittedDataBySpace[0];
+        this.formVal.expressionFormGroup.value.expressionForm[i - 1].operatorChosen = splittedDataBySpace[1];
+        this.formVal.expressionFormGroup.value.expressionForm[i - 1].selectedClinicianDropDown = splittedDataBySpace[2];
       }
     }
   }
@@ -241,68 +238,62 @@ export class JobformComponent implements OnInit, OnChanges {
   }
 
   afterSelectedPriorClinician(value) {
-    this.formVal.clinicianRemaining[0] = this.formVal.clinicianData.slice(0);
+    this.formVal.clinicianRemaining[0] = this.formVal.clinicianData.slice(0);//setting values for first form
     var index1 = this.formVal.clinicianRemaining[0].indexOf(value);
     this.formVal.clinicianRemaining[0].splice(index1, 1);
     this.formVal.alreadySelectedClinician[0] = [];
     this.formVal.alreadySelectedClinician[0].push(value);
+    this.formVal.priorClinicianDropDown = true;//Should be disabled
+    this.formVal.disableToReadData[0] = false;
     this.formVal.selected = true;
-    this.formVal.firstDropDown = true;
     this.itr = 0;
-    this.num = this.formVal.clinicianData.length;
-    this.num = this.num * (this.num + 1) / 2;
-    for (let i = 0; i < this.num; i++) {
+    this.numOfForm = this.formVal.clinicianData.length;
+    this.numOfForm = this.numOfForm * (this.numOfForm + 1) / 2;
+    for (let i = 0; i < this.numOfForm; i++) {
       this.formVal.isRequiredToAddExpForm[i] = true;
       this.addMoreRequired[i] = false;
     }
-    for (let i = 0; i < this.model1.length; i++) {
-      this.model1[i].expressions = [];
+    for (let i = 0; i < this.model.length; i++) {//Initially Exp for all clinician should be empty
+      this.model[i].expressions = [];
     }
-    for (let i = 0; i < this.model1.length; i++) {
-      if (this.model1[i].name == value) {
-        this.model1[i].expressions.push(this.itr);
+    for (let i = 0; i < this.model.length; i++) {//Reading Expression Starts
+      if (this.model[i].name == value) {
+        this.model[i].expressions.push(this.itr);
       }
     }
-    for (let i = 0; i < this.selected1.length; i++) {
-      this.selected1[i].cliniciansDropDown = '';
-      this.selected2[i].numberOfClinician = '';
-      this.selected3[i].operatorChosen = '';
-      this.selected4[i].selectedClinicianDropDown = '';
+    for (let i = 0; i < this.selectedClinician.length; i++) {
+      this.selectedClinician[i].cliniciansDropDown = '';
+      this.selectedNumOfClinician[i].numberOfClinician = '';
+      this.selectedOperator[i].operatorChosen = '';
+      this.selectedCinincianForExp[i].selectedClinicianDropDown = '';
     }
     this.formVal.isRequiredToDelete = true;
-    if (this.formVal.expressionFormGroup.controls.expressionForm.length - 1 == -1) {
+    if (this.formVal.expressionFormGroup.controls.expressionForm.length - 1 == -1) {//Creating a Expression Form
       const control = <FormArray>this.formVal.expressionFormGroup.controls['expressionForm'];
       control.push(this.initialization());
-      this.selected1.push({ cliniciansDropDown: '' });
-      this.selected2.push({ numberOfClinician: '' });
-      this.selected3.push({ operatorChosen: '' });
-      this.selected4.push({ selectedClinicianDropDown: '' });
-      this.selected1[0].cliniciansDropDown = '';
-      this.selected2[0].numberOfClinician = '';
-      this.selected3[0].operatorChosen = '';
-      this.selected4[0].selectedClinicianDropDown = '';
+      this.selectedClinician.push({ cliniciansDropDown: '' });
+      this.selectedNumOfClinician.push({ numberOfClinician: '' });
+      this.selectedOperator.push({ operatorChosen: '' });
+      this.selectedCinincianForExp.push({ selectedClinicianDropDown: '' });
     }
-  }
-  readingData2(index) {
-    this.formVal.isRead[index] = false;
   }
   readingData(index) {
 
     let clinician = this.formVal.expressionFormGroup.value.expressionForm[index].cliniciansDropDown;
-    let selectedClinician = this.formVal.expressionFormGroup.value.expressionForm[index].selectedClinicianDropDown;
-    if (clinician !== '' && this.formVal.expressionFormGroup.value.expressionForm[index].numberOfClinician !== '' && this.formVal.expressionFormGroup.value.expressionForm[index].operatorChosen !== '' && selectedClinician !== '') {
-      for (let i = 0; i < this.model1.length; i++) {
-        if (this.model1[i].name == clinician) {
-          if (this.model1[i].expressions.length == 0) {
+    let selectedClinicianValue = this.formVal.expressionFormGroup.value.expressionForm[index].selectedClinicianDropDown;
+    if (clinician !== '' && this.formVal.expressionFormGroup.value.expressionForm[index].numberOfClinician !== '' && this.formVal.expressionFormGroup.value.expressionForm[index].operatorChosen !== '' && selectedClinicianValue !== '') {
+      for (let i = 0; i < this.model.length; i++) { //Reading Expression from FormArray
+        if (this.model[i].name == clinician) {
+          if (this.model[i].expressions.length == 0) {
             this.itr++;
-            this.model1[i].expressions.push(this.itr);
+            this.model[i].expressions.push(this.itr);
 
           }
-          this.model1[i].expressions.push(this.formVal.expressionFormGroup.value.expressionForm[index].numberOfClinician + " " + this.formVal.expressionFormGroup.value.expressionForm[index].operatorChosen + " " + selectedClinician);
+          this.model[i].expressions.push(this.formVal.expressionFormGroup.value.expressionForm[index].numberOfClinician + " " + this.formVal.expressionFormGroup.value.expressionForm[index].operatorChosen + " " + selectedClinicianValue);
         }
       }
-      this.formVal.isRead[index] = true;
-      this.formVal.isRead[index + 1] = false;
+      this.formVal.disableToReadData[index] = true;//Disable the Current Form After reading data
+      this.formVal.disableToReadData[index + 1] = false;//Enable for Next Form to read data
 
       this.settingValueForNextForm(index);
       if (this.formVal.alreadySelectedClinician[index].length == 1) {
@@ -313,12 +304,12 @@ export class JobformComponent implements OnInit, OnChanges {
         this.formVal.isRequiredToAddExpForm[index] = false;
       }
       const control = <FormArray>this.formVal.expressionFormGroup.controls['expressionForm'];
-      if (!this.addMoreRequired[index] && this.formVal.clinicianRemaining[index + 1].length !== 0) {
+      if (!this.addMoreRequired[index] && this.formVal.clinicianRemaining[index + 1].length !== 0) {//Creating a Expression Form
         control.push(this.initialization());
-        this.selected1.push({ cliniciansDropDown: '' });
-        this.selected2.push({ numberOfClinician: '' });
-        this.selected3.push({ operatorChosen: '' });
-        this.selected4.push({ selectedClinicianDropDown: '' });
+        this.selectedClinician.push({ cliniciansDropDown: '' });
+        this.selectedNumOfClinician.push({ numberOfClinician: '' });
+        this.selectedOperator.push({ operatorChosen: '' });
+        this.selectedCinincianForExp.push({ selectedClinicianDropDown: '' });
         this.addMoreRequired[index + 1] = false;
       }
     }
@@ -332,53 +323,52 @@ export class JobformComponent implements OnInit, OnChanges {
       this.formVal.expressionFormGroup.value.expressionForm[j].operatorChosen = splittedValue[1];
       this.formVal.expressionFormGroup.value.expressionForm[j].selectedClinicianDropDown = splittedValue[2];
     }
-    this.check=false;
-    this.num = this.formVal.expressionFormGroup.controls.expressionForm.length - 1;
-    for (let i = 0; i < this.model1.length; i++) {
-      if (this.model1[i].name == (this.formVal.expressionFormGroup.value.expressionForm[this.num].cliniciansDropDown)) {
-        if (this.model1[i].expressions.length == 2) {
-          this.model1[i].expressions = [];
+    this.check = false;
+    this.numOfForm = this.formVal.expressionFormGroup.controls.expressionForm.length - 1;
+    for (let i = 0; i < this.model.length; i++) {//Deleting the Assigned Expression from Model
+      if (this.model[i].name == (this.formVal.expressionFormGroup.value.expressionForm[this.numOfForm].cliniciansDropDown)) {
+        if (this.model[i].expressions.length == 2) {
+          this.model[i].expressions = [];
           this.itr--;
         }
         else {
-          this.model1[i].expressions.splice(this.model1[i].expressions.length - 1, 1);
+          this.model[i].expressions.splice(this.model[i].expressions.length - 1, 1);
         }
       }
     }
-    this.formVal.expressionFormGroup.controls.expressionForm.value.pop()
-    this.formVal.expressionFormGroup.controls.expressionForm.removeAt(this.num);
-    this.selected1[this.num].cliniciansDropDown = '';
-    this.selected2[this.num].numberOfClinician = '';
-    this.selected3[this.num].operatorChosen = '';
-    this.selected4[this.num].selectedClinicianDropDown = '';
-    this.num = this.num - 1;
-    if (this.num >= 0) {
-      if (this.formVal.alreadySelectedClinician[this.num].length > 1) {
-        this.addMoreRequired[this.num] = true;
-        this.formVal.isRequiredToAddExpForm[this.num] = false;
+    this.formVal.expressionFormGroup.controls.expressionForm.value.pop()//Deleting the Last Form
+    this.formVal.expressionFormGroup.controls.expressionForm.removeAt(this.numOfForm);
+    this.selectedClinician[this.numOfForm].cliniciansDropDown = '';
+    this.selectedNumOfClinician[this.numOfForm].numberOfClinician = '';
+    this.selectedOperator[this.numOfForm].operatorChosen = '';
+    this.selectedCinincianForExp[this.numOfForm].selectedClinicianDropDown = '';
+    this.numOfForm = this.numOfForm - 1;
+    if (this.numOfForm >= 0) {
+      if (this.formVal.alreadySelectedClinician[this.numOfForm].length > 1) {
+        this.addMoreRequired[this.numOfForm] = true;
+        this.formVal.isRequiredToAddExpForm[this.numOfForm] = false;
       }
 
-      this.formVal.isRead[this.num] = true;
-      if (this.addMoreRequired[this.num] != true && this.formVal.clinicianRemaining[this.num + 1].length != 0) {
+      this.formVal.disableToReadData[this.numOfForm] = true;
+      if (this.addMoreRequired[this.numOfForm] != true && this.formVal.clinicianRemaining[this.numOfForm + 1].length != 0) {
         this.toAddExp = true;
       }
     }
-    if (this.num == -1) {
-      for (let i = 0; i < this.model1.length; i++) {
-        this.model1[i].expressions = [];
+    if (this.numOfForm == -1) {//after Every Expression are deleted  
+      for (let i = 0; i < this.model.length; i++) {
+        this.model[i].expressions = [];
         this.itr = 0;
       }
-
       this.formVal.clinicianRemaining = [['physician', 'app', 'scribe']]
       this.formVal.alreadySelectedClinician = [[]];
       this.formVal.selectedClinicianDropDown = [[]];
-      this.formVal.firstDropDown = false;
-      this.formVal.selectedExp = "";
+      this.formVal.priorClinicianDropDown = false;
+      this.formVal.selectedPriorClinician = "";
       this.formVal.isRequiredToDelete = false;
     }
   }
 
-  addingExpressionForm(index): void {
+  addingExpressionForm(index): void {//Adding Expression for the same Clinician if possible
     let value = this.formVal.expressionFormGroup.value.expressionForm[index].selectedClinicianDropDown;
     this.formVal.clinicianRemaining[index + 1] = [];
     this.formVal.clinicianRemaining[index + 1].push(this.formVal.expressionFormGroup.value.expressionForm[index].cliniciansDropDown);
@@ -388,23 +378,22 @@ export class JobformComponent implements OnInit, OnChanges {
     var index1 = this.formVal.alreadySelectedClinician[index + 1].indexOf(value);
     this.formVal.alreadySelectedClinician[index + 1].splice(index1, 1);
     this.formVal.alreadySelectedClinician[index + 1] = this.removeDuplicate(this.formVal.alreadySelectedClinician[index + 1]);
-
     this.addingExpForm(index);
   }
 
-  notAddingExpressionForm(index): void {
+  notAddingExpressionForm(index): void {//Not Adding Expression for the same Clinician even it is possible
     this.settingValueForNextForm(index);
     this.addingExpForm(index);
   }
 
-  private addingExpForm(index: any) {
+  private addingExpForm(index: any) {//Creating a Expression Form
     const control = <FormArray>this.formVal.expressionFormGroup.controls['expressionForm'];
     if (this.formVal.clinicianRemaining[index + 1].length !== 0) {
       control.push(this.initialization());
-      this.selected1.push({ cliniciansDropDown: '' });
-      this.selected2.push({ numberOfClinician: '' });
-      this.selected3.push({ operatorChosen: '' });
-      this.selected4.push({ selectedClinicianDropDown: '' });
+      this.selectedClinician.push({ cliniciansDropDown: '' });
+      this.selectedNumOfClinician.push({ numberOfClinician: '' });
+      this.selectedOperator.push({ operatorChosen: '' });
+      this.selectedCinincianForExp.push({ selectedClinicianDropDown: '' });
     }
     this.formVal.isRequiredToAddExpForm[index] = true;
     this.addMoreRequired[index + 1] = false;
@@ -413,13 +402,13 @@ export class JobformComponent implements OnInit, OnChanges {
   addingExpression() {
     const control = <FormArray>this.formVal.expressionFormGroup.controls['expressionForm'];
     control.push(this.initialization());
-    this.selected1.push({ cliniciansDropDown: '' });
-    this.selected2.push({ numberOfClinician: '' });
-    this.selected3.push({ operatorChosen: '' });
-    this.selected4.push({ selectedClinicianDropDown: '' });
-    this.num = this.formVal.expressionFormGroup.controls.expressionForm.length - 1;
-    this.formVal.isRead[this.num] = false;
-    this.addMoreRequired[this.num] = false;
+    this.selectedClinician.push({ cliniciansDropDown: '' });
+    this.selectedNumOfClinician.push({ numberOfClinician: '' });
+    this.selectedOperator.push({ operatorChosen: '' });
+    this.selectedCinincianForExp.push({ selectedClinicianDropDown: '' });
+    this.numOfForm = this.formVal.expressionFormGroup.controls.expressionForm.length - 1;
+    this.formVal.disableToReadData[this.numOfForm] = false;
+    this.addMoreRequired[this.numOfForm] = false;
     this.toAddExp = false;
   }
 
@@ -438,11 +427,11 @@ export class JobformComponent implements OnInit, OnChanges {
 
       }
     }
-    var index1 = this.formVal.clinicianRemaining[index + 1].indexOf(this.formVal.selectedExp);
+    var index1 = this.formVal.clinicianRemaining[index + 1].indexOf(this.formVal.selectedPriorClinician);
     this.formVal.clinicianRemaining[index + 1].splice(index1, 1);
 
     this.formVal.alreadySelectedClinician[index + 1] = [];
-    this.formVal.alreadySelectedClinician[index + 1].push(this.formVal.selectedExp);
+    this.formVal.alreadySelectedClinician[index + 1].push(this.formVal.selectedPriorClinician);
     for (var j = 0; j <= index; j++) {
       this.formVal.alreadySelectedClinician[index + 1].push(this.formVal.expressionFormGroup.value.expressionForm[j].cliniciansDropDown);
     }
@@ -460,13 +449,13 @@ export class JobformComponent implements OnInit, OnChanges {
     this.validateFlagToSend.emit(this.flagForValidation);
   }
   calculateCapacity() {
-    for (let i = 0; i < this.model1.length; i++) {
- 
-      this.model1[i].patientsPerHour = this.formVal.model[i].patientsPerHour;
-      this.model1[i].cost = this.formVal.model[i].cost;
-      this.model1[i].capacity[0] = this.formVal.efficiencyModel[i].firstHour;
-      this.model1[i].capacity[1] = this.formVal.efficiencyModel[i].midHour;
-      this.model1[i].capacity[2] = this.formVal.efficiencyModel[i].lastHour;
+    for (let i = 0; i < this.model.length; i++) {
+
+      this.model[i].patientsPerHour = this.formVal.model[i].patientsPerHour;
+      this.model[i].cost = this.formVal.model[i].cost;
+      this.model[i].capacity[0] = this.formVal.efficiencyModel[i].firstHour;
+      this.model[i].capacity[1] = this.formVal.efficiencyModel[i].midHour;
+      this.model[i].capacity[2] = this.formVal.efficiencyModel[i].lastHour;
     }
   }
   sendFile() {
@@ -514,7 +503,7 @@ export class JobformComponent implements OnInit, OnChanges {
     this.requestBody.notAllocatedEndTime = this.formVal.notAllocatedEndTime;
     this.requestBody.patientHourWait = this.formVal.patientHourWait;
     this.requestBody.name = this.formVal.jobName;
-    this.requestBody.clinicians = JSON.parse(JSON.stringify(this.model1));
+    this.requestBody.clinicians = JSON.parse(JSON.stringify(this.model));
     this.requestBody.cronExpression = this.formVal.cronExpression;
     this.requestBody.userId = this.authService.currentLoggedInUser;
     this.requestBody.inputFormat = this.formVal.inputFormat;

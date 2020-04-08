@@ -34,8 +34,8 @@
 
         <label class="col-sm">Clinician Relationship</label>
 
-        <select [disabled]="firstDropDown" [(ngModel)]="selectedExp" name="clinicianSelection"
-            (change)="afterSelectedPriorClinician(selectedExp)">
+        <select [disabled]="priorClinicianDropDown" [(ngModel)]="selectedPriorClinician" name="clinicianSelection"
+            (change)="afterSelectedPriorClinician(selectedPriorClinician)">
             <option value="" hidden>Select</option>
             <option *ngFor="let a of clinicianData">{{a}}</option>
         </select>
@@ -45,7 +45,7 @@
                 *ngFor="let itr of expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
                 <div [formGroupName]="i">
 
-                    <select formControlName="cliniciansDropDown" name="cliniciansDropDownId">
+                    <select name="cliniciansDropDownId" formControlName="cliniciansDropDown">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of clinicianRemaining[i]">{{a}}</option>
                     </select>
@@ -60,18 +60,16 @@
                         <option *ngFor="let a of alreadySelectedClinician[i] ; let i = index">{{a}}</option>
                     </select>
 
-                    <button type="submit" [disabled]="isRead[i]" (click)="readingData(i)">OK</button>
+                    <button type="button" [disabled]="disableToReadData[i]" (click)="readingData(i)">OK</button>
                     <button type="button" [disabled]="isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
                         (click)="addingExpressionForm(i)">ADD</button>
                     <button type="button" [disabled]="isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
                         (click)="notAddingExpressionForm(i)">No</button>
-
-
                 </div>
             </div>
         </form>
-        <button type="submit" *ngIf="isRequiredToDelete" (click)="removingExpression()">Delete</button>
-        <button type="submit" *ngIf="toAddExp" (click)="addingExpression()">Add</button>
+        <button type="button" *ngIf="isRequiredToDelete" (click)="removingExpression()">Delete</button>
+        <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
 
         <br />
         <div style="height:30vh; position: relative;  ">

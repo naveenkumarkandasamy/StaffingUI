@@ -69,38 +69,35 @@
 
 
 
-    <select name="clinicianId" [(ngModel)]="formVal.selectedExp" [disabled]="formVal.firstDropDown" (change)="afterSelectedPriorClinician(formVal.
-    selectedExp)">
+    <select name="clinicianId" [(ngModel)]="formVal.selectedPriorClinician" [disabled]="formVal.priorClinicianDropDown"
+        (change)="afterSelectedPriorClinician(formVal.
+    selectedPriorClinician)">
         <option value="" hidden>Select</option>
-        <option *ngFor="let listItem of formVal.clinicianData" [ngValue]="listItem">{{ listItem}}</option>
+        <option *ngFor="let a of formVal.clinicianData" [ngValue]="a">{{a}}</option>
     </select>
-
-
-
     <form *ngIf="formVal.selected" [formGroup]="formVal.expressionFormGroup">
 
         <div formArrayName="expressionForm"
             *ngFor="let itr of formVal.expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
             <div [formGroupName]="i">
 
-                <select [value]="selected1[i].cliniciansDropDown" formControlName="cliniciansDropDown"
-                    (change)="readingData2(i)">
+                <select [value]="selectedClinician[i].cliniciansDropDown" formControlName="cliniciansDropDown">
                     <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.clinicianRemaining[i]">{{a}}</option>
                 </select>
-                <input [value]="selected2[i].numberOfClinician" type="number" placeholder="1" step="1" min="0" max="100"
-                    formControlName="numberOfClinician">
-                <select [value]="selected3[i].operatorChosen" formControlName="operatorChosen">
+                <input [value]="selectedNumOfClinician[i].numberOfClinician" type="number" placeholder="1" step="1"
+                    min="0" max="100" formControlName="numberOfClinician">
+                <select [value]="selectedOperator[i].operatorChosen" formControlName="operatorChosen">
                     <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.operator ; let i = index">{{a}}</option>
                 </select>
-                <select [value]="selected4[i].selectedClinicianDropDown" name="selectedClinicianDropDownId"
-                    formControlName="selectedClinicianDropDown">
+                <select [value]="selectedCinincianForExp[i].selectedClinicianDropDown"
+                    name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
                     <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.alreadySelectedClinician[i] ; let i = index">{{a}}</option>
                 </select>
 
-                <button type="submit" [disabled]="formVal.isRead[i]" (click)="readingData(i)">OK</button>
+                <button type="button" [disabled]="formVal.disableToReadData[i]" (click)="readingData(i)">OK</button>
                 <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
                     (click)="addingExpressionForm(i)">ADD</button>
                 <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
@@ -108,8 +105,8 @@
             </div>
         </div>
     </form>
-    <button type="submit" *ngIf="formVal.isRequiredToDelete" (click)="removingExpression()">Delete</button>
-    <button type="submit" *ngIf="toAddExp" (click)="addingExpression()">Add</button>
+    <button type="button" *ngIf="formVal.isRequiredToDelete" (click)="removingExpression()">Delete</button>
+    <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
     <br />
 
     <label>Coverage Summary</label>
@@ -120,7 +117,7 @@
     <br />
     <label>Clinician Efficiency</label>
     <ag-grid-angular domLayout='autoHeight' style="width: 50vw; height: 20vh;" class="ag-theme-balham"
-        [rowData]="formVal.efficiencyModel" [columnDefs]="formVal.columnDefs1" [defaultColDef]="defaultColDef"
+        [rowData]="formVal.efficiencyModel" [columnDefs]="formVal.efficiencyColumnDefs" [defaultColDef]="defaultColDef"
         (blur)="sendresponse()">
     </ag-grid-angular>
     <br />
