@@ -142,7 +142,8 @@ export class GraphComponent implements OnInit {
         field: 'header',
         cellStyle: { 'font-size': 'large' },
         pinned: 'left',
-        width: 300
+        width: 300,
+        lockPosition: true
       }
     ];
 
@@ -150,7 +151,8 @@ export class GraphComponent implements OnInit {
       return {
         headerName: (translation.hour - startIndex) + "",
         field: (translation.hour - startIndex).toString(),
-        width: 75
+        width: 75,
+        lockPosition: true
       };
     }));
   }
@@ -259,10 +261,10 @@ export class GraphComponent implements OnInit {
   }
 
   shiftColumnDef = [
-    { headerName: 'Day', field: 'day' },
-    { headerName: 'Start Time', field: 'startTime' },
-    { headerName: 'End Time', field: 'endTime' },
-    { headerName: 'Shift Duration', field: 'shiftLength' },
+    { headerName: 'Day', field: 'day',lockPosition: true },
+    { headerName: 'Start Time', field: 'startTime',lockPosition: true },
+    { headerName: 'End Time', field: 'endTime',lockPosition: true },
+    { headerName: 'Shift Duration', field: 'shiftLength',lockPosition: true },
   ];
 
 
@@ -287,7 +289,7 @@ export class GraphComponent implements OnInit {
   changeHeaders() {
 
     this.clinicianNames.forEach((name, index) => {
-      this.shiftColumnDef.push({ headerName: name + " count", field: name })
+      this.shiftColumnDef.push({ headerName: name + " count", field: name , lockPosition: true})
     })
     this.coverageColumnDef[1].headerName = this.requestBody.clinician[0].name + " Coverage";
     this.coverageColumnDef[2].headerName = this.requestBody.clinician[1].name + " Coverage";
