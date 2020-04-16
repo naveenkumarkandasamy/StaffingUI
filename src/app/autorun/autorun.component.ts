@@ -151,9 +151,9 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.expression3 = "1 * physician, 2 * app";
 
     this.jobDetails.columnDefs = [
-      { headerName: 'Role', field: 'name', editable: true },
+      { headerName: 'Role', field: 'name', editable: true,lockPosition: true },
       {
-        headerName: 'Capacity Per Hr', valueGetter: function (params) {
+        headerName: 'Capacity Per Hr',lockPosition: true, valueGetter: function (params) {
           return params.data.patientsPerHour;
         },
         valueSetter: function (params) {
@@ -166,7 +166,7 @@ export class AutorunComponent implements OnInit {
         }
       },
       {
-        headerName: 'Cost',
+        headerName: 'Cost',lockPosition: true,
         valueGetter: function (params) {
           return params.data.cost;
         },

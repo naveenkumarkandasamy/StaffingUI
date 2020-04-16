@@ -58,9 +58,9 @@ export class MainFormComponent implements OnInit {
   }
 
   columnDefs = [
-    { headerName: 'Role', field: 'name', editable: true },
+    { headerName: 'Role', field: 'name', editable: true, lockPosition: true},
     {
-      headerName: 'Capacity Per Hr', valueGetter: function (params) {
+      headerName: 'Capacity Per Hr', lockPosition: true, valueGetter: function (params) {
         return params.data.patientsPerHour;
       },
       valueSetter: function (params) {
@@ -73,7 +73,7 @@ export class MainFormComponent implements OnInit {
       }
     },
     {
-      headerName: 'Cost',
+      headerName: 'Cost', lockPosition: true,
       valueGetter: function (params) {
         return params.data.cost;
       },
@@ -89,9 +89,9 @@ export class MainFormComponent implements OnInit {
   ];
 
   columnDefs1 = [
-    { headerName: 'Role', field: 'name', editable: true },
+    { headerName: 'Role', field: 'name', editable: true, lockPosition: true },
     {
-      headerName: 'FirstHour', valueGetter: function (params) {
+      headerName: 'FirstHour',lockPosition: true ,valueGetter: function (params) {
         return params.data.firstHour;
       },
       valueSetter: function (params) {
@@ -104,7 +104,7 @@ export class MainFormComponent implements OnInit {
       }
     },
     {
-      headerName: 'MidHour',
+      headerName: 'MidHour',lockPosition: true, 
       valueGetter: function (params) {
         return params.data.midHour;
       },
@@ -118,7 +118,7 @@ export class MainFormComponent implements OnInit {
       },
     },
     {
-      headerName: 'LastHour',
+      headerName: 'LastHour',lockPosition: true ,
       valueGetter: function (params) {
         return params.data.lastHour;
       },
@@ -373,7 +373,8 @@ export class MainFormComponent implements OnInit {
         cellStyle: { 'font-size': 'large' },
         pinned: 'left',
         width: 300,
-        editable: false
+        editable: false, 
+        lockPosition: true
       }
     ];
 
@@ -381,7 +382,7 @@ export class MainFormComponent implements OnInit {
 
       this.transposedColumnDef.push({
 
-        headerName: i + "",
+        headerName: i + "", lockPosition: true,
         valueGetter: function (params) {
           return params.data.expectedPatientsPerHour[i];
         },

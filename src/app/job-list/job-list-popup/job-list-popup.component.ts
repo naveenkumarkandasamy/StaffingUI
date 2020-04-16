@@ -25,9 +25,9 @@ export class JobListPopupComponent implements OnInit {
   ];
 
   cliniciansColumnDefs = [
-    {field : 'Role'},
-    {field : 'Capacity Per Hr'},
-    {field : 'Cost'}
+    {field : 'Role',lockPosition: true },
+    {field : 'Capacity Per Hr',lockPosition: true },
+    {field : 'Cost',lockPosition: true }
   ];
 
   inputFTPDetailsRowData = [];
