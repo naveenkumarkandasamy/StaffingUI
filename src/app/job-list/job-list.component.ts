@@ -9,6 +9,7 @@ import { DataService } from '../services/data.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { JobListPopupComponent } from './job-list-popup/job-list-popup.component';
+import { Role } from '../Models/Role';
 
 @Component({
   selector: 'app-job-list',
@@ -17,17 +18,18 @@ import { JobListPopupComponent } from './job-list-popup/job-list-popup.component
 })
 export class JobListComponent implements OnInit {
 
+  currentUser: any;
   jobListData: any;
   scheduledJobListData: any = [];
   draftJobListData: any = [];
   private idColumn = 'id';
   private dsData: any;
-  isScheduled: string = "scheduled";
+  isScheduled: string = "draft";
 
-  displayedColumnsScheduled: string[] = ['name', 'userId', 'cronExpression','infoButton', 'deleteButton', 'editButton'];
-  displayedColumnsDrafts: string[] = ['name', 'userId','infoButton', 'deleteButton', 'editButton'];
+  displayedColumnsScheduled: string[] = ['name', 'userId', 'cronExpression', 'infoButton', 'deleteButton', 'editButton'];
+  displayedColumnsDrafts: string[] = ['name', 'userId', 'infoButton', 'deleteButton', 'editButton'];
   dataSource: any;
-  responseBody: any = {"message":""};
+  responseBody: any = { "message": "" };
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -37,10 +39,14 @@ export class JobListComponent implements OnInit {
 
   ngOnInit() {
     this.getJobListData();
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  }
+
+  get isAdmin() {
+    return this.currentUser && this.currentUser.roles.indexOf(Role.Admin) > -1;
   }
 
   getJobListData() {
-
     this.httpClientService.getJobDetails().subscribe(data => {
       this.jobListData = data;
       this.getSegregatedData();
@@ -51,9 +57,7 @@ export class JobListComponent implements OnInit {
       this.dataSource.filterPredicate = function (data: any, filter: string): boolean {
         return data.name.toLowerCase().includes(filter);
       };
-
     });
-
   }
 
   applyFilter(filterValue: string) {
@@ -61,51 +65,58 @@ export class JobListComponent implements OnInit {
   }
 
   redirect(pagename: string, requestBody: any, elementid: string) {
-    this.router.navigate(['/'+pagename+'/'+elementid]);
-    this.dataService.setJobDetailsToEdit(requestBody);
+    if (this.currentUser.roles[0] == 'ROLE_ADMIN') {
+      this.router.navigate(['/' + pagename + '/' + elementid]);
+      this.dataService.setJobDetailsToEdit(requestBody);
+    }
+    else {
+      this.toastr.error("OPERATION ALLOWED ONLY TO ADMIN!!");
+    }
   }
 
-  deleteJob(jobId: String){
-    this.httpClientService.deleteJobDetails(jobId).subscribe(data => { 
-      this.responseBody = data;
-      this.toastr.success(this.responseBody.message);
-      this.dsData = this.dataSource.data;
-      const itemIndex = this.dsData.findIndex(obj => obj[this.idColumn] === jobId);
-      this.dataSource.data.splice(itemIndex, 1);
-      this.dataSource.paginator = this.paginator;
-    }, error => {
-      this.toastr.error(error.message);
-    });
-    this.getJobListData();
+  deleteJob(jobId: String) {
+    if (this.currentUser.roles[0] == 'ROLE_ADMIN') {
+      this.httpClientService.deleteJobDetails(jobId).subscribe(data => {
+        this.responseBody = data;
+        this.toastr.success(this.responseBody.message);
+        this.dsData = this.dataSource.data;
+        const itemIndex = this.dsData.findIndex(obj => obj[this.idColumn] === jobId);
+        this.dataSource.data.splice(itemIndex, 1);
+        this.dataSource.paginator = this.paginator;
+      }, error => {
+        this.toastr.error(error.message);
+      });
+      this.getJobListData();
+    }
+    else {
+      this.toastr.error("OPERATION ALLOWED ONLY TO ADMIN!!");
+    }
   }
 
   jobListPopup(element: any) {
     const dialogConfig = new MatDialogConfig();
 
-    dialogConfig.data = { title: 'Job List Info', job_details : element };
+    dialogConfig.data = { title: 'Job List Info', job_details: element };
     this.dialog.open(JobListPopupComponent, dialogConfig).afterClosed()
       .subscribe(data => {
-         
+
       });
   }
 
-  getSegregatedData()
-  {
+  getSegregatedData() {
     this.scheduledJobListData = [];
     this.draftJobListData = [];
     for (let index = 0; index < this.jobListData.length; index++) {
-      if(this.jobListData[index].status === 'SCHEDULED')
-      {
+      if (this.jobListData[index].status === 'SCHEDULED') {
         this.scheduledJobListData.push(this.jobListData[index]);
-      }else {
+      } else {
         this.draftJobListData.push(this.jobListData[index]);
       }
     }
   }
-  
+
   onJobTypeChange(type: any) {
-    if(type.value === 'scheduled') 
-    {
+    if (type.value === 'scheduled') {
       this.dataSource.data = this.scheduledJobListData;
     } else {
       this.dataSource.data = this.draftJobListData;
@@ -113,5 +124,5 @@ export class JobListComponent implements OnInit {
     this.dataSource.sort = this.sort;
     setTimeout(() => this.dataSource.paginator = this.paginator);
   }
-  
+
 }

@@ -2,8 +2,8 @@
     <mat-form-field style="width: 20%; margin-right: 5px;">
         <mat-label>Select Job Type</mat-label>
         <mat-select [(ngModel)]="isScheduled" (selectionChange)="onJobTypeChange($event)">
-            <mat-option value="scheduled" >Scheduled</mat-option>
             <mat-option value="draft">Draft</mat-option>
+            <mat-option value="scheduled" *ngIf ="isAdmin">Scheduled</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field style="width: 70%;">
