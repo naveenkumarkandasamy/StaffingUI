@@ -1,16 +1,17 @@
-<mat-toolbar class="mat-elevation-z6" color="primary">
-    <mat-toolbar-row>
-        <!-- <button mat-icon-button>
-      <mat-icon (click)="sidenav.toggle()">menu</mat-icon> 
-    </button> -->
-        <span>OSAT</span>
-        <a mat-button [routerLink]="'/mainForm'" style="text-decoration:none">Main Form</a>
-        <a mat-button *ngIf="loginService.isUserLoggedIn() && isAdmin" [routerLink]="'/job'" style="text-decoration:none"> Autorun </a>
-        <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/joblist'" style="text-decoration:none"> Job List </a>
-
-        <!-- <a mat-button *ngIf="!loginService.isUserLoggedIn()" [routerLink]="'/login'" style="text-decoration:none"> Login </a> -->
-
-        <div class="spacer"> </div>
-        <a mat-button *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/logout'" style="text-decoration:none"> Logout </a>
-    </mat-toolbar-row>
-</mat-toolbar>
+<nav class="navbar navbar-inverse navbar-custom">
+    <div class="container-fluid">
+        <div class="container-header">
+            <a href="#" class="navbar-brand">OSAT</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li><a [routerLink]="'/mainForm'">Main Form</a></li>
+                <li><a *ngIf="loginService.isUserLoggedIn() && isAdmin" [routerLink]="'/job'">Autorun</a></li>
+                <li><a *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/joblist'">Job List</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/logout'">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
