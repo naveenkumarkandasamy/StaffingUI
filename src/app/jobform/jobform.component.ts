@@ -89,8 +89,9 @@ export class JobformComponent implements OnInit, OnChanges {
   responseBody: any = { "message": "" };
   requestBody: any;
   flagForValidation = 0;
-  checkFlag = 0;
   toAddExp: boolean;
+  checkFlag=0;
+  cronValid =0;
 
   //FORM VALIDATION
   jobName = new FormControl('', [Validators.required]);
@@ -210,7 +211,12 @@ export class JobformComponent implements OnInit, OnChanges {
       this.flagForValidation = 1;
       this.checkFlag = 1;
     }
-    else if (this.formVal.outputFormat == 'EMAIL' && this.outputEmail.hasError('email')) {
+    else if (this.formVal.outputFormat == 'EMAIL' && (this.outputEmail.hasError('email') || 
+    this.outputEmail.hasError('required'))) {
+      this.flagForValidation = 1
+      this.checkFlag=1;
+    }
+    else if (this.cronValid == 0 && this.cronExp.hasError('required')){
       this.flagForValidation = 1
       this.checkFlag = 1;
     }
@@ -511,12 +517,17 @@ export class JobformComponent implements OnInit, OnChanges {
       this.requestBody.inputFtpDetails.fileUrl = this.formVal.inputFtpUrl;
       this.requestBody.inputFtpDetails.username = this.formVal.inputFtpUsername;
       this.requestBody.inputFtpDetails.password = this.formVal.inputFtpPassword;
-      this.requestBody.inputFileDetails = this.formVal.inputFile;
+      this.requestBody.inputFileDetails = null;
     }
-    else {
+    else if (this.formVal.inputFormat == "DATA_FILE") {
       this.requestBody.inputFtpDetails = null;
       this.requestBody.inputFileDetails.fileExtension = 'xlsx';  //*** */
     }
+    else{
+      this.requestBody.inputFileDetails = null;
+      this.requestBody.inputFtpDetails = null;
+    }
+    
     this.requestBody.outputFormat = this.formVal.outputFormat;
     if (this.formVal.outputFormat == "FTP_URL") {
       this.requestBody.outputFtpDetails.fileUrl = this.formVal.outputFtpUrl;
@@ -555,9 +566,9 @@ export class JobformComponent implements OnInit, OnChanges {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       this.formVal.cronExpression = result;
-      console.log(this.formVal.cronExpression);
+      this.cronValid = 1;
+      this.sendresponse();
     });
   }
 }

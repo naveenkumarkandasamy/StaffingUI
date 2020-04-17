@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { response, Model } from "../Models/app.types"
+import { response, Model, Efficiency } from "../Models/app.types"
 import { ViewChild, ElementRef } from '@angular/core';
 import { DataService } from "../services/data.service"
 import { ConstantsService } from "../services/constants.service";
@@ -52,6 +52,9 @@ export class MainFormComponent implements OnInit {
   model: Model[] = this.constantsService.model;
   isRequiredToDelete: boolean;
   toAddExp: boolean;
+
+  efficiencyModel: Efficiency[]= this.constantsService.efficiencyModel;
+
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
     "lowerLimitFactor": 0.85, // *** ADD UPPER LIMIT
@@ -62,9 +65,9 @@ export class MainFormComponent implements OnInit {
   }
 
   columnDefs = [
-    { headerName: 'Role', field: 'name', editable: true },
+    { headerName: 'Role', field: 'name', editable: true, lockPosition: true},
     {
-      headerName: 'Capacity Per Hr', valueGetter: function (params) {
+      headerName: 'Capacity Per Hr', lockPosition: true, valueGetter: function (params) {
         return params.data.patientsPerHour;
       },
       valueSetter: function (params) {
@@ -77,13 +80,58 @@ export class MainFormComponent implements OnInit {
       }
     },
     {
-      headerName: 'Cost',
+      headerName: 'Cost', lockPosition: true,
       valueGetter: function (params) {
         return params.data.cost;
       },
       valueSetter: function (params) {
         if (params.data.cost !== params.newValue) {
           params.data.cost = params.newValue;
+          return true;
+        } else {
+          return false;
+        }
+      },
+    }
+  ];
+
+  columnDefs1 = [
+    { headerName: 'Role', field: 'name', editable: true, lockPosition: true },
+    {
+      headerName: 'FirstHour',lockPosition: true ,valueGetter: function (params) {
+        return params.data.firstHour;
+      },
+      valueSetter: function (params) {
+        if (params.data.firstHour !== params.newValue) {
+          params.data.firstHour = params.newValue;
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+    {
+      headerName: 'MidHour',lockPosition: true, 
+      valueGetter: function (params) {
+        return params.data.midHour;
+      },
+      valueSetter: function (params) {
+        if (params.data.midHour !== params.newValue) {
+          params.data.midHour = params.newValue;
+          return true;
+        } else {
+          return false;
+        }
+      },
+    },
+    {
+      headerName: 'LastHour',lockPosition: true ,
+      valueGetter: function (params) {
+        return params.data.lastHour;
+      },
+      valueSetter: function (params) {
+        if (params.data.lastHour !== params.newValue) {
+          params.data.lastHour = params.newValue;
           return true;
         } else {
           return false;
@@ -356,10 +404,12 @@ export class MainFormComponent implements OnInit {
 
   }
   calculateCapacity() {
-    for (let i = 1; i < this.model.length; i++) {
-      this.model[i].capacity[0] = this.model[i].patientsPerHour / this.model[0].patientsPerHour;
-      this.model[i].capacity[1] = this.model[i].capacity[0] * this.model[0].capacity[1];
-      this.model[i].capacity[2] = this.model[i].capacity[0] * this.model[0].capacity[2];
+    for (let i = 0; i < this.model.length; i++) {
+
+      this.model[i].capacity[0] = this.efficiencyModel[i].firstHour;
+      this.model[i].capacity[1] = this.efficiencyModel[i].midHour;
+      this.model[i].capacity[2] = this.efficiencyModel[i].lastHour;
+
     }
   }
 
@@ -375,7 +425,8 @@ export class MainFormComponent implements OnInit {
         cellStyle: { 'font-size': 'large' },
         pinned: 'left',
         width: 300,
-        editable: false
+        editable: false, 
+        lockPosition: true
       }
     ];
 
@@ -383,7 +434,7 @@ export class MainFormComponent implements OnInit {
 
       this.transposedColumnDef.push({
 
-        headerName: i + "",
+        headerName: i + "", lockPosition: true,
         valueGetter: function (params) {
           return params.data.expectedPatientsPerHour[i];
         },

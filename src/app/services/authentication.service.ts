@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { map, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -68,6 +68,38 @@ export class AuthenticationService {
   }
 
   logOut() {
-    localStorage.removeItem('currentUser')
+    localStorage.removeItem('currentUser');
+  }
+
+  getRefreshToken() {
+    let currentUser = JSON.parse(this.getCurrentUser());
+    return currentUser.refreshToken;
+  }
+
+  getBearerToken() {
+    let currentUser = JSON.parse(this.getCurrentUser());
+    return currentUser.accessToken;
+  }
+
+  getCurrentUser() {
+    return localStorage.getItem('currentUser');
+  } 
+
+  setBearerToken(accessToken: string) {
+    let currentUser = JSON.parse(this.getCurrentUser());
+    currentUser.accessToken = accessToken;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  }
+
+  getNewAccessToken() {
+    let refreshToken =  this.getRefreshToken();
+    let currentUser =  (JSON.parse(this.getCurrentUser())).name;
+    return this.httpClient.post(this.apiUrl+'/Staffing/api/token?refresh-token=' + refreshToken + "&current-user=" + currentUser, "").pipe(
+      map(
+        data => {
+          this.setBearerToken(data['accessToken']);
+        }
+      )
+    )
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Model,Efficiency } from '../Models/app.types';
+import { Model, Efficiency } from '../Models/app.types';
+
 
 @Injectable()
 export class ConstantsService {
@@ -208,6 +209,26 @@ export class ConstantsService {
             0.55,
             0.5
          ]
+      }
+   ];
+   readonly efficiencyModel: Efficiency[] = [
+      {
+         "name": "physician",
+         "firstHour": 1.0,
+         "midHour": 0.83,
+         "lastHour": 0.67
+      },
+      {
+         "name": "scribe",
+         "firstHour": 0.6,
+         "midHour": 0.5,
+         "lastHour": 0.4
+      },
+      {
+         "name": "app",
+         "firstHour": 0.15,
+         "midHour": 0.12,
+         "lastHour": 0.1
       }
    ];
    readonly model: Model[] = [

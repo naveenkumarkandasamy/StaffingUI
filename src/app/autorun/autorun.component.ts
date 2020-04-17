@@ -177,6 +177,12 @@ export class AutorunComponent implements OnInit {
       "operator": "",
       "isRequiredToDelete": "",
       "expressionRowData": "",
+    }
+    if (editData.inputFormat == 'NULL') {
+      editData.inputFormat = -1;
+    }
+    if (editData.outputFormat == 'NULL') {
+      editData.outputFormat = -1;
 
     }
     this.jobDetails.jobName = (this.jobId == null || resetFlag == 0) ? "" : editData.name;
@@ -211,7 +217,7 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.operator = ['*'];
     this.jobDetails.disableToReadData = [[]];
     this.jobDetails.isRequiredToAddExpForm = [];
-    
+
     this.jobDetails.inputFormat = (this.jobId == null || resetFlag == 0) ? -1 : editData.inputFormat;
     if (this.editData.inputFtpDetails != null) {
       this.jobDetails.inputFtpUrl = (this.jobId == null || resetFlag == 0) ? null : editData.inputFtpDetails.fileUrl;
@@ -229,10 +235,11 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.cronExpression = (this.jobId == null || resetFlag == 0) ? null : editData.cronExpression;
     this.jobDetails.emailId = (this.jobId == null || resetFlag == 0) ? "" : editData.outputEmailId;
     this.jobDetails.jobStatus = (this.jobId == null || resetFlag == 0) ? "SCHEDULED" : editData.status;
+
     this.jobDetails.columnDefs = (this.jobId == null || resetFlag == 0) ? [
-      { headerName: 'name', field: 'name', editable: true },
+      { headerName: 'name', field: 'name', editable: true ,lockPosition: true},
       {
-        headerName: 'patientsPerHour', valueGetter: function (params) {
+        headerName: 'patientsPerHour',lockPosition: true, valueGetter: function (params) {
           return params.data.patientsPerHour;
         },
         valueSetter: function (params) {
@@ -245,7 +252,7 @@ export class AutorunComponent implements OnInit {
         }
       },
       {
-        headerName: 'cost',
+        headerName: 'cost',lockPosition: true,
         valueGetter: function (params) {
           return params.data.cost;
         },
@@ -315,12 +322,10 @@ export class AutorunComponent implements OnInit {
   }
   onSubmit() {
     if (this.validateFlag == 0) {
-      console.log(this.requestBody);
       this.requestBody.status = "SCHEDULED";
       this.createAndPostJob();
     }
     else {
-      console.log(this.requestBody);
       this.toastr.error("Please Enter Valid Field Values");
     }
   }
@@ -331,13 +336,19 @@ export class AutorunComponent implements OnInit {
   }
 
   createAndPostJob() {
-    if (this.requestBody.inputFormat == -1) {
+    if (this.requestBody.status == "SCHEDULED" && this.requestBody.inputFormat == -1) {
       this.toastr.error("Please select a valid input format");
     }
-    else if (this.requestBody.outputFormat == -1) {
+    else if (this.requestBody.status == "SCHEDULED" && this.requestBody.outputFormat == -1) {
       this.toastr.error("Please select a valid output format");
     }
     else {
+      if (this.requestBody.inputFormat == -1) {
+        this.requestBody.inputFormat = 'NULL';
+      }
+      if (this.requestBody.outputFormat == -1) {
+        this.requestBody.outputFormat = 'NULL';
+      }
       const formData = new FormData();
       formData.append('file', this.inputFile);
       formData.append('input', JSON.stringify(this.requestBody));
