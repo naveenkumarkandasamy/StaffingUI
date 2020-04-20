@@ -219,13 +219,13 @@ export class ConstantsService {
          "lastHour": 0.67
       },
       {
-         "name": "scribe",
+         "name": "app",
          "firstHour": 0.6,
          "midHour": 0.5,
          "lastHour": 0.4
       },
       {
-         "name": "app",
+         "name": "scribe",
          "firstHour": 0.15,
          "midHour": 0.12,
          "lastHour": 0.1
@@ -244,14 +244,14 @@ export class ConstantsService {
          "capacity": [0.6, 0.5, 0.4],
          "cost": 65,
          "name": "app",
-         "expressions": ["1 * scribe"]
+         "expressions": ["1 * physician"]
       },
       {
          "patientsPerHour": 0.37,
          "capacity": [0.15, 0.12, 0.1],
          "cost": 20,
          "name": "scribe",
-         "expressions": ["1 * physician"]
+         "expressions": ["1 * physician","2 * app"]
       }];
       readonly efficiencyModel: Efficiency[] = [
          {
