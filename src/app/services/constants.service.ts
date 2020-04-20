@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Model, Efficiency } from '../Models/app.types';
 
+
 @Injectable()
 export class ConstantsService {
    readonly baseAppUrl: string = 'http://localhost:3000/';
@@ -243,20 +244,39 @@ export class ConstantsService {
          "capacity": [0.6, 0.5, 0.4],
          "cost": 65,
          "name": "app",
-         "expressions": []
+         "expressions": ["1 * scribe"]
       },
       {
          "patientsPerHour": 0.37,
          "capacity": [0.15, 0.12, 0.1],
          "cost": 20,
          "name": "scribe",
-         "expressions": []
+         "expressions": ["1 * physician"]
       }];
+      readonly efficiencyModel: Efficiency[] = [
+         {
+            "name": "physician",
+            "firstHour": 1.0,
+            "midHour": 0.83,
+            "lastHour": 0.67
+         },
+         {
+            "name": "app",
+            "firstHour": 0.15,
+            "midHour": 0.12,
+            "lastHour": 0.1
+         },
+         {
+            "name": "scribe",
+            "firstHour": 0.6,
+            "midHour": 0.5,
+            "lastHour": 0.4
+         }
+      ];
    readonly shiftLength: string = "";
    readonly requestBody: any = {
       "shiftLength": [12, 8, 10, 4],
       "lowerLimitFactor": 0.85,
-      "clinician": this.model,
       "dayWorkload": this.data,
    }
 

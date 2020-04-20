@@ -37,6 +37,7 @@
                     placeholder="6" step="1" min="0" max="23" required name="notAllocatedEndTime"/>
                 </div>
             </div>
+      
             <div class="form-group">
                 <label class="control-label col-sm-4">Enter Number of patientHourWait:</label>
                 <div class="col-sm-3">
@@ -49,34 +50,36 @@
         <div class="form-group">
             <label class="control-label col-sm-4">Clinician Relationship:</label>
             <div class="col-sm-3">
-                <select class="form-control" [disabled]="firstDropDown" (change)="afterSelectedPriorClinician($event.target)">
-                    <option value="" hidden>Select</option>
-                    <option *ngFor="let a of clinicianData">{{a}}</option>
-                </select>
+            <select [disabled]="priorClinicianDropDown" [(ngModel)]="selectedPriorClinician" name="clinicianSelection"
+            (change)="afterSelectedPriorClinician(selectedPriorClinician)">
+            <option value="" hidden>Select</option>
+            <option *ngFor="let a of clinicianData">{{a}}</option>
+            </select>
             </div>
         </div>
 
-        <form *ngIf="selected" [formGroup]="expressionFormGroup">
 
+        <form *ngIf="selected" [formGroup]="expressionFormGroup">
             <div formArrayName="expressionForm"
                 *ngFor="let itr of expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
                 <div [formGroupName]="i">
 
-                    <select formControlName="cliniciansDropDown">
+                    <select name="cliniciansDropDownId" formControlName="cliniciansDropDown">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of clinicianRemaining[i]">{{a}}</option>
                     </select>
-                    <input type="number" placeholder="1" step="1" min="0" max="100" formControlName="numberOfClinician">
-                    <select formControlName="operatorChosen">
+                    <input name="numberOfClinicianId" type="number" placeholder="1" step="1" min="0" max="100"
+                        formControlName="numberOfClinician">
+                    <select name="operatorChosenId" formControlName="operatorChosen">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of operator ; let i = index">{{a}}</option>
                     </select>
-                    <select formControlName="selectedClinicianDropDown">
+                    <select name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of alreadySelectedClinician[i] ; let i = index">{{a}}</option>
                     </select>
 
-                    <button type="submit" [disabled]="isRead[i]" (click)="readingData(i)">OK</button>
+                    <button type="button" [disabled]="disableToReadData[i]" (click)="readingData(i)">OK</button>
                     <button type="button" [disabled]="isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
                         (click)="addingExpressionForm(i)">ADD</button>
                     <button type="button" [disabled]="isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
@@ -84,6 +87,10 @@
                 </div>
             </div>
         </form>
+
+        <button type="button" *ngIf="isRequiredToDelete" (click)="removingExpression()">Delete</button>
+        <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
+
         <br />
 
         <label class="col-sm-12">Clinician Summary:</label>

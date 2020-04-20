@@ -39,30 +39,44 @@
 
     <label class="col-sm-12">Clinician Relationship:</label>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">Physician:</label>
-        <div class="col-sm-3">
-            <input class="form-control" required type="text" [(ngModel)]="formVal.expression1" name="expression1"
-            (blur)="sendresponse()" [formControl]="exp1" />
+    <select name="clinicianId" [(ngModel)]="formVal.selectedPriorClinician" [disabled]="formVal.priorClinicianDropDown"
+        (change)="afterSelectedPriorClinician(formVal.selectedPriorClinician)">
+        <option value="" hidden>Select</option>
+        <option *ngFor="let a of formVal.clinicianData" [ngValue]="a">{{a}}</option>
+    </select>
+    <form *ngIf="formVal.selected" [formGroup]="formVal.expressionFormGroup">
+
+        <div formArrayName="expressionForm"
+            *ngFor="let itr of formVal.expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
+            <div [formGroupName]="i">
+
+                <select [value]="selectedClinician[i].cliniciansDropDown" formControlName="cliniciansDropDown">
+                    <option [value]="" hidden>Select</option>
+                    <option *ngFor="let a of formVal.clinicianRemaining[i]">{{a}}</option>
+                </select>
+                <input [value]="selectedNumOfClinician[i].numberOfClinician" type="number" placeholder="1" step="1"
+                    min="0" max="100" formControlName="numberOfClinician">
+                <select [value]="selectedOperator[i].operatorChosen" formControlName="operatorChosen">
+                    <option [value]="" hidden>Select</option>
+                    <option *ngFor="let a of formVal.operator ; let i = index">{{a}}</option>
+                </select>
+                <select [value]="selectedCinincianForExp[i].selectedClinicianDropDown"
+                    name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
+                    <option [value]="" hidden>Select</option>
+                    <option *ngFor="let a of formVal.alreadySelectedClinician[i] ; let i = index">{{a}}</option>
+                </select>
+
+                <button type="button" [disabled]="formVal.disableToReadData[i]" (click)="readingData(i)">OK</button>
+                <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
+                    (click)="addingExpressionForm(i)">ADD</button>
+                <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
+                    (click)="notAddingExpressionForm(i)">No</button>
+            </div>
         </div>
-        <mat-error *ngIf="exp1.hasError('required')">Enter valid Expression {{getFlagStatus()}}</mat-error> 
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-4">Apprentice:</label>
-        <div class="col-sm-3">
-            <input class="form-control" required type="text" [(ngModel)]="formVal.expression2" name="expression2"
-            (blur)="sendresponse()" [formControl]="exp2"/>
-        </div>
-        <mat-error *ngIf="exp2.hasError('required')">Enter valid Expression {{getFlagStatus()}}</mat-error> 
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-4">Scribe:</label>
-        <div class="col-sm-3">
-            <input class="form-control" required type="text" [(ngModel)]="formVal.expression3" name="expression3"
-            (blur)="sendresponse()" [formControl]="exp3" />
-        </div>
-        <mat-error *ngIf="exp3.hasError('required')">Enter valid Expression {{getFlagStatus()}}</mat-error> 
-    </div>
+    </form>
+    <button type="button" *ngIf="formVal.isRequiredToDelete" (click)="removingExpression()">Delete</button>
+    <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
+    <br />
     <hr>
 
     <label class="col-sm-12">Coverage Summary:</label>
@@ -90,6 +104,7 @@
         </div> 
     </div>
     <div *ngIf="formVal.inputFormat == 'FTP_URL'">
+
         <div class="form-group">
             <label class="control-label col-sm-4">FTP URL:</label>
             <div class="col-sm-3">
@@ -188,3 +203,4 @@
     </div>
 </form>
 <br><br>
+
