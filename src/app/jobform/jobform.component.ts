@@ -192,7 +192,6 @@ export class JobformComponent implements OnInit, OnChanges {
     if (this.jobName.hasError('required') || this.shiftLength.hasError('pattern') ||
       this.lowerUtilization.hasError('min') || this.lowerUtilization.hasError('max') ||
       this.upperUtilization.hasError('min') || this.upperUtilization.hasError('max') ||
-      this.outputEmail.hasError('required') ||
       this.cronExp.hasError('required')) {
       this.flagForValidation = 1;
       this.checkFlag = 1;
