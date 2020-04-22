@@ -211,7 +211,6 @@ export class ConstantsService {
          ]
       }
    ];
-
    readonly model: Model[] = [
       {
          "patientsPerHour": 1.2,
