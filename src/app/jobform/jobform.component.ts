@@ -194,7 +194,6 @@ export class JobformComponent implements OnInit, OnChanges {
       this.notAllocatedStartTime.hasError('min')||this.notAllocatedStartTime.hasError('max')||
       this.notAllocatedEndTime.hasError('min')||this.notAllocatedEndTime.hasError('max')||
       this.patientHourWait.hasError('min')|| this.patientHourWait.hasError('max')||
-      this.outputEmail.hasError('required') ||
       this.cronExp.hasError('required')) {
       this.flagForValidation = 1;
       this.checkFlag = 1;
