@@ -211,28 +211,27 @@ export class ConstantsService {
          ]
       }
    ];
-   
    readonly model: Model[] = [
       {
          "patientsPerHour": 1.2,
          "capacity": [1.0, 0.83, 0.67],
          "cost": 200,
          "name": "physician",
-         "expressions": []
+         "expressions": ["0"]
       },
       {
          "patientsPerHour": 0.6,
          "capacity": [0.6, 0.5, 0.4],
          "cost": 65,
          "name": "app",
-         "expressions": ["1 * physician"]
+         "expressions": ["1","1 * physician"]
       },
       {
          "patientsPerHour": 0.37,
          "capacity": [0.15, 0.12, 0.1],
          "cost": 20,
          "name": "scribe",
-         "expressions": ["1 * physician","2 * app"]
+         "expressions": ["2","1 * physician","1 * app"]
       }];
       readonly efficiencyModel: Efficiency[] = [
          {

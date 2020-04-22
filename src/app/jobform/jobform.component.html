@@ -35,15 +35,46 @@
         <mat-error *ngIf="upperUtilization.hasError('min') || upperUtilization.hasError('max')">Enter value in range
             (0.8-1.5) {{getFlagStatus()}}</mat-error> 
     </div>
+    <div class="form-group">
+        <label class="control-label col-sm-4">Enter Restriction Start Time:</label>
+        <div class="col-sm-3">
+            <input class="form-control" type="number" [(ngModel)]="formVal.notAllocatedStartTime" placeholder="1" step="1"
+             min="0" max="23" name="notAllocatedStartTime" (blur)="sendresponse()" [formControl]="notAllocatedStartTime"/>
+        </div>
+        <mat-error *ngIf="notAllocatedStartTime.hasError('min') || notAllocatedStartTime.hasError('max')">Enter value in range
+            (0-23) {{getFlagStatus()}}</mat-error> 
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-4">Enter Restriction End Time:</label>
+        <div class="col-sm-3">
+            <input class="form-control" type="number" [(ngModel)]="formVal.notAllocatedEndTime" placeholder="6" step="1"
+             min="0" max="23" name="notAllocatedEndTime" (blur)="sendresponse()" [formControl]="notAllocatedEndTime"/>
+        </div>
+        <mat-error *ngIf="notAllocatedEndTime.hasError('min') || notAllocatedEndTime.hasError('max')">Enter value in range
+            (0-23) {{getFlagStatus()}}</mat-error> 
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-4">Enter Patient Hour Wait:</label>
+        <div class="col-sm-3">
+            <input class="form-control" type="number" [(ngModel)]="formVal.patientHourWait" placeholder="2" step="1"
+             min="1" max="167" name="patientHourWait" (blur)="sendresponse()" [formControl]="patientHourWait"/>
+        </div>
+        <mat-error *ngIf="patientHourWait.hasError('min') || patientHourWait.hasError('max')">Enter value in range
+            (1-167){{getFlagStatus()}}</mat-error> 
+    </div>
+    
     <hr>
 
-    <label class="col-sm-12">Clinician Relationship:</label>
-
-    <select name="clinicianId" [(ngModel)]="formVal.selectedPriorClinician" [disabled]="formVal.priorClinicianDropDown"
+    <div class="form-group">
+     <label class="control-label col-sm-4">Clinician Relationship:</label>
+     <div class="col-sm-3">
+     <select name="clinicianId" [(ngModel)]="formVal.selectedPriorClinician" [disabled]="formVal.priorClinicianDropDown"
         (change)="afterSelectedPriorClinician(formVal.selectedPriorClinician)">
         <option value="" hidden>Select</option>
         <option *ngFor="let a of formVal.clinicianData" [ngValue]="a">{{a}}</option>
     </select>
+    </div>
+    </div>
     <form *ngIf="formVal.selected" [formGroup]="formVal.expressionFormGroup">
 
         <div formArrayName="expressionForm"
@@ -78,13 +109,25 @@
     <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
     <br />
     <hr>
-
+   
     <label class="col-sm-12">Coverage Summary:</label>
     <br>
     <div class="form-group">
         <label class="control-label col-sm-2"></label>
         <div class="col-sm-4">
-            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="model"  [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef" (blur)="sendresponse()">
+            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="formVal.model"  [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef" (blur)="sendresponse()">
+            </ag-grid-angular>     
+        </div>
+        <br><br><br><br>
+    </div>
+    <hr>
+
+    <label class="col-sm-12">Clinician Efficiency:</label>
+    <br>
+    <div class="form-group">
+        <label class="control-label col-sm-2"></label>
+        <div class="col-sm-4">
+            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="formVal.efficiencyModel"  [columnDefs]="formVal.efficiencyColumnDefs" [defaultColDef]="defaultColDef" (blur)="sendresponse()">
             </ag-grid-angular>     
         </div>
         <br><br><br><br>
