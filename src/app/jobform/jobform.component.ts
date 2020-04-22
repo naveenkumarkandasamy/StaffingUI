@@ -100,7 +100,7 @@ export class JobformComponent implements OnInit, OnChanges {
   upperUtilization = new FormControl('', [Validators.min(0.8), Validators.max(1.5)]);
   notAllocatedStartTime = new FormControl('', [Validators.min(0), Validators.max(23)]);
   notAllocatedEndTime = new FormControl('', [Validators.min(0), Validators.max(23)]);
-  patientHourWait = new FormControl('', [Validators.min(0), Validators.max(23)]);
+  patientHourWait = new FormControl('', [Validators.min(1), Validators.max(167)]);
   inputVFile = new FormControl('', [Validators.required]);
   inputFtpUrl = new FormControl('', [Validators.required]);
   inputFtpUsername = new FormControl('', [Validators.required]);
@@ -113,7 +113,7 @@ export class JobformComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.check = false;
-    if (this.reset != true) {
+    if (this.reset != true ) {
 
       this.exp = [];
       for (let index1 = 0; index1 < this.expData.length; index1++) {
@@ -179,7 +179,6 @@ export class JobformComponent implements OnInit, OnChanges {
         this.selectedNumOfClinician.push({ numberOfClinician: splittedDataBySpace[0] });
         this.selectedOperator.push({ operatorChosen: splittedDataBySpace[1] });
         this.selectedCinincianForExp.push({ selectedClinicianDropDown: splittedDataBySpace[2] });
-
         this.formVal.expressionFormGroup.value.expressionForm[i - 1].cliniciansDropDown = splittedData[0];
         this.formVal.expressionFormGroup.value.expressionForm[i - 1].numberOfClinician = splittedDataBySpace[0];
         this.formVal.expressionFormGroup.value.expressionForm[i - 1].operatorChosen = splittedDataBySpace[1];
@@ -192,6 +191,9 @@ export class JobformComponent implements OnInit, OnChanges {
     if (this.jobName.hasError('required') || this.shiftLength.hasError('pattern') ||
       this.lowerUtilization.hasError('min') || this.lowerUtilization.hasError('max') ||
       this.upperUtilization.hasError('min') || this.upperUtilization.hasError('max') ||
+      this.notAllocatedStartTime.hasError('min')||this.notAllocatedStartTime.hasError('max')||
+      this.notAllocatedEndTime.hasError('min')||this.notAllocatedEndTime.hasError('max')||
+      this.patientHourWait.hasError('min')|| this.patientHourWait.hasError('max')||
       this.outputEmail.hasError('required') ||
       this.cronExp.hasError('required')) {
       this.flagForValidation = 1;
