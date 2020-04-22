@@ -242,15 +242,15 @@ export class ConstantsService {
          },
          {
             "name": "app",
-            "firstHour": 0.15,
-            "midHour": 0.12,
-            "lastHour": 0.1
-         },
-         {
-            "name": "scribe",
             "firstHour": 0.6,
             "midHour": 0.5,
             "lastHour": 0.4
+         },
+         {
+            "name": "scribe",
+            "firstHour": 0.15,
+            "midHour": 0.12,
+            "lastHour": 0.1
          }
       ];
    readonly shiftLength: string = "";
