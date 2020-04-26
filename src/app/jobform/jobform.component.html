@@ -115,7 +115,7 @@
     <div class="form-group">
         <label class="control-label col-sm-2"></label>
         <div class="col-sm-4">
-            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="formVal.model"  [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef" (blur)="sendresponse()">
+            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="formVal.model"  [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef" (cellMouseOut)="sendresponse()">
             </ag-grid-angular>     
         </div>
         <br><br><br><br>
@@ -127,7 +127,7 @@
     <div class="form-group">
         <label class="control-label col-sm-2"></label>
         <div class="col-sm-4">
-            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="formVal.efficiencyModel"  [columnDefs]="formVal.efficiencyColumnDefs" [defaultColDef]="defaultColDef" (blur)="sendresponse()">
+            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="formVal.efficiencyModel"  [columnDefs]="formVal.efficiencyColumnDefs" [defaultColDef]="defaultColDef" (cellMouseOut)="sendresponse()">
             </ag-grid-angular>     
         </div>
         <br><br><br><br>
