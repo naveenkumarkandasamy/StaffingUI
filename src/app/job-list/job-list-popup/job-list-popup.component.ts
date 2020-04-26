@@ -50,7 +50,6 @@ export class JobListPopupComponent implements OnInit {
 
   constructor(private dialogRef: MatDialogRef<JobListPopupComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.jobDetails = data.job_details;
-    console.log(this.jobDetails.clinicians);
    }
 
   ngOnInit() {
