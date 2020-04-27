@@ -26,13 +26,27 @@ export class JobListPopupComponent implements OnInit {
 
   cliniciansColumnDefs = [
     {field : 'Role',lockPosition: true },
-    {field : 'Capacity Per Hr',lockPosition: true },
+    {field : 'Patient Per Hr',lockPosition: true },
     {field : 'Cost',lockPosition: true }
+  ];
+
+  cliniciansEfficiencyColumnDefs = [
+    {field : 'Role',lockPosition: true },
+    {field : 'First Hour',lockPosition: true },
+    {field : 'Mid Hour',lockPosition: true },
+    {field : 'Last Hour',lockPosition: true }
+  ];
+
+  cliniciansRelationshipColumnDefs = [
+    {field : 'Role',lockPosition: true },
+    {field : 'Expression',lockPosition: true },
   ];
 
   inputFTPDetailsRowData = [];
   outputFTPDetailsRowData = [];
   cliniciansRowData = [];
+  cliniciansEfficiencyRowData = [];
+  cliniciansRelationshipRowData = [];
 
   constructor(private dialogRef: MatDialogRef<JobListPopupComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.jobDetails = data.job_details;
@@ -44,9 +58,12 @@ export class JobListPopupComponent implements OnInit {
 
   createTableData()
   {
+    this.createExpressions(this.jobDetails.clinicians)
     this.createCliniciansData(this.jobDetails.clinicians);
+    this.createClinicianEfficieny(this.jobDetails.clinicians);
     this.createInputFTPDetails(this.jobDetails.inputFtpDetails);
     this.createOutputFTPDetails(this.jobDetails.outputFtpDetails);
+
     this.dataSource = [
       {
         item:'Name',
@@ -65,12 +82,28 @@ export class JobListPopupComponent implements OnInit {
         value: this.jobDetails.upperUtilizationFactor
       },
       {
-        item:'Clinicians',
-        value: this.jobDetails.clinicians 
+        item:'Restricted Start Time',
+        value: this.jobDetails.notAllocatedStartTime
       },
       {
-        item:'Cron Expression',
-        value: this.jobDetails.cronExpression
+        item:'Restricted End Time',
+        value: this.jobDetails.notAllocatedEndTime
+      },
+      {
+        item:'Patient Hour Wait',
+        value: this.jobDetails.patientHourWait
+      },
+      {
+        item:'Clinician Relationship',
+        value: this.cliniciansRelationshipRowData
+      },
+      {
+        item:'Clinician Summary',
+        value: this.cliniciansRowData
+      },
+      {
+        item:'Clinician Efficiency',
+        value: this.cliniciansEfficiencyRowData
       },
       {
         item:'Input Format',
@@ -85,31 +118,35 @@ export class JobListPopupComponent implements OnInit {
         value: this.jobDetails.outputFormat
       },
       {
-        item:'Output Email ID',
-        value: this.jobDetails.outputEmailId
+        item:((this.jobDetails.outputFormat === 'EMAIL') ? 'Output Email ID' : 'Output FTP Details'),
+        value: ((this.jobDetails.outputFormat === 'EMAIL') ? this.jobDetails.outputEmailId : this.outputFTPDetailsRowData)
+      },
+      {
+        item:'Cron Expression',
+        value: this.jobDetails.cronExpression
       },
       {
         item:'Status',
         value: this.jobDetails.status
       }
     ];
-    
-    if(this.jobDetails.outputFormat !== 'EMAIL') {
-      this.dataSource.splice(
-        9,
-        0,
-        {
-          item: 'Output FTP Details',
-          value: this.outputFTPDetailsRowData
-        });
+  }
+  createExpressions(data: any) {
+    for (let index = 0; index < data.length; index++) {
+      this.cliniciansRelationshipRowData.push({ Role: data[index].name, Expression : data[index].expressions});
+    }
+  }
+  
+  createClinicianEfficieny(data: any) {
+    for (let index = 0; index < data.length; index++) {
+      this.cliniciansEfficiencyRowData.push({ Role: data[index].name, 'First Hour' : data[index].capacity[0], 'Mid Hour' : data[index].capacity[1], 'Last Hour' : data[index].capacity[2]});
     }
   }
 
   createCliniciansData(data : any) {
     for (let index = 0; index < data.length; index++) {
-      this.cliniciansRowData.push({ Role: data[index].name, 'Capacity Per Hr' : data[index].name, Cost: data[index].cost});
+      this.cliniciansRowData.push({ Role: data[index].name, 'Patient Per Hr' : data[index].patientsPerHour, Cost: data[index].cost});
     }
-
   }
 
   createInputFTPDetails(data : any) { 

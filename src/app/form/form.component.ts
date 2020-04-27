@@ -67,7 +67,7 @@ export class MainFormComponent implements OnInit {
   columnDefs = [
     { headerName: 'Role', field: 'name', editable: true, lockPosition: true},
     {
-      headerName: 'Capacity Per Hr', lockPosition: true, valueGetter: function (params) {
+      headerName: 'Patients Per Hr', lockPosition: true, valueGetter: function (params) {
         return params.data.patientsPerHour;
       },
       valueSetter: function (params) {

@@ -285,7 +285,6 @@ export class JobformComponent implements OnInit, OnChanges {
     }
   }
   readingData(index) {
-
     let clinician = this.formVal.expressionFormGroup.value.expressionForm[index].cliniciansDropDown;
     let selectedClinicianValue = this.formVal.expressionFormGroup.value.expressionForm[index].selectedClinicianDropDown;
     if (clinician !== '' && this.formVal.expressionFormGroup.value.expressionForm[index].numberOfClinician !== '' && this.formVal.expressionFormGroup.value.expressionForm[index].operatorChosen !== '' && selectedClinicianValue !== '') {
@@ -320,6 +319,7 @@ export class JobformComponent implements OnInit, OnChanges {
         this.addMoreRequired[index + 1] = false;
       }
     }
+    this.sendresponse();
   }
   removingExpression() {
     this.toAddExp = false;
