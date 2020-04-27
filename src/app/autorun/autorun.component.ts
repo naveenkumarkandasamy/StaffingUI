@@ -35,6 +35,7 @@ export class AutorunComponent implements OnInit {
   expressionDataFromDb: any = [];
   mostPriorClinician: any;
   reset: boolean = false;
+  clinicianModel: Model[] = this.constantsService.model;
 
   constructor(private fb: FormBuilder, private constantsService: ConstantsService, private httpClientService: HttpClientService,
     private toastr: ToastrService, private _Activatedroute: ActivatedRoute) { }
@@ -67,14 +68,24 @@ export class AutorunComponent implements OnInit {
   jobDetails: any;
 
   createCliniciansData(data: any) {
+    for (let i=0; i < this.clinicianModel.length; i++)
+    {
     for (let index = 0; index < data.length; index++) {
+      if(this.clinicianModel[i].name==data[index].name){
       this.cliniciansDataFromDb.push({ 'name': data[index].name, 'patientsPerHour': data[index].patientsPerHour, 'cost': data[index].cost });
+     }
+    }
     }
   }
   createEfficiencyData(data: any) {
+    for (let i=0; i < this.clinicianModel.length; i++)
+    {
     for (let index = 0; index < data.length; index++) {
+      if(this.clinicianModel[i].name==data[index].name){
       this.cliniciansEfficiencyDataFromDb.push({ 'name': data[index].name, 'firstHour': data[index].capacity[0], 'midHour': data[index].capacity[1], 'lastHour': data[index].capacity[2] });
+      }
     }
+    }  
   }
   createExpressionsData(data: any) {
     for (let index1 = 0; index1 < data.length; index1++) {
