@@ -371,7 +371,7 @@ export class MainFormComponent implements OnInit {
     this.requestBody.upperLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.upperLimitFactor;
     this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
     this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
-    this.requestBody.patientHourWait = this.patientHourWait != "" ? this.patientHourWait : this.requestBody.patientHourWait;
+    this.requestBody.patientHourWait = this.patientHourWait;
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }

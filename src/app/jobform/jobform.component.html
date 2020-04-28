@@ -57,10 +57,10 @@
         <label class="control-label col-sm-4">Enter Patient Hour Wait:</label>
         <div class="col-sm-3">
             <input class="form-control" type="number" [(ngModel)]="formVal.patientHourWait" placeholder="2" step="1"
-             min="1" max="167" name="patientHourWait" (blur)="sendresponse()" [formControl]="patientHourWait"/>
+             min="0" max="167" name="patientHourWait" (blur)="sendresponse()" [formControl]="patientHourWait"/>
         </div>
         <mat-error *ngIf="patientHourWait.hasError('min') || patientHourWait.hasError('max')">Enter value in range
-            (1-167){{getFlagStatus()}}</mat-error> 
+            (0-167){{getFlagStatus()}}</mat-error> 
     </div>
     
     <hr>
