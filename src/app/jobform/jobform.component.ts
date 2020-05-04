@@ -457,8 +457,6 @@ export class JobformComponent implements OnInit, OnChanges {
   }
   calculateCapacity() {
     for (let i = 0; i < this.model.length; i++) {
-
-      this.model[i].patientsPerHour = this.formVal.model[i].patientsPerHour;
       this.model[i].cost = this.formVal.model[i].cost;
       this.model[i].capacity[0] = this.formVal.efficiencyModel[i].firstHour;
       this.model[i].capacity[1] = this.formVal.efficiencyModel[i].midHour;
