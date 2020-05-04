@@ -51,7 +51,7 @@
             <label class="control-label col-sm-4">Clinician Relationship:</label>
             <div class="col-sm-3">
             <select [disabled]="priorClinicianDropDown" [(ngModel)]="selectedPriorClinician" name="clinicianSelection"
-            (change)="afterSelectedPriorClinician(selectedPriorClinician)">
+            (change)="afterSelectedPriorClinician(selectedPriorClinician)" required>
             <option value="" hidden>Select</option>
             <option *ngFor="let a of clinicianData">{{a}}</option>
             </select>

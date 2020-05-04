@@ -44,11 +44,11 @@ export class MainFormComponent implements OnInit {
   inputTypes: Array<string> = ["Provide Online", "File Upload"];
   inputFormat: string = "Provide Online";
   fileToUpload: File = null;
-  utilization = "";
-  upperUtilization = "";
+  utilization = 1.10;
+  upperUtilization = 0.85;
   notAllocatedStartTime = 1;
   notAllocatedEndTime = 6;
-  patientHourWait = "";
+  patientHourWait = 2;
   model: Model[] = this.constantsService.model;
   isRequiredToDelete: boolean;
   toAddExp: boolean;
@@ -366,12 +366,12 @@ export class MainFormComponent implements OnInit {
   }
   onSubmit() {
     this.calculateCapacity();
-    this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
-    this.requestBody.lowerLimitFactor = this.upperUtilization != "" ? this.upperUtilization : this.requestBody.lowerLimitFactor;
-    this.requestBody.upperLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.upperLimitFactor;
+    this.requestBody.shiftLength = this.shiftLength;
+    this.requestBody.lowerLimitFactor = this.upperUtilization;
+    this.requestBody.upperLimitFactor = this.utilization;
     this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
     this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
-    this.requestBody.patientHourWait = this.patientHourWait != "" ? this.patientHourWait : this.requestBody.patientHourWait;
+    this.requestBody.patientHourWait = this.patientHourWait
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
