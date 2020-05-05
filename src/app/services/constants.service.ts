@@ -253,7 +253,7 @@ export class ConstantsService {
             "lastHour": 0.1
          }
       ];
-   readonly shiftLength: any = [12,8,10,4];
+   readonly shiftLength: string = "12,8,10,4"
    readonly requestBody: any = {
       "shiftLength": [12, 8, 10, 4],
       "lowerLimitFactor": 0.85,

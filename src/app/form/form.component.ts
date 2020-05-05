@@ -366,7 +366,7 @@ export class MainFormComponent implements OnInit {
   }
   onSubmit() {
     this.calculateCapacity();
-    this.requestBody.shiftLength = this.shiftLength;
+    this.requestBody.shiftLength = this.shiftLength.split(",");
     this.requestBody.lowerLimitFactor = this.upperUtilization;
     this.requestBody.upperLimitFactor = this.utilization;
     this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
