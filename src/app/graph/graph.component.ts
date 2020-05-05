@@ -176,8 +176,7 @@ export class GraphComponent implements OnInit {
 
   public options: any = {
     chart: {
-      type: 'column',
-      height: 400
+      height: 350
     },
     title: {
       text: 'Workload and Capacity Pattern'
@@ -243,6 +242,7 @@ export class GraphComponent implements OnInit {
     this.dataSource = data; //.slice(0,24);
     this.options.series = [
       {
+        type: 'column',
         name: 'Workload',
         color: 'rgba(0,0,217,1)',
         data: expectedWorkLoadArray,
@@ -250,6 +250,7 @@ export class GraphComponent implements OnInit {
         pointPlacement: -0.2
       },
       {
+        type: 'line',
         name: 'Capacity',
         color: 'rgba(255,165,0,1)',
         data: capacityWorkLoadArray,
