@@ -8,7 +8,7 @@ export class ConstantsService {
    readonly distLocation: string = 'MyApplication/';
    readonly data: any = [
       {
-         "name": "Sunday",
+         "name": "Monday",
          "expectedPatientsPerHour": [
             2.59,
             2.58,
@@ -37,7 +37,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Monday",
+         "name": "Tuesday",
          "expectedPatientsPerHour": [
             3.85,
             2.9,
@@ -66,7 +66,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Tuesday",
+         "name": "Wednesday",
          "expectedPatientsPerHour": [
             4.45,
             3.4,
@@ -95,7 +95,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Wednesday",
+         "name": "Thursday",
          "expectedPatientsPerHour": [
             4.26,
             2.97,
@@ -124,7 +124,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Thursday",
+         "name": "Friday",
          "expectedPatientsPerHour": [
             4.05,
             2.93,
@@ -153,7 +153,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Friday",
+         "name": "Saturday",
          "expectedPatientsPerHour": [
             2.9,
             1.74,
@@ -182,7 +182,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Saturday",
+         "name": "Sunday",
          "expectedPatientsPerHour": [
             1.08,
             0.35,

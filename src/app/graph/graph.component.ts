@@ -34,8 +34,9 @@ export class GraphComponent implements OnInit {
   filteredShiftList: Shifts[];
   shiftSlots: object[];
   dataSource: any[];
-  daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-  days: number[] = [0, 1, 2, 3, 4, 5, 6];
+  daysOfWeek: string[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday"]
+  orderOfDays: string[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Sat,Sunday"];
+  days: number[] = [0, 1, 2, 3, 4, 5, 6, 7];
   transposedData: TransposedRow[];
   filteredTransposedData: TransposedRow[];
   transposedColumnDef: Array<any>
@@ -51,14 +52,36 @@ export class GraphComponent implements OnInit {
   }
 
   filterDetails(filterVal: any) {
-    if (filterVal == -1) {
+    let choiceOfDays =filterVal;
+    if (choiceOfDays == -1) {
       this.filteredShiftList = this.shiftList;
       this.filteredHourlyData = this.hourlyDetailData;
       this.createColumnData(0);
       this.filteredTransposedData = this.transposedData;
+      this.getSummary();
       this.createGraph(this.hourlyDetailData);
       return;
     }
+    else if(choiceOfDays == 7){
+      filterVal =5;
+      this.filteredHourlyData = this.hourlyDetailData.slice(filterVal * 24, (parseInt(filterVal) + 1) * 48);
+      this.createColumnData(120);
+      this.filteredTransposedData = [];
+      this.transposedData.forEach(transposedRow => {
+      let newRow = this.filterList(filterVal * 24, (parseInt(filterVal) + 1) * 48, transposedRow);
+      newRow["header"] = transposedRow["header"];
+      this.filteredTransposedData.push(newRow);
+      })
+     this.filteredShiftList =[];
+     for(filterVal = 5; filterVal <= 6; filterVal++){
+      for(let itr in this.shiftList){
+       if(this.shiftList[itr].day == this.daysOfWeek[filterVal]){
+          this.filteredShiftList.push(this.shiftList[itr])
+       }}
+     }
+    }
+    else
+    {
     this.filteredHourlyData = this.hourlyDetailData.slice(filterVal * 24, (parseInt(filterVal) + 1) * 24);
     this.createColumnData(filterVal * 24);
     this.filteredShiftList = this.shiftList.filter(a => a.day == this.daysOfWeek[filterVal])
@@ -68,6 +91,7 @@ export class GraphComponent implements OnInit {
       newRow["header"] = transposedRow["header"];
       this.filteredTransposedData.push(newRow);
     })
+    }
     this.getSummary();
     this.createGraph(this.filteredHourlyData);
   }
