@@ -100,7 +100,7 @@ export class JobformComponent implements OnInit, OnChanges {
   upperUtilization = new FormControl('', [Validators.min(0.8), Validators.max(1.5)]);
   notAllocatedStartTime = new FormControl('', [Validators.min(0), Validators.max(23)]);
   notAllocatedEndTime = new FormControl('', [Validators.min(0), Validators.max(23)]);
-  patientHourWait = new FormControl('', [Validators.min(1), Validators.max(167)]);
+  patientHourWait = new FormControl('', [Validators.min(0), Validators.max(167)]);
   inputVFile = new FormControl('', [Validators.required]);
   inputFtpUrl = new FormControl('', [Validators.required]);
   inputFtpUsername = new FormControl('', [Validators.required]);
