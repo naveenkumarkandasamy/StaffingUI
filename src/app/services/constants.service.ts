@@ -8,7 +8,7 @@ export class ConstantsService {
    readonly distLocation: string = 'MyApplication/';
    readonly data: any = [
       {
-         "name": "Sunday",
+         "name": "Monday",
          "expectedPatientsPerHour": [
             2.59,
             2.58,
@@ -37,7 +37,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Monday",
+         "name": "Tuesday",
          "expectedPatientsPerHour": [
             3.85,
             2.9,
@@ -66,7 +66,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Tuesday",
+         "name": "Wednesday",
          "expectedPatientsPerHour": [
             4.45,
             3.4,
@@ -95,7 +95,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Wednesday",
+         "name": "Thursday",
          "expectedPatientsPerHour": [
             4.26,
             2.97,
@@ -124,7 +124,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Thursday",
+         "name": "Friday",
          "expectedPatientsPerHour": [
             4.05,
             2.93,
@@ -153,7 +153,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Friday",
+         "name": "Saturday",
          "expectedPatientsPerHour": [
             2.9,
             1.74,
@@ -182,7 +182,7 @@ export class ConstantsService {
          ]
       },
       {
-         "name": "Saturday",
+         "name": "Sunday",
          "expectedPatientsPerHour": [
             1.08,
             0.35,
@@ -213,21 +213,18 @@ export class ConstantsService {
    ];
    readonly model: Model[] = [
       {
-         "patientsPerHour": 1.2,
          "capacity": [1.0, 0.83, 0.67],
          "cost": 200,
          "name": "physician",
          "expressions": ["0"]
       },
       {
-         "patientsPerHour": 0.6,
          "capacity": [0.6, 0.5, 0.4],
          "cost": 65,
          "name": "app",
          "expressions": ["1","1 * physician"]
       },
       {
-         "patientsPerHour": 0.37,
          "capacity": [0.15, 0.12, 0.1],
          "cost": 20,
          "name": "scribe",
@@ -236,21 +233,21 @@ export class ConstantsService {
       readonly efficiencyModel: Efficiency[] = [
          {
             "name": "physician",
-            "firstHour": 1.0,
-            "midHour": 0.83,
-            "lastHour": 0.67
+            "firstHour": 1.2,
+            "midHour":1.0 ,
+            "lastHour": 0.9
          },
          {
             "name": "app",
-            "firstHour": 0.6,
-            "midHour": 0.5,
-            "lastHour": 0.4
+            "firstHour": 0.8,
+            "midHour": 0.7,
+            "lastHour": 0.6,
          },
          {
             "name": "scribe",
-            "firstHour": 0.15,
-            "midHour": 0.12,
-            "lastHour": 0.1
+            "firstHour": 0.5,
+            "midHour": 0.4,
+            "lastHour": 0.3
          }
       ];
    readonly shiftLength: string = "12,8,10,4"

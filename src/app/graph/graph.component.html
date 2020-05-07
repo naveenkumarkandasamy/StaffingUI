@@ -6,7 +6,7 @@
             <select (change)="filterDetails($event.target.value)">
                 <option value="-1">--All--</option>
                 <option *ngFor="let i of days" value={{i}}>
-                    {{daysOfWeek[i]}}
+                    {{orderOfDays[i]}}
                 </option>
             </select>
         </div>

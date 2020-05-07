@@ -42,7 +42,7 @@
                 <label class="control-label col-sm-4">Enter Number of patientHourWait:</label>
                 <div class="col-sm-3">
                     <input type="number" class="form-control" [(ngModel)]="patientHourWait"
-                    step="1" min="1" max="167" required placeholder="2" name="patientHourWait"/>
+                    step="1" min="0" max="167" required placeholder="2" name="patientHourWait"/>
                 </div>
             </div>
         <br />
@@ -92,8 +92,8 @@
         <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
 
         <br />
-
-        <label class="col-sm-12">Clinician Summary:</label>
+        <hr>
+        <label class="col-sm-12">Clinician Cost:</label>
         <br>
         <br>
         <div class="form-group">
@@ -107,7 +107,7 @@
         <br>
         <hr>
 
-        <label class="col-sm-12">Clinician Efficiency:</label>
+        <label class="col-sm-12">Clinician Performance:</label>
         <br>
         <br>
         <div class="form-group">
