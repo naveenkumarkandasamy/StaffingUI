@@ -5,9 +5,9 @@
         </div>
         <div>
             <ul class="nav navbar-nav">
-                <li><a *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/mainForm'">Main Form</a></li>
-                <li><a *ngIf="loginService.isUserLoggedIn() && isAdmin" [routerLink]="'/job'">Autorun</a></li>
-                <li><a *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/joblist'">Job List</a></li>
+                <li><a *ngIf="loginService.isUserLoggedIn() "  routerLinkActive="active"  [routerLink]="'/mainForm'" >Main Form</a></li>
+                <li><a *ngIf="loginService.isUserLoggedIn() && isAdmin" routerLinkActive="active"  [routerLink]="'/job'">Autorun</a></li>
+                <li><a *ngIf="loginService.isUserLoggedIn()" routerLinkActive="active" [routerLink]="'/joblist'">Job List</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a *ngIf="loginService.isUserLoggedIn()" [routerLink]="'/logout'">Logout</a></li>

@@ -22,3 +22,8 @@
 .nav>ul {
     display: inline-block;
 }  
+
+.active {
+    color:white;
+    font-weight: bold;
+}
