@@ -45,7 +45,6 @@ export interface Shifts {
 }
 
 export class Model {
-  patientsPerHour: number;
   capacity: Array<number>;
   cost: number;
   name: String;
