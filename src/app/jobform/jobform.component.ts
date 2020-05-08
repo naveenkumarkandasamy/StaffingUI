@@ -7,6 +7,7 @@ import { AuthenticationService } from '../services/authentication.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormControl, Validators, FormBuilder, FormArray, FormGroup } from '@angular/forms';
 import { NgForm } from '@angular/forms';
+import { ExcelService } from '../services/excel.service';
 
 @Component({
   selector: 'app-jobform',
@@ -15,6 +16,7 @@ import { NgForm } from '@angular/forms';
 })
 export class JobformComponent implements OnInit, OnChanges {
 
+  sampleFileData: any = this.constantsService.sampleFileData;
   selectedClinician: any[] = [];
   selectedNumOfClinician: any[] = [];
   selectedOperator: any[] = [];
@@ -24,7 +26,7 @@ export class JobformComponent implements OnInit, OnChanges {
   checking: boolean = false;
   expression: String;
 
-  constructor(private fb: FormBuilder, private constantsService: ConstantsService, public dialog: MatDialog, private authService: AuthenticationService, private toastr: ToastrService) {
+  constructor(private fb: FormBuilder, private constantsService: ConstantsService, public dialog: MatDialog, private authService: AuthenticationService, private toastr: ToastrService, private excelService: ExcelService) {
   }
   ngOnInit() {
     this.itr = 1;
@@ -569,6 +571,10 @@ export class JobformComponent implements OnInit, OnChanges {
       this.cronValid = 1;
       this.sendresponse();
     });
+  }
+
+  exportAsXLSX():void {
+    this.excelService.exportAsExcelFile(this.sampleFileData, 'sample');
   }
 }
 

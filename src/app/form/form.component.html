@@ -99,7 +99,7 @@
         <div class="form-group">
             <label class="control-label col-sm-2"></label>
             <div class="col-sm-4">
-                <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham"
+                <ag-grid-angular domLayout="autoHeight" style="width: 28.1vw; height: 20vh;" class="ag-theme-balham"
                 [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
                 </ag-grid-angular>     
             </div>
@@ -148,6 +148,12 @@
             </div>
         </div>
         <div *ngIf="inputFormat == 'File Upload'">
+                <div class="form-group">
+                        <label class="control-label col-sm-4">Download Sample File:</label>
+                        <div class="col-sm-3">
+                            <button mat-raised-button (click)="exportAsXLSX()" style="width: 100%">Download</button>
+                        </div>
+                    </div>
             <div class="form-group">
                 <label class="control-label col-sm-4">Choose File:</label>
                 <div class="col-sm-3">

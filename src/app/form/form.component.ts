@@ -9,6 +9,7 @@ import { HttpClientService } from "../services/http-client.service";
 import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs/operators';
 import { FormGroup, FormControl, FormArray, FormBuilder } from '@angular/forms';
+import { ExcelService } from '../services/excel.service';
 @Component({
   selector: 'mainForm',
   templateUrl: './form.component.html',
@@ -40,6 +41,7 @@ export class MainFormComponent implements OnInit {
   apiData: response;
   transposedColumnDef: Array<any>
   data: any = this.constantsService.data;
+  sampleFileData: any = this.constantsService.sampleFileData;
   shiftLength: string = this.constantsService.shiftLength;
   inputTypes: Array<string> = ["Provide Online", "File Upload"];
   inputFormat: string = "Provide Online";
@@ -133,7 +135,7 @@ export class MainFormComponent implements OnInit {
   }
 
   constructor(private fb: FormBuilder, private router: Router, private http: HttpClient,
-    private dataService: DataService, private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService) { }
+    private dataService: DataService, private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService, private excelService: ExcelService) { }
 
   ngOnInit() {
 
@@ -432,5 +434,9 @@ export class MainFormComponent implements OnInit {
       })
 
     }
+  }
+
+  exportAsXLSX():void {
+    this.excelService.exportAsExcelFile(this.sampleFileData, 'sample');
   }
 }

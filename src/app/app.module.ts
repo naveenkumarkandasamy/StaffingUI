@@ -37,6 +37,7 @@ import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
 
 import { CronGeneratorComponent } from './cron-generator/cron-generator.component';
 import { JobformComponent } from './jobform/jobform.component';
+import { ExcelService } from './services/excel.service';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,7 @@ import { JobformComponent } from './jobform/jobform.component';
   entryComponents: [
     JobListPopupComponent
   ],
-  providers: [DataService, ConstantsService, AuthenticationService, HttpClientService,
+  providers: [ExcelService, DataService, ConstantsService, AuthenticationService, HttpClientService,
     { provide: HTTP_INTERCEPTORS, useClass: BasicAuthInterceptor, multi: true },],
   // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },],
   bootstrap: [AppComponent]

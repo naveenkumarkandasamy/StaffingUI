@@ -222,34 +222,34 @@ export class ConstantsService {
          "capacity": [0.6, 0.5, 0.4],
          "cost": 65,
          "name": "app",
-         "expressions": ["1","1 * physician"]
+         "expressions": ["1", "1 * physician"]
       },
       {
          "capacity": [0.15, 0.12, 0.1],
          "cost": 20,
          "name": "scribe",
-         "expressions": ["2","1 * physician","1 * app"]
+         "expressions": ["2", "1 * physician", "1 * app"]
       }];
-      readonly efficiencyModel: Efficiency[] = [
-         {
-            "name": "physician",
-            "firstHour": 1.2,
-            "midHour":1.0 ,
-            "lastHour": 0.9
-         },
-         {
-            "name": "app",
-            "firstHour": 0.8,
-            "midHour": 0.7,
-            "lastHour": 0.6,
-         },
-         {
-            "name": "scribe",
-            "firstHour": 0.5,
-            "midHour": 0.4,
-            "lastHour": 0.3
-         }
-      ];
+   readonly efficiencyModel: Efficiency[] = [
+      {
+         "name": "physician",
+         "firstHour": 1.2,
+         "midHour": 1.0,
+         "lastHour": 0.9
+      },
+      {
+         "name": "app",
+         "firstHour": 0.8,
+         "midHour": 0.7,
+         "lastHour": 0.6,
+      },
+      {
+         "name": "scribe",
+         "firstHour": 0.5,
+         "midHour": 0.4,
+         "lastHour": 0.3
+      }
+   ];
    readonly shiftLength: string = "";
    readonly requestBody: any = {
       "shiftLength": [12, 8, 10, 4],
@@ -294,4 +294,52 @@ export class ConstantsService {
       "upperUtilizationFactor": 1.10,
       "scheduleDateTime": Date().toString()
    }];
+
+   readonly sampleFileData: any = [
+      {
+         "Day": "Monday",
+         "0": "",
+         "1": "",
+         "2": "",
+         "3": "",
+         "4": "",
+         "5": "",
+         "6": "",
+         "7": "",
+         "8": "",
+         "9": "",
+         "10": "",
+         "11": "",
+         "12": "",
+         "13": "",
+         "14": "",
+         "15": "",
+         "16": "",
+         "17": "",
+         "18": "",
+         "19": "",
+         "20": "",
+         "21": "",
+         "22": "",
+         "23": ""
+      },
+      {
+         "Day": "Tuesday"
+      },
+      {
+         "Day": "Wednesday"
+      },
+      {
+         "Day": "Thursday"
+      },
+      {
+         "Day": "Friday"
+      },
+      {
+         "Day": "Saturday"
+      },
+      {
+         "Day": "Sunday"
+      }
+   ];
 }
