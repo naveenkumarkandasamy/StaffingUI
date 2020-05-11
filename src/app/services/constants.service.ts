@@ -230,27 +230,27 @@ export class ConstantsService {
          "name": "scribe",
          "expressions": ["2", "1 * physician", "1 * app"]
       }];
-   readonly efficiencyModel: Efficiency[] = [
-      {
-         "name": "physician",
-         "firstHour": 1.2,
-         "midHour": 1.0,
-         "lastHour": 0.9
-      },
-      {
-         "name": "app",
-         "firstHour": 0.8,
-         "midHour": 0.7,
-         "lastHour": 0.6,
-      },
-      {
-         "name": "scribe",
-         "firstHour": 0.5,
-         "midHour": 0.4,
-         "lastHour": 0.3
-      }
-   ];
-   readonly shiftLength: string = "";
+      readonly efficiencyModel: Efficiency[] = [
+         {
+            "name": "physician",
+            "firstHour": 1.2,
+            "midHour":1.0 ,
+            "lastHour": 0.9
+         },
+         {
+            "name": "app",
+            "firstHour": 0.8,
+            "midHour": 0.7,
+            "lastHour": 0.6,
+         },
+         {
+            "name": "scribe",
+            "firstHour": 0.5,
+            "midHour": 0.4,
+            "lastHour": 0.3
+         }
+      ];
+   readonly shiftLength: string = "12,8,10,4"
    readonly requestBody: any = {
       "shiftLength": [12, 8, 10, 4],
       "lowerLimitFactor": 0.85,

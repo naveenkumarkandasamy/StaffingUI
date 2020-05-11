@@ -1,42 +1,41 @@
 <div class="container">
     <br>
     <form class="form-horizontal" (ngSubmit)="onSubmit()" #heroForm="ngForm" ngNativeValidate>
-            <div class="form-group">
-                <label class="control-label col-sm-4">Enter comma seperted shift preferences:</label>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" [(ngModel)]="shiftLength"
-                    placeholder="12, 8, 10, 4" name="shiftLength" #name="ngModel" pattern="^[1-9][0-9]?(,[1-9][0-9]?)*$"
-                    required/>
-                </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Enter comma seperted shift preferences:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" [(ngModel)]="shiftLength" placeholder="12, 8, 10, 4"
+                    name="shiftLength" #name="ngModel" pattern="^[1-9][0-9]?(,[1-9][0-9]?)*$" required />
             </div>
-            <div class="form-group">
-                <label class="control-label col-sm-4">Enter lower limit for utilization:</label>
-                <div class="col-sm-3">
-                    <input type="number" class="form-control" [(ngModel)]="upperUtilization"
-                    name="upperUtilization" min="0.5" max="1.1" placeholder="0.85" step="0.05" required/>
-                </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Enter lower limit for utilization:</label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" [(ngModel)]="upperUtilization" name="upperUtilization"
+                    min="0.5" max="1.1" placeholder="0.85" step="0.05" required />
             </div>
-            <div class="form-group">
-                <label class="control-label col-sm-4">Enter upper limit for utilization:</label>
-                <div class="col-sm-3">
-                    <input type="number" class="form-control" [(ngModel)]="utilization"
-                    placeholder="1.10" name="utilzation" step="0.05" min="0.8" max="1.5" required/>
-                </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Enter upper limit for utilization:</label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" [(ngModel)]="utilization" placeholder="1.10" name="utilzation"
+                    step="0.05" min="0.8" max="1.5" required />
             </div>
-            <div class="form-group">
-                <label class="control-label col-sm-4">Enter Restriction start time:</label>
-                <div class="col-sm-3">
-                    <input type="number" class="form-control" [(ngModel)]="notAllocatedStartTime"
-                    placeholder="1" step="1" min="0" max="23" required name="notAllocatedStartTime"/>
-                </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Enter Restriction start time:</label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" [(ngModel)]="notAllocatedStartTime" placeholder="1" step="1"
+                    min="0" max="23" required name="notAllocatedStartTime" />
             </div>
-            <div class="form-group">
-                <label class="control-label col-sm-4">Enter Restriction End time:</label>
-                <div class="col-sm-3">
-                    <input type="number" class="form-control" [(ngModel)]="notAllocatedEndTime"
-                    placeholder="6" step="1" min="0" max="23" required name="notAllocatedEndTime"/>
-                </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Enter Restriction End time:</label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" [(ngModel)]="notAllocatedEndTime" placeholder="6" step="1"
+                    min="0" max="23" required name="notAllocatedEndTime" />
             </div>
+        </div>
       
             <div class="form-group">
                 <label class="control-label col-sm-4">Enter Number of patientHourWait:</label>
@@ -51,7 +50,7 @@
             <label class="control-label col-sm-4">Clinician Relationship:</label>
             <div class="col-sm-3">
             <select [disabled]="priorClinicianDropDown" [(ngModel)]="selectedPriorClinician" name="clinicianSelection"
-            (change)="afterSelectedPriorClinician(selectedPriorClinician)">
+            (change)="afterSelectedPriorClinician(selectedPriorClinician)" required>
             <option value="" hidden>Select</option>
             <option *ngFor="let a of clinicianData">{{a}}</option>
             </select>
@@ -114,8 +113,8 @@
             <label class="control-label col-sm-2"></label>
             <div class="col-sm-4">
                 <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham"
-                [rowData]="efficiencyModel" [columnDefs]="columnDefs1" [defaultColDef]="defaultColDef">
-                </ag-grid-angular>     
+                    [rowData]="efficiencyModel" [columnDefs]="columnDefs1" [defaultColDef]="defaultColDef">
+                </ag-grid-angular>
             </div>
         </div>
         <br>
@@ -125,24 +124,24 @@
             <label class="control-label col-sm-4">Arrival Data format:</label>
             <div class="col-sm-3">
                 <select class="form-control" id="inputType" name="inputFormat" #t (change)="formatChanged(t.value)"
-                required>>
-                    <option value="-1" >Select Input Format</option>
+                    required>>
+                    <option value="-1">Select Input Format</option>
                     <option [value]="type" *ngFor="let type of inputTypes">
                         {{ type }}
                     </option>
                 </select>
-            </div> 
+            </div>
         </div>
         <hr>
         <div *ngIf="inputFormat == 'Provide Online'">
-            <label class="col-sm-12">Hourly Data:</label>
+            <label class="col-sm-12">Hourly Workload:</label>
             <br>
             <div class="form-group">
                 <label class="control-label col-sm-2"></label>
                 <div class="col-sm-10">
                     <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="data"
-                    [columnDefs]="transposedColumnDef" [defaultColDef]="defaultColDef">
-                    </ag-grid-angular>     
+                        [columnDefs]="transposedColumnDef" [defaultColDef]="defaultColDef">
+                    </ag-grid-angular>
                 </div>
                 <br><br><br><br>
             </div>
@@ -157,7 +156,20 @@
             <div class="form-group">
                 <label class="control-label col-sm-4">Choose File:</label>
                 <div class="col-sm-3">
-                    <input type="file" id="file" #fileInput (change)="handleFileInput($event.target.files)" required/>
+                    <input type="file" id="file" #fileInput (change)="handleFileInput($event)" required />
+                </div>
+            </div>
+            <div *ngIf="chooseFile">
+                <label class="col-sm-12">Hourly Workload:</label>
+                <br>
+                <div class="form-group">
+                    <label class="control-label col-sm-2"></label>
+                    <div class="col-sm-10">
+                        <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="fileData"
+                        [columnDefs]="transposedFileColumnDef" [defaultColDef]="defaultColDef">
+                        </ag-grid-angular>
+                    </div>
+                    <br><br><br><br>
                 </div>
             </div>
         </div>

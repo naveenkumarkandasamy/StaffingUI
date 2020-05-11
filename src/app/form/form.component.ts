@@ -10,6 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs/operators';
 import { FormGroup, FormControl, FormArray, FormBuilder } from '@angular/forms';
 import { ExcelService } from '../services/excel.service';
+import * as XLSX from 'xlsx';
+
 @Component({
   selector: 'mainForm',
   templateUrl: './form.component.html',
@@ -46,16 +48,19 @@ export class MainFormComponent implements OnInit {
   inputTypes: Array<string> = ["Provide Online", "File Upload"];
   inputFormat: string = "Provide Online";
   fileToUpload: File = null;
-  utilization = "";
-  upperUtilization = "";
+  utilization = 1.10;
+  upperUtilization = 0.85;
   notAllocatedStartTime = 1;
   notAllocatedEndTime = 6;
-  patientHourWait = "";
+  patientHourWait = 2;
   model: Model[] = this.constantsService.model;
   isRequiredToDelete: boolean;
   toAddExp: boolean;
+  chooseFile: boolean;
+  fileData: any;
+  transposedFileColumnDef: Array<any>
 
-  efficiencyModel: Efficiency[]= this.constantsService.efficiencyModel;
+  efficiencyModel: Efficiency[] = this.constantsService.efficiencyModel;
 
   requestBody: any = {
     "shiftLength": [12, 8, 10, 4],
@@ -67,7 +72,7 @@ export class MainFormComponent implements OnInit {
   }
 
   columnDefs = [
-    { headerName: 'Role', field: 'name', editable: true, lockPosition: true},
+    { headerName: 'Role', field: 'name', editable: true, lockPosition: true },
     {
       headerName: 'Cost', lockPosition: true,
       valueGetter: function (params) {
@@ -87,7 +92,7 @@ export class MainFormComponent implements OnInit {
   columnDefs1 = [
     { headerName: 'Role', field: 'name', editable: true, lockPosition: true },
     {
-      headerName: 'FirstHour',lockPosition: true ,valueGetter: function (params) {
+      headerName: 'FirstHour', lockPosition: true, valueGetter: function (params) {
         return params.data.firstHour;
       },
       valueSetter: function (params) {
@@ -100,7 +105,7 @@ export class MainFormComponent implements OnInit {
       }
     },
     {
-      headerName: 'MidHour',lockPosition: true, 
+      headerName: 'MidHour', lockPosition: true,
       valueGetter: function (params) {
         return params.data.midHour;
       },
@@ -114,7 +119,7 @@ export class MainFormComponent implements OnInit {
       },
     },
     {
-      headerName: 'LastHour',lockPosition: true ,
+      headerName: 'LastHour', lockPosition: true,
       valueGetter: function (params) {
         return params.data.lastHour;
       },
@@ -153,7 +158,9 @@ export class MainFormComponent implements OnInit {
 
       ])
     });
+    this.chooseFile = false;
   }
+
   trackByForm(index: number, data: any) {
     return data.trackingId;
   }
@@ -342,25 +349,46 @@ export class MainFormComponent implements OnInit {
   }
   formatChanged(value) {
     this.inputFormat = value;
+    this.chooseFile = false;
   }
 
-  handleFileInput(files: FileList) {
-    this.fileToUpload = files.item(0);
+  handleFileInput(event) {
+    this.fileToUpload = event.target.files[0]
     var ext = this.fileToUpload.name.split(".").pop();
+    this.chooseFile = true;
     if (ext != "xlsx") {
       this.toastr.error('file format not supported , upload only xlsx files');
       this.fileInput.nativeElement.value = null;
       this.fileToUpload = undefined;
+      this.chooseFile = false;
     }
+    const target: DataTransfer = <DataTransfer>(event.target);
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      /* read workbook */
+      const bstr: string = e.target.result;
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+
+      /* grab first sheet */
+      const wsname: string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+      /* save data */
+      this.fileData = XLSX.utils.sheet_to_json(ws, { raw: true });
+      this.createFileColumnData();
+    };
+    reader.readAsBinaryString(target.files[0]);
   }
+
   onSubmit() {
     this.calculateCapacity();
-    this.requestBody.shiftLength = this.shiftLength != "" ? this.shiftLength.split(',') : this.requestBody.shiftLength;
-    this.requestBody.lowerLimitFactor = this.upperUtilization != "" ? this.upperUtilization : this.requestBody.lowerLimitFactor;
-    this.requestBody.upperLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.upperLimitFactor;
+    this.requestBody.shiftLength = this.shiftLength.split(",");
+    this.requestBody.lowerLimitFactor = this.upperUtilization;
+    this.requestBody.upperLimitFactor = this.utilization;
     this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
     this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
     this.requestBody.patientHourWait = this.patientHourWait;
+
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
@@ -413,8 +441,8 @@ export class MainFormComponent implements OnInit {
         field: 'name',
         cellStyle: { 'font-size': 'large' },
         pinned: 'left',
-        width: 300,
-        editable: false, 
+        width: 250,
+        editable: false,
         lockPosition: true
       }
     ];
@@ -438,5 +466,29 @@ export class MainFormComponent implements OnInit {
 
   exportAsXLSX():void {
     this.excelService.exportAsExcelFile(this.sampleFileData, 'sample');
+  }
+  
+  createFileColumnData() {
+    this.transposedFileColumnDef = [
+      {
+        headerName: 'Day',
+        field: 'Day',
+        cellStyle: { 'font-size': 'large' },
+        pinned: 'left',
+        width: 250,
+        editable: false,
+        lockPosition: true
+      }
+    ];
+
+    for (let i = 0; i < 24; i++) {
+      this.transposedFileColumnDef.push({
+        headerName: i + "", lockPosition: true,
+        valueGetter: function (params) {
+          return params.data[i];
+        },
+        width: 60
+      })
+    }
   }
 }
