@@ -50,11 +50,11 @@
         <div class="form-group">
             <label class="control-label col-sm-4">Clinician Relationship:</label>
             <div class="col-sm-3">
-                <select [disabled]="priorClinicianDropDown" [(ngModel)]="selectedPriorClinician"
-                    name="clinicianSelection" (change)="afterSelectedPriorClinician(selectedPriorClinician)">
-                    <option value="" hidden>Select</option>
-                    <option *ngFor="let a of clinicianData">{{a}}</option>
-                </select>
+            <select [disabled]="priorClinicianDropDown" [(ngModel)]="selectedPriorClinician" name="clinicianSelection"
+            (change)="afterSelectedPriorClinician(selectedPriorClinician)" required>
+            <option value="" hidden>Select</option>
+            <option *ngFor="let a of clinicianData">{{a}}</option>
+            </select>
             </div>
         </div>
 
