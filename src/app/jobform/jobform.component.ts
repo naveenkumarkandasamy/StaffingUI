@@ -461,6 +461,11 @@ export class JobformComponent implements OnInit, OnChanges {
     this.validateFlagToSend.emit(this.flagForValidation);
   }
   calculateCapacity() {
+    if (this.model[0].expressions.length == 0 && this.model[1].expressions.length == 0 && this.model[2].expressions.length == 0 ){
+     this.model[0].expressions = ["0"];
+     this.model[1].expressions = ["1","1 * physician"];
+     this.model[2].expressions = ["2","1 * physician","1 * app"];
+    }
     for (let i = 0; i < this.model.length; i++) {
       this.model[i].cost = this.formVal.model[i].cost;
       this.model[i].capacity[0] = this.formVal.efficiencyModel[i].firstHour;
