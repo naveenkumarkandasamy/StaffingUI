@@ -21,17 +21,6 @@ export class AutorunComponent implements OnInit {
   clinicianData: any;
   cliniciansDataFromDb: any = [];
   cliniciansEfficiencyDataFromDb: any = [];
-  cliniciansColumnDefs = [
-    { field: 'name' },
-    { field: 'patientsPerHour' },
-    { field: 'cost' }
-  ];
-  cliniciansEfficiencyColumnDefs = [
-    { field: 'name' },
-    { field: 'firstHour' },
-    { field: 'midHour' },
-    { field: 'lastHour' }
-  ];
   expressionDataFromDb: any = [];
   mostPriorClinician: any;
   reset: boolean = false;
@@ -72,7 +61,7 @@ export class AutorunComponent implements OnInit {
     {
     for (let index = 0; index < data.length; index++) {
       if(this.clinicianModel[i].name==data[index].name){
-      this.cliniciansDataFromDb.push({ 'name': data[index].name, 'patientsPerHour': data[index].patientsPerHour, 'cost': data[index].cost });
+      this.cliniciansDataFromDb.push({ 'name': data[index].name, 'cost': data[index].cost });
      }
     }
     }
@@ -247,28 +236,15 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.emailId = (this.jobId == null || resetFlag == 0) ? "" : editData.outputEmailId;
     this.jobDetails.jobStatus = (this.jobId == null || resetFlag == 0) ? "SCHEDULED" : editData.status;
 
-    this.jobDetails.columnDefs = (this.jobId == null || resetFlag == 0) ? [
+    this.jobDetails.columnDefs = [
       { headerName: 'name', field: 'name', editable: true ,lockPosition: true},
-      {
-        headerName: 'patientsPerHour',lockPosition: true, valueGetter: function (params) {
-          return params.data.patientsPerHour;
-        },
-        valueSetter: function (params) {
-          if (params.data.patientsPerHour !== params.newValue) {
-            params.data.patientsPerHour = params.newValue;
-            return true;
-          } else {
-            return false;
-          }
-        }
-      },
       {
         headerName: 'cost',lockPosition: true,
         valueGetter: function (params) {
           return params.data.cost;
         },
         valueSetter: function (params) {
-          if (params.data.cost !== params.newValue) {
+          if (params.data.cost !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
             params.data.cost = params.newValue;
             return true;
           } else {
@@ -276,15 +252,15 @@ export class AutorunComponent implements OnInit {
           }
         },
       }
-    ] : this.cliniciansColumnDefs;
-    this.jobDetails.efficiencyColumnDefs = (this.jobId == null || resetFlag == 0) ? [
+    ];
+    this.jobDetails.efficiencyColumnDefs =  [
       { headerName: 'name', field: 'name', editable: true },
       {
         headerName: 'firstHour', valueGetter: function (params) {
           return params.data.firstHour;
         },
         valueSetter: function (params) {
-          if (params.data.firstHour !== params.newValue) {
+          if (params.data.firstHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
             params.data.firstHour = params.newValue;
             return true;
           } else {
@@ -298,7 +274,7 @@ export class AutorunComponent implements OnInit {
           return params.data.midHour;
         },
         valueSetter: function (params) {
-          if (params.data.midHour !== params.newValue) {
+          if (params.data.midHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
             params.data.midHour = params.newValue;
             return true;
           } else {
@@ -312,7 +288,7 @@ export class AutorunComponent implements OnInit {
           return params.data.lastHour;
         },
         valueSetter: function (params) {
-          if (params.data.lastHour !== params.newValue) {
+          if (params.data.lastHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
             params.data.lastHour = params.newValue;
             return true;
           } else {
@@ -320,7 +296,7 @@ export class AutorunComponent implements OnInit {
           }
         },
       }
-    ] : this.cliniciansEfficiencyColumnDefs;
+    ] ;
 
   }
   onReset() {

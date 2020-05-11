@@ -67,25 +67,12 @@ export class MainFormComponent implements OnInit {
   columnDefs = [
     { headerName: 'Role', field: 'name', editable: true, lockPosition: true},
     {
-      headerName: 'Patients Per Hr', lockPosition: true, valueGetter: function (params) {
-        return params.data.patientsPerHour;
-      },
-      valueSetter: function (params) {
-        if (params.data.patientsPerHour !== params.newValue) {
-          params.data.patientsPerHour = params.newValue;
-          return true;
-        } else {
-          return false;
-        }
-      }
-    },
-    {
       headerName: 'Cost', lockPosition: true,
       valueGetter: function (params) {
         return params.data.cost;
       },
       valueSetter: function (params) {
-        if (params.data.cost !== params.newValue) {
+        if (params.data.cost !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
           params.data.cost = params.newValue;
           return true;
         } else {
@@ -102,7 +89,7 @@ export class MainFormComponent implements OnInit {
         return params.data.firstHour;
       },
       valueSetter: function (params) {
-        if (params.data.firstHour !== params.newValue) {
+        if (params.data.firstHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
           params.data.firstHour = params.newValue;
           return true;
         } else {
@@ -116,7 +103,7 @@ export class MainFormComponent implements OnInit {
         return params.data.midHour;
       },
       valueSetter: function (params) {
-        if (params.data.midHour !== params.newValue) {
+        if (params.data.midHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
           params.data.midHour = params.newValue;
           return true;
         } else {
@@ -130,7 +117,7 @@ export class MainFormComponent implements OnInit {
         return params.data.lastHour;
       },
       valueSetter: function (params) {
-        if (params.data.lastHour !== params.newValue) {
+        if (params.data.lastHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
           params.data.lastHour = params.newValue;
           return true;
         } else {
@@ -371,7 +358,7 @@ export class MainFormComponent implements OnInit {
     this.requestBody.upperLimitFactor = this.utilization != "" ? this.utilization : this.requestBody.upperLimitFactor;
     this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
     this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
-    this.requestBody.patientHourWait = this.patientHourWait != "" ? this.patientHourWait : this.requestBody.patientHourWait;
+    this.requestBody.patientHourWait = this.patientHourWait;
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }

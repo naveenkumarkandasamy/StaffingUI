@@ -30,7 +30,6 @@ export class JobListPopupComponent implements OnInit {
 
   cliniciansColumnDefs = [
     {field : 'Role',lockPosition: true },
-    {field : 'Patient Per Hr',lockPosition: true },
     {field : 'Cost',lockPosition: true }
   ];
 
@@ -159,7 +158,7 @@ export class JobListPopupComponent implements OnInit {
     for (let i=0; i < this.clinicianModel.length; i++){
     for (let index = 0; index < data.length; index++) {
       if(this.clinicianModel[i].name==data[index].name){
-      this.cliniciansRowData.push({ Role: data[index].name, 'Patient Per Hr' : data[index].patientsPerHour, Cost: data[index].cost});
+      this.cliniciansRowData.push({ Role: data[index].name, Cost: data[index].cost});
       }
     }
     }  
