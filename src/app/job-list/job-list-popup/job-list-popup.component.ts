@@ -13,7 +13,7 @@ export class JobListPopupComponent implements OnInit {
   public dataSource;
   private gridApi;
   private gridColumnApi;
-   clinicianModel =[
+  clinicianModel =[
    {"name": "physician"},
    {"name": "app"},
    {"name": "scribe"}
@@ -141,7 +141,8 @@ export class JobListPopupComponent implements OnInit {
       if(this.clinicianModel[i].name==data[index].name){
       this.cliniciansRelationshipRowData.push({ Role: data[index].name, Expression : data[index].expressions});
       }
-    }}
+    }
+    }
   }
   
   createClinicianEfficieny(data: any) {
@@ -150,7 +151,8 @@ export class JobListPopupComponent implements OnInit {
       if(this.clinicianModel[i].name==data[index].name){
       this.cliniciansEfficiencyRowData.push({ Role: data[index].name, 'First Hour' : data[index].capacity[0], 'Mid Hour' : data[index].capacity[1], 'Last Hour' : data[index].capacity[2]});
       }
-    }}  
+    }
+    }  
   }
 
   createCliniciansData(data : any) {
@@ -159,7 +161,8 @@ export class JobListPopupComponent implements OnInit {
       if(this.clinicianModel[i].name==data[index].name){
       this.cliniciansRowData.push({ Role: data[index].name, 'Patient Per Hr' : data[index].patientsPerHour, Cost: data[index].cost});
       }
-    }}  
+    }
+    }  
   }
 
   createInputFTPDetails(data : any) { 
