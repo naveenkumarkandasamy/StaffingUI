@@ -75,38 +75,43 @@
     </select>
     </div>
     </div>
-    <form *ngIf="formVal.selected" [formGroup]="formVal.expressionFormGroup">
+    <div class="form-group">
+     <label class="control-label col-sm-4"></label>
+     <div class="col-sm-6">
+     <form *ngIf="formVal.selected" [formGroup]="formVal.expressionFormGroup">
 
         <div formArrayName="expressionForm"
             *ngFor="let itr of formVal.expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
             <div [formGroupName]="i">
 
-                <select [value]="selectedClinician[i].cliniciansDropDown" formControlName="cliniciansDropDown">
+                <select class="dropDown" [value]="selectedClinician[i].cliniciansDropDown" formControlName="cliniciansDropDown">
                     <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.clinicianRemaining[i]">{{a}}</option>
-                </select>
-                <input [value]="selectedNumOfClinician[i].numberOfClinician" type="number" placeholder="1" step="1"
+                </select>&nbsp;
+                <input class="dropDown" [value]="selectedNumOfClinician[i].numberOfClinician" type="number" placeholder="1" step="1"
                     min="0" max="100" formControlName="numberOfClinician">
-                <select [value]="selectedOperator[i].operatorChosen" formControlName="operatorChosen">
+                <select class="dropDown" [value]="selectedOperator[i].operatorChosen" formControlName="operatorChosen">
                     <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.operator ; let i = index">{{a}}</option>
                 </select>
-                <select [value]="selectedCinincianForExp[i].selectedClinicianDropDown"
+                <select class="dropDown" [value]="selectedCinincianForExp[i].selectedClinicianDropDown"
                     name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
                     <option [value]="" hidden>Select</option>
                     <option *ngFor="let a of formVal.alreadySelectedClinician[i] ; let i = index">{{a}}</option>
-                </select>
+                </select>&nbsp;
 
-                <button type="button" [disabled]="formVal.disableToReadData[i]" (click)="readingData(i)">OK</button>
+                <button type="button" [disabled]="formVal.disableToReadData[i]" (click)="readingData(i)">OK</button>&nbsp;
                 <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
-                    (click)="addingExpressionForm(i)">ADD</button>
+                    (click)="addingExpressionForm(i)">ADD</button>&nbsp;
                 <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
                     (click)="notAddingExpressionForm(i)">No</button>
-            </div>
+            </div><br>
         </div>
-    </form>
-    <button type="button" *ngIf="formVal.isRequiredToDelete" (click)="removingExpression()">Delete</button>
-    <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
+     </form>
+     <button type="button" *ngIf="formVal.isRequiredToDelete" (click)="removingExpression()">Delete</button>&nbsp;
+     <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
+     </div>
+    </div>
     <br />
     <hr>
    
