@@ -8,3 +8,8 @@
       font-size: 10px;
     }
 }
+.dropDown,select.option{
+    border: 1px solid silver;
+    border-radius: 3px;
+    width :100px;
+}

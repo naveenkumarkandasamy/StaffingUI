@@ -45,51 +45,53 @@
                 </div>
             </div>
         <br />
-
+        <hr>
         <div class="form-group">
             <label class="control-label col-sm-4">Clinician Relationship:</label>
             <div class="col-sm-3">
-            <select [disabled]="priorClinicianDropDown" [(ngModel)]="selectedPriorClinician" name="clinicianSelection"
-            (change)="afterSelectedPriorClinician(selectedPriorClinician)" required>
-            <option value="" hidden>Select</option>
-            <option *ngFor="let a of clinicianData">{{a}}</option>
-            </select>
+
+               <select class="dropDown" required [disabled]="priorClinicianDropDown" [(ngModel)]="selectedPriorClinician" name="clinicianSelection"
+               (change)="afterSelectedPriorClinician(selectedPriorClinician)" required>
+                  <option value="" hidden>Select</option>
+                  <option *ngFor="let a of clinicianData">{{a}}</option>
+               </select>
             </div>
         </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4"></label>
+            <div class="col-sm-6">
+              <form *ngIf="selected" [formGroup]="expressionFormGroup">
+              <div formArrayName="expressionForm" 
+              *ngFor="let itr of expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
+              <div [formGroupName]="i">
 
-
-        <form *ngIf="selected" [formGroup]="expressionFormGroup">
-            <div formArrayName="expressionForm"
-                *ngFor="let itr of expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
-                <div [formGroupName]="i">
-
-                    <select name="cliniciansDropDownId" formControlName="cliniciansDropDown">
+                    <select class="dropDown" name="cliniciansDropDownId" formControlName="cliniciansDropDown">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of clinicianRemaining[i]">{{a}}</option>
-                    </select>
-                    <input name="numberOfClinicianId" type="number" placeholder="1" step="1" min="0" max="100"
+                    </select>&nbsp;
+                    <input class="dropDown" name="numberOfClinicianId" type="number" placeholder="1" step="1" min="0" max="100"
                         formControlName="numberOfClinician">
-                    <select name="operatorChosenId" formControlName="operatorChosen">
+                    <select class="dropDown" name="operatorChosenId" formControlName="operatorChosen">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of operator ; let i = index">{{a}}</option>
                     </select>
-                    <select name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
+                    <select class="dropDown" name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of alreadySelectedClinician[i] ; let i = index">{{a}}</option>
-                    </select>
+                    </select>&nbsp;
 
-                    <button type="button" [disabled]="disableToReadData[i]" (click)="readingData(i)">OK</button>
+                    <button type="button" [disabled]="disableToReadData[i]" (click)="readingData(i)">OK</button>&nbsp;
                     <button type="button" [disabled]="isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
-                        (click)="addingExpressionForm(i)">ADD</button>
+                        (click)="addingExpressionForm(i)">ADD</button>&nbsp;
                     <button type="button" [disabled]="isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
                         (click)="notAddingExpressionForm(i)">No</button>
+                </div><br>
                 </div>
+                </form>
+                <button type="button" *ngIf="isRequiredToDelete" (click)="removingExpression()">Delete</button>&nbsp;
+                <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
             </div>
-        </form>
-
-        <button type="button" *ngIf="isRequiredToDelete" (click)="removingExpression()">Delete</button>
-        <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
-
+        </div>
         <br />
         <hr>
         <label class="col-sm-12">Clinician Cost:</label>
