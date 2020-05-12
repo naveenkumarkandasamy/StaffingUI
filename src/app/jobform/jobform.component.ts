@@ -7,6 +7,7 @@ import { AuthenticationService } from '../services/authentication.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormControl, Validators, FormBuilder, FormArray, FormGroup } from '@angular/forms';
 import { NgForm } from '@angular/forms';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-jobform',
@@ -28,6 +29,7 @@ export class JobformComponent implements OnInit, OnChanges {
   }
   ngOnInit() {
     this.itr = 1;
+    this.chooseFile = false;
   }
   @Input() expData: any;
   @Input() reset: any;
@@ -78,6 +80,9 @@ export class JobformComponent implements OnInit, OnChanges {
   itr: any;
   model: Model[] = this.constantsService.model;
   efficiencyModel: Efficiency[] = this.constantsService.efficiencyModel;
+  chooseFile: boolean;
+  fileData: any;
+  transposedFileColumnDef: Array<any>
 
   columnDefs: any
   powerPlantTypes: any;
@@ -456,6 +461,11 @@ export class JobformComponent implements OnInit, OnChanges {
     this.validateFlagToSend.emit(this.flagForValidation);
   }
   calculateCapacity() {
+    if (this.model[0].expressions.length == 0 && this.model[1].expressions.length == 0 && this.model[2].expressions.length == 0 ){
+     this.model[0].expressions = ["0"];
+     this.model[1].expressions = ["1","1 * physician"];
+     this.model[2].expressions = ["2","1 * physician","1 * app"];
+    }
     for (let i = 0; i < this.model.length; i++) {
       this.model[i].cost = this.formVal.model[i].cost;
       this.model[i].capacity[0] = this.formVal.efficiencyModel[i].firstHour;
@@ -540,18 +550,62 @@ export class JobformComponent implements OnInit, OnChanges {
     this.requestBody.status = this.formVal.jobStatus;
   }
 
-  handleFileInput(files: FileList) {
-    this.inputFile = files.item(0);
+  handleFileInput(event) {
+    this.inputFile = event.target.files[0]
     var ext = this.inputFile.name.split(".").pop();
+    this.chooseFile = true;
     if (ext != "xlsx") {
       this.toastr.error('file format not supported , upload only xlsx files');
       this.fileInput.nativeElement.value = null;
       this.inputFile = undefined;
+      this.chooseFile = false;
+    }
+    const target: DataTransfer = <DataTransfer>(event.target);
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      /* read workbook */
+      const bstr: string = e.target.result;
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+
+      /* grab first sheet */
+      const wsname: string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+      /* save data */
+      this.fileData = XLSX.utils.sheet_to_json(ws, { raw: true });
+      this.createFileColumnData();
+    };
+    reader.readAsBinaryString(target.files[0]);
+  }
+
+  createFileColumnData() {
+    this.transposedFileColumnDef = [
+      {
+        headerName: 'Day',
+        field: 'Day',
+        cellStyle: { 'font-size': 'large' },
+        pinned: 'left',
+        width: 250,
+        editable: false,
+        lockPosition: true
+      }
+    ];
+
+    for (let i = 0; i < 24; i++) {
+      this.transposedFileColumnDef.push({
+        headerName: i + "", lockPosition: true,
+        valueGetter: function (params) {
+          return params.data[i];
+        },
+        width: 60
+      })
     }
   }
 
+
   inputformatChanged(value) {
     this.formVal.inputFormat = value;
+    this.chooseFile =  false;
   }
 
   outputformatChanged(value) {
