@@ -20,6 +20,7 @@ import * as XLSX from 'xlsx';
 
 export class MainFormComponent implements OnInit {
 
+  savedBody : any;
   priorClinicianDropDown: boolean = false;
   expressionFormGroup: FormGroup;
   clinicianData = [];
@@ -43,16 +44,17 @@ export class MainFormComponent implements OnInit {
   apiData: response;
   transposedColumnDef: Array<any>
   data: any = this.constantsService.data;
+
   sampleFileData: any = this.constantsService.sampleFileData;
-  shiftLength: string = this.constantsService.shiftLength;
+  shiftLength: string;
   inputTypes: Array<string> = ["Provide Online", "File Upload"];
-  inputFormat: string = "Provide Online";
+  inputFormat: string;
   fileToUpload: File = null;
-  utilization = 1.10;
-  upperUtilization = 0.85;
-  notAllocatedStartTime = 1;
-  notAllocatedEndTime = 6;
-  patientHourWait = 2;
+  utilization : any;
+  upperUtilization : any;
+  notAllocatedStartTime: any;
+  notAllocatedEndTime : any;
+  patientHourWait : any;
   model: Model[] = this.constantsService.model;
   isRequiredToDelete: boolean;
   toAddExp: boolean;
@@ -143,7 +145,25 @@ export class MainFormComponent implements OnInit {
     private dataService: DataService, private toastr: ToastrService, private constantsService: ConstantsService, private httpClientService: HttpClientService, private excelService: ExcelService) { }
 
   ngOnInit() {
-
+    this.savedBody = this.dataService.getRequestBody();
+    if(this.savedBody == null){
+        this.shiftLength = this.constantsService.shiftLength;
+        this.utilization = 1.1;
+        this.upperUtilization = 0.85;
+        this.notAllocatedStartTime = 1;
+        this.notAllocatedEndTime = 6;
+        this.patientHourWait = 2;
+        this.inputFormat = "Provide Online";
+    }
+    else{
+      this.shiftLength = this.savedBody.shiftLength.toString();
+      this.utilization = this.savedBody.upperLimitFactor;
+      this.upperUtilization = this.savedBody.lowerLimitFactor;
+      this.notAllocatedStartTime = this.savedBody.notAllocatedStartTime;
+      this.notAllocatedEndTime = this.savedBody.notAllocatedEndTime;
+      this.patientHourWait = this.savedBody.patientHourWait;
+      this.inputFormat = this.savedBody.inputFormat;
+    }
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
     this.clinicianData = ['physician', 'app', 'scribe'];
@@ -389,6 +409,7 @@ export class MainFormComponent implements OnInit {
     this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
     this.requestBody.patientHourWait = this.patientHourWait;
 
+    this.requestBody.inputFormat = this.inputFormat;
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
