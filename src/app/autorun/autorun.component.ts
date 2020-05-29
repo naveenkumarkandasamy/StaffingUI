@@ -129,9 +129,6 @@ export class AutorunComponent implements OnInit {
   }
   createRequestBody($event) {
     this.requestBody = $event;
-    if (this.jobId != null) {
-      this.requestBody['id'] = this.jobId;
-    }
   }
 
   getflag($event) {
@@ -310,6 +307,10 @@ export class AutorunComponent implements OnInit {
   onSubmit() {
     if (this.validateFlag == 0) {
       this.requestBody.status = "SCHEDULED";
+       if(this.editData.status && this.requestBody.status == this.editData.status){
+        this.requestBody['id'] = this.jobId;
+        this.jobId=null;
+      }
       this.createAndPostJob();
     }
     else {
@@ -319,6 +320,10 @@ export class AutorunComponent implements OnInit {
 
   onSaveDraft() {
     this.requestBody.status = "DRAFT";
+    if(this.editData.status && this.requestBody.status == this.editData.status){
+        this.requestBody['id'] = this.jobId;
+        this.jobId=null;
+      }
     this.createAndPostJob();
   }
 
