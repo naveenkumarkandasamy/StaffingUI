@@ -61,6 +61,7 @@ export class MainFormComponent implements OnInit {
   chooseFile: boolean;
   fileData: any;
   transposedFileColumnDef: Array<any>
+  preferredOption: any;
 
   efficiencyModel: Efficiency[] = this.constantsService.efficiencyModel;
 
@@ -154,6 +155,7 @@ export class MainFormComponent implements OnInit {
         this.notAllocatedEndTime = 6;
         this.patientHourWait = 2;
         this.inputFormat = "Provide Online";
+        this.preferredOption = "utilization"
     }
     else{
       this.shiftLength = this.savedBody.shiftLength.toString();
@@ -163,6 +165,8 @@ export class MainFormComponent implements OnInit {
       this.notAllocatedEndTime = this.savedBody.notAllocatedEndTime;
       this.patientHourWait = this.savedBody.patientHourWait;
       this.inputFormat = this.savedBody.inputFormat;
+      this.preferredOption = this.savedBody.preferredOption;
+
     }
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
@@ -179,6 +183,7 @@ export class MainFormComponent implements OnInit {
       ])
     });
     this.chooseFile = false;
+    // this.toggleValue = 4;
   }
 
   trackByForm(index: number, data: any) {
@@ -408,7 +413,7 @@ export class MainFormComponent implements OnInit {
     this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
     this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
     this.requestBody.patientHourWait = this.patientHourWait;
-
+    this.requestBody.preferredOption = this.preferredOption;
     this.requestBody.inputFormat = this.inputFormat;
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();

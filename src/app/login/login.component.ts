@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class LoginComponent implements OnInit {
   invalidLogin = false
 
   constructor(private router: Router,
-    private loginservice: AuthenticationService) { }
+    private loginservice: AuthenticationService, private toastr: ToastrService) { }
 
   ngOnInit() {
   }
@@ -27,8 +28,12 @@ export class LoginComponent implements OnInit {
       },
       error => {
         this.invalidLogin = true
+        this.toastr.error("Invalid Credentials");
       }
     )
     );
+    if(this.invalidLogin == true){
+      this.toastr.error("Invalid Credentials");
+    }
   }
 }
