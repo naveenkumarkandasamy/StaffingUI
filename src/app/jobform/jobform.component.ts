@@ -29,11 +29,12 @@ export class JobformComponent implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder, private constantsService: ConstantsService, public dialog: MatDialog, private authService: AuthenticationService, private toastr: ToastrService, private excelService: ExcelService) {
   }
+
   ngOnInit() {
     this.itr = 1;
     this.chooseFile = false;
-    // this.formVal.preferredOption = "utilization";
   }
+  
   @Input() expData: any;
   @Input() reset: any;
   @Output() requestBodyToSend = new EventEmitter();

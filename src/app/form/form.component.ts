@@ -183,7 +183,6 @@ export class MainFormComponent implements OnInit {
       ])
     });
     this.chooseFile = false;
-    // this.toggleValue = 4;
   }
 
   trackByForm(index: number, data: any) {
