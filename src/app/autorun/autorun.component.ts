@@ -91,6 +91,7 @@ export class AutorunComponent implements OnInit {
     "notAllocatedStartTime": 1,
     "notAllocatedEndTime": 6,
     "patientHourWait": 2,
+    "preferredOption": "utilization",
     "clinicians": null,
     "cronExpression": "",
     "model": "",
@@ -149,6 +150,7 @@ export class AutorunComponent implements OnInit {
       "notAllocatedStartTime": 1,
       "notAllocatedEndTime": 6,
       "patientHourWait": 2,
+      "preferredOption": "utilization",
       "model": "",
       "cronExpression": "",
       "inputFormat": "",
@@ -189,6 +191,7 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.notAllocatedStartTime = (this.jobId == null || resetFlag == 0) ? 1 : editData.notAllocatedStartTime;
     this.jobDetails.notAllocatedEndTime = (this.jobId == null || resetFlag == 0) ? 6 : editData.notAllocatedEndTime;
     this.jobDetails.patientHourWait = (this.jobId == null || resetFlag == 0) ? 2 : editData.patientHourWait;
+    this.jobDetails.preferredOption = (this.jobId == null || resetFlag == 0) ? "utilization" : editData.preferredOption;
     this.jobDetails.model = (this.jobId == null || resetFlag == 0 || this.reset == true) ? JSON.parse(JSON.stringify(this.constantsService.model)) : this.cliniciansDataFromDb;
     this.jobDetails.efficiencyModel = (this.jobId == null || resetFlag == 0 || this.reset == true) ? JSON.parse(JSON.stringify(this.constantsService.efficiencyModel)) : this.cliniciansEfficiencyDataFromDb;
 

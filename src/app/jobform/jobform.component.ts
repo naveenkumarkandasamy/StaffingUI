@@ -29,10 +29,12 @@ export class JobformComponent implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder, private constantsService: ConstantsService, public dialog: MatDialog, private authService: AuthenticationService, private toastr: ToastrService, private excelService: ExcelService) {
   }
+
   ngOnInit() {
     this.itr = 1;
     this.chooseFile = false;
   }
+  
   @Input() expData: any;
   @Input() reset: any;
   @Output() requestBodyToSend = new EventEmitter();
@@ -50,6 +52,7 @@ export class JobformComponent implements OnInit, OnChanges {
     "notAllocatedStartTime": 1,
     "notAllocatedEndTime": 6,
     "patientHourWait": 2,
+    "preferredOption": "utilization",
     "cronExpression": "",
     "inputFormat": "",
     "inputFtpUrl": "",
@@ -488,6 +491,7 @@ export class JobformComponent implements OnInit, OnChanges {
       "notAllocatedStartTime": 1,
       "notAllocatedEndTime": 6,
       "patientHourWait": 2,
+      "preferredOption" : "utilization",
       "clinicians": null,
       "cronExpression": "",
       "inputFormat": "",
@@ -519,6 +523,7 @@ export class JobformComponent implements OnInit, OnChanges {
     this.requestBody.notAllocatedStartTime = this.formVal.notAllocatedStartTime;
     this.requestBody.notAllocatedEndTime = this.formVal.notAllocatedEndTime;
     this.requestBody.patientHourWait = this.formVal.patientHourWait;
+    this.requestBody.preferredOption = this.formVal.preferredOption;
     this.requestBody.name = this.formVal.jobName;
     this.requestBody.clinicians = JSON.parse(JSON.stringify(this.model));
     this.requestBody.cronExpression = this.formVal.cronExpression;
