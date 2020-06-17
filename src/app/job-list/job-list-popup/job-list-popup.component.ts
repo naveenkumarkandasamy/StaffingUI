@@ -102,6 +102,10 @@ export class JobListPopupComponent implements OnInit {
         value: this.jobDetails.patientHourWait
       },
       {
+        item: 'Preferred Option',
+        value: this.jobDetails.preferredOption
+      },
+      {
         item:'Clinician Relationship',
         value: this.cliniciansRelationshipRowData
       },

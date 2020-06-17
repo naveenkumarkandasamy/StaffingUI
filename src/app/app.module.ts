@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { AgGridModule } from 'ag-grid-angular';
-import { MatToolbarModule, MatIconModule, MatSidenavModule, MatButtonModule, MatCheckboxModule, MatInputModule, MatPaginatorModule, MatRadioModule, MatCardModule, MatDialogModule } from "@angular/material";
+import { MatToolbarModule, MatIconModule, MatSidenavModule, MatButtonModule, MatCheckboxModule, MatInputModule, MatPaginatorModule, MatRadioModule, MatCardModule, MatDialogModule, MatButtonToggleModule } from "@angular/material";
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -74,6 +74,7 @@ import { ExcelService } from './services/excel.service';
     MatToolbarModule,
     MatIconModule,
     MatSidenavModule,
+    MatButtonToggleModule,
     MatCheckboxModule,
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),

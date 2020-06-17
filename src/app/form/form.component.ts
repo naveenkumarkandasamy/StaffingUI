@@ -67,6 +67,7 @@ export class MainFormComponent implements OnInit {
   chooseFile: boolean;
   fileData: any;
   transposedFileColumnDef: Array<any>
+  preferredOption: any;
 
   efficiencyModel: Efficiency[] = this.constantsService.efficiencyModel;
 
@@ -166,6 +167,7 @@ export class MainFormComponent implements OnInit {
         this.appMaxCount = this.model[1].maxCount;
         this.scribeMinCount = this.model[2].minCount;
         this.scribeMaxCount = this.model[2].maxCount;
+        this.preferredOption = "utilization"
     }
     else{
       this.shiftLength = this.savedBody.shiftLength.toString();
@@ -181,6 +183,7 @@ export class MainFormComponent implements OnInit {
       this.appMaxCount = this.savedBody.clinician[1].maxCount;
       this.scribeMinCount = this.savedBody.clinician[2].minCount;
       this.scribeMaxCount = this.savedBody.clinician[2].maxCount;
+      this.preferredOption = this.savedBody.preferredOption;
     }
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
@@ -426,8 +429,8 @@ export class MainFormComponent implements OnInit {
     this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
     this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
     this.requestBody.patientHourWait = this.patientHourWait;
+    this.requestBody.preferredOption = this.preferredOption;
     this.requestBody.inputFormat = this.inputFormat;
-    console.log(this.requestBody);
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
