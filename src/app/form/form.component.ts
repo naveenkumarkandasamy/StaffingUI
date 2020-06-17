@@ -55,6 +55,12 @@ export class MainFormComponent implements OnInit {
   notAllocatedStartTime: any;
   notAllocatedEndTime : any;
   patientHourWait : any;
+  physicianMinCount :any;
+  physicianMaxCount :any;
+  appMinCount :any;
+  appMaxCount :any;
+  scribeMinCount :any;
+  scribeMaxCount :any;
   model: Model[] = this.constantsService.model;
   isRequiredToDelete: boolean;
   toAddExp: boolean;
@@ -70,7 +76,7 @@ export class MainFormComponent implements OnInit {
     "upperLimitFactor": 1.10,
     "patientHourWait": 2,
     "clinician": this.model,
-    "dayWorkload": this.data,
+    "dayWorkload": this.data,    
   }
 
   columnDefs = [
@@ -154,6 +160,12 @@ export class MainFormComponent implements OnInit {
         this.notAllocatedEndTime = 6;
         this.patientHourWait = 2;
         this.inputFormat = "Provide Online";
+        this.physicianMinCount = this.model[0].minCount;
+        this.physicianMaxCount = this.model[0].maxCount;
+        this.appMinCount = this.model[1].minCount;
+        this.appMaxCount = this.model[1].maxCount;
+        this.scribeMinCount = this.model[2].minCount;
+        this.scribeMaxCount = this.model[2].maxCount;
     }
     else{
       this.shiftLength = this.savedBody.shiftLength.toString();
@@ -163,6 +175,12 @@ export class MainFormComponent implements OnInit {
       this.notAllocatedEndTime = this.savedBody.notAllocatedEndTime;
       this.patientHourWait = this.savedBody.patientHourWait;
       this.inputFormat = this.savedBody.inputFormat;
+      this.physicianMinCount = this.savedBody.clinician[0].minCount;
+      this.physicianMaxCount = this.savedBody.clinician[0].maxCount;
+      this.appMinCount = this.savedBody.clinician[1].minCount;
+      this.appMaxCount = this.savedBody.clinician[1].maxCount;
+      this.scribeMinCount = this.savedBody.clinician[2].minCount;
+      this.scribeMaxCount = this.savedBody.clinician[2].maxCount;
     }
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
@@ -408,8 +426,8 @@ export class MainFormComponent implements OnInit {
     this.requestBody.notAllocatedStartTime = this.notAllocatedStartTime;
     this.requestBody.notAllocatedEndTime = this.notAllocatedEndTime;
     this.requestBody.patientHourWait = this.patientHourWait;
-
     this.requestBody.inputFormat = this.inputFormat;
+    console.log(this.requestBody);
     if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
@@ -443,12 +461,16 @@ export class MainFormComponent implements OnInit {
   }
   calculateCapacity() {
     for (let i = 0; i < this.model.length; i++) {
-
       this.model[i].capacity[0] = this.efficiencyModel[i].firstHour;
       this.model[i].capacity[1] = this.efficiencyModel[i].midHour;
       this.model[i].capacity[2] = this.efficiencyModel[i].lastHour;
-
     }
+    this.model[0].minCount = this.physicianMinCount;
+    this.model[0].maxCount = this.physicianMaxCount;
+    this.model[1].minCount = this.appMinCount;
+    this.model[1].maxCount = this.appMaxCount;
+    this.model[2].minCount = this.scribeMinCount;
+    this.model[2].maxCount = this.scribeMaxCount;
   }
 
   navigateToGraph() {

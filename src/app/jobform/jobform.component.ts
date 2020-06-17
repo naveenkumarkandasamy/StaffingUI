@@ -26,12 +26,24 @@ export class JobformComponent implements OnInit, OnChanges {
   addMoreRequired = [];
   checking: boolean = false;
   expression: String;
+  physicianMinCount :any;
+  physicianMaxCount :any;
+  appMinCount :any;
+  appMaxCount :any;
+  scribeMinCount :any;
+  scribeMaxCount :any;
 
   constructor(private fb: FormBuilder, private constantsService: ConstantsService, public dialog: MatDialog, private authService: AuthenticationService, private toastr: ToastrService, private excelService: ExcelService) {
   }
   ngOnInit() {
     this.itr = 1;
     this.chooseFile = false;
+    this.physicianMinCount = this.formVal.model[0].minCount;
+    this.physicianMaxCount = this.formVal.model[0].maxCount;
+    this.appMinCount = this.formVal.model[1].minCount;
+    this.appMaxCount = this.formVal.model[1].maxCount;
+    this.scribeMinCount = this.formVal.model[2].minCount;
+    this.scribeMaxCount = this.formVal.model[2].maxCount;
   }
   @Input() expData: any;
   @Input() reset: any;
@@ -120,6 +132,12 @@ export class JobformComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.check = false;
+    this.physicianMinCount = this.formVal.model[0].minCount;
+    this.physicianMaxCount = this.formVal.model[0].maxCount;
+    this.appMinCount = this.formVal.model[1].minCount;
+    this.appMaxCount = this.formVal.model[1].maxCount;
+    this.scribeMinCount = this.formVal.model[2].minCount;
+    this.scribeMaxCount = this.formVal.model[2].maxCount;
     if (this.reset != true ) {
 
       this.exp = [];
@@ -474,6 +492,12 @@ export class JobformComponent implements OnInit, OnChanges {
       this.model[i].capacity[1] = this.formVal.efficiencyModel[i].midHour;
       this.model[i].capacity[2] = this.formVal.efficiencyModel[i].lastHour;
     }
+    this.model[0].minCount = this.physicianMinCount;
+    this.model[0].maxCount = this.physicianMaxCount;
+    this.model[1].minCount = this.appMinCount;
+    this.model[1].maxCount = this.appMaxCount;
+    this.model[2].minCount = this.scribeMinCount;
+    this.model[2].maxCount = this.scribeMaxCount;
   }
   sendFile() {
     this.fileToSend.emit(this.inputFile);

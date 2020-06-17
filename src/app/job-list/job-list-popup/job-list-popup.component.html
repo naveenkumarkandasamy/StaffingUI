@@ -11,7 +11,7 @@
       <ng-container matColumnDef="value">
         <th mat-header-cell *matHeaderCellDef> Value </th>
         <td mat-cell *matCellDef="let element">
-          <p *ngIf = "element.item != 'Clinician Summary' && element.item != 'Input FTP Details' && element.item != 'Output FTP Details' && element.item != 'Clinician Relationship' && element.item != 'Clinician Efficiency'"> {{element.value}}  </p>
+          <p *ngIf = "element.item != 'Clinician Count' && element.item != 'Clinician Summary' && element.item != 'Input FTP Details' && element.item != 'Output FTP Details' && element.item != 'Clinician Relationship' && element.item != 'Clinician Efficiency'"> {{element.value}}  </p>
           
           <ag-grid-angular 
           *ngIf = "element.item == 'Clinician Relationship'"
@@ -19,6 +19,15 @@
           class="ag-theme-balham"
           [rowData]="cliniciansRelationshipRowData"
           [columnDefs]="cliniciansRelationshipColumnDefs"
+          (gridReady)="onGridReady($event)">
+          </ag-grid-angular>
+          
+          <ag-grid-angular 
+          *ngIf = "element.item == 'Clinician Count'"
+          style="width: 415px; height: 150px;"
+          class="ag-theme-balham"
+          [rowData]="clinicianCountData"
+          [columnDefs]="cliniciansCountColumnDefs "
           (gridReady)="onGridReady($event)">
           </ag-grid-angular>
 

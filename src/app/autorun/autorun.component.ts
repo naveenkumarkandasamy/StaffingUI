@@ -61,7 +61,7 @@ export class AutorunComponent implements OnInit {
     {
     for (let index = 0; index < data.length; index++) {
       if(this.clinicianModel[i].name==data[index].name){
-      this.cliniciansDataFromDb.push({ 'name': data[index].name, 'cost': data[index].cost });
+      this.cliniciansDataFromDb.push({ 'name': data[index].name, 'cost': data[index].cost, 'minCount': data[index].minCount, 'maxCount': data[index].maxCount });
      }
     }
     }
@@ -305,6 +305,7 @@ export class AutorunComponent implements OnInit {
     return array.filter((a, b) => array.indexOf(a) === b);
   }
   onSubmit() {
+    console.log("submit",this.requestBody);
     if (this.validateFlag == 0) {
       this.requestBody.status = "SCHEDULED";
        if(this.editData.status && this.requestBody.status == this.editData.status){

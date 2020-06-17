@@ -64,8 +64,43 @@
     </div>
     
     <hr>
-
-    <div class="form-group">
+    <label class="col-sm-12">Clinician Count:</label>
+        <br><br>
+        <label class="control-label col-sm-4">Physician's Min Count:</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" [(ngModel)]="physicianMinCount"
+                step="1" min="0" max="50" required placeholder="1" (blur)="sendresponse()" name="physicianMinCount"/>
+            </div>
+        <label class="control-label col-sm-2">Physician's Max Count:</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" [(ngModel)]="physicianMaxCount"
+                step="1" min="0" max="50" required (blur)="sendresponse()" placeholder="2" name="physicianMaxCount"/>
+            </div>
+        <br><br>
+        <label class="control-label col-sm-4">App's Min Count:</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" [(ngModel)]="appMinCount"
+                step="1" min="0" max="50" required placeholder="1" (blur)="sendresponse()" name="appMinCount"/>
+            </div>
+        <label class="control-label col-sm-2">App's Max Count:</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" [(ngModel)]="appMaxCount"
+                step="1" min="0" max="50" required (blur)="sendresponse()" placeholder="2" name="appMaxCount"/>
+            </div>
+        <br><br>
+        <label class="control-label col-sm-4">Scribe's Min Count:</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" [(ngModel)]="scribeMinCount"
+                step="1" min="0" max="50" required placeholder="1" (blur)="sendresponse()" name="scribeMinCount"/>
+            </div>
+        <label class="control-label col-sm-2">Scribe's Max Count:</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" [(ngModel)]="scribeMaxCount"
+                step="1" min="0" max="50" required (blur)="sendresponse()" placeholder="2" name="scribeMaxCount"/>
+            </div>
+        <br><br>
+     <hr>
+     <div class="form-group">
      <label class="control-label col-sm-4">Clinician Relationship:</label>
      <div class="col-sm-3">
      <select name="clinicianId" [(ngModel)]="formVal.selectedPriorClinician" [disabled]="formVal.priorClinicianDropDown"
