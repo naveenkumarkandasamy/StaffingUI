@@ -61,7 +61,7 @@ export class AutorunComponent implements OnInit {
     {
     for (let index = 0; index < data.length; index++) {
       if(this.clinicianModel[i].name==data[index].name){
-      this.cliniciansDataFromDb.push({ 'name': data[index].name, 'cost': data[index].cost });
+      this.cliniciansDataFromDb.push({ 'name': data[index].name, 'cost': data[index].cost, 'minCount': data[index].minCount, 'maxCount': data[index].maxCount });
      }
     }
     }
@@ -331,12 +331,19 @@ export class AutorunComponent implements OnInit {
   }
 
   createAndPostJob() {
+   
     if (this.requestBody.status == "SCHEDULED" && this.requestBody.inputFormat == -1) {
       this.toastr.error("Please select a valid input format");
     }
     else if (this.requestBody.status == "SCHEDULED" && this.requestBody.outputFormat == -1) {
       this.toastr.error("Please select a valid output format");
     }
+    else if (this.requestBody.clinicians[0].maxCount < this.requestBody.clinicians[0].minCount || 
+      this.requestBody.clinicians[1].maxCount < this.requestBody.clinicians[1].minCount ||
+      this.requestBody.clinicians[2].maxCount < this.requestBody.clinicians[2].minCount ){
+      this.toastr.error("minCount should be less than maxCount");
+    }
+
     else {
       if (this.requestBody.inputFormat == -1) {
         this.requestBody.inputFormat = 'NULL';

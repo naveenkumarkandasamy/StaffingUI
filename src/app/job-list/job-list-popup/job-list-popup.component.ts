@@ -45,12 +45,18 @@ export class JobListPopupComponent implements OnInit {
     {field : 'Expression',lockPosition: true },
   ];
 
+  cliniciansCountColumnDefs = [
+    {field : 'Role',lockPosition: true },
+    {field : 'minCount',lockPosition: true },
+    {field : 'maxCount',lockPosition: true },
+  ];
+
   inputFTPDetailsRowData = [];
   outputFTPDetailsRowData = [];
   cliniciansRowData = [];
   cliniciansEfficiencyRowData = [];
   cliniciansRelationshipRowData = [];
-
+  clinicianCountData = [];
   constructor(private dialogRef: MatDialogRef<JobListPopupComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.jobDetails = data.job_details;
    }
@@ -66,7 +72,6 @@ export class JobListPopupComponent implements OnInit {
     this.createClinicianEfficieny(this.jobDetails.clinicians);
     this.createInputFTPDetails(this.jobDetails.inputFtpDetails);
     this.createOutputFTPDetails(this.jobDetails.outputFtpDetails);
-
     this.dataSource = [
       {
         item:'Name',
@@ -103,6 +108,10 @@ export class JobListPopupComponent implements OnInit {
       {
         item:'Clinician Relationship',
         value: this.cliniciansRelationshipRowData
+      },
+      {
+        item:'Clinician Count',
+        value: this.clinicianCountData
       },
       {
         item:'Clinician Summary',
@@ -163,6 +172,7 @@ export class JobListPopupComponent implements OnInit {
     for (let index = 0; index < data.length; index++) {
       if(this.clinicianModel[i].name==data[index].name){
       this.cliniciansRowData.push({ Role: data[index].name, Cost: data[index].cost});
+      this.clinicianCountData.push({ Role: data[index].name, 'minCount': data[index].minCount, 'maxCount': data[index].maxCount });
       }
     }
     }  

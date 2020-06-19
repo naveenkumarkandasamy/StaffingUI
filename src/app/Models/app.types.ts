@@ -48,7 +48,9 @@ export class Model {
   capacity: Array<number>;
   cost: number;
   name: String;
-  expressions: Array<String>
+  expressions: Array<String>;
+  minCount :number;
+  maxCount :number;
 }
 export class Efficiency {
   name: String;
