@@ -308,7 +308,6 @@ export class AutorunComponent implements OnInit {
     return array.filter((a, b) => array.indexOf(a) === b);
   }
   onSubmit() {
-    console.log("submit",this.requestBody);
     if (this.validateFlag == 0) {
       this.requestBody.status = "SCHEDULED";
        if(this.editData.status && this.requestBody.status == this.editData.status){
@@ -332,12 +331,19 @@ export class AutorunComponent implements OnInit {
   }
 
   createAndPostJob() {
+   
     if (this.requestBody.status == "SCHEDULED" && this.requestBody.inputFormat == -1) {
       this.toastr.error("Please select a valid input format");
     }
     else if (this.requestBody.status == "SCHEDULED" && this.requestBody.outputFormat == -1) {
       this.toastr.error("Please select a valid output format");
     }
+    else if (this.requestBody.clinicians[0].maxCount < this.requestBody.clinicians[0].minCount || 
+      this.requestBody.clinicians[1].maxCount < this.requestBody.clinicians[1].minCount ||
+      this.requestBody.clinicians[2].maxCount < this.requestBody.clinicians[2].minCount ){
+      this.toastr.error("minCount should be less than maxCount");
+    }
+
     else {
       if (this.requestBody.inputFormat == -1) {
         this.requestBody.inputFormat = 'NULL';

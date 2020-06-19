@@ -218,7 +218,7 @@ export class ConstantsService {
          "name": "physician",
          "expressions": ["0"],
          "minCount":1,
-         "maxCount":2,
+         "maxCount":6,
       },
       {
          "capacity": [0.6, 0.5, 0.4],
@@ -226,7 +226,7 @@ export class ConstantsService {
          "name": "app",
          "expressions": ["1", "1 * physician"],
          "minCount":1,
-         "maxCount":2,
+         "maxCount":6,
       },
       {
          "capacity": [0.15, 0.12, 0.1],
@@ -234,7 +234,7 @@ export class ConstantsService {
          "name": "scribe",
          "expressions": ["2", "1 * physician", "1 * app"],
          "minCount":1,
-         "maxCount":2,
+         "maxCount":6,
       }];
       readonly efficiencyModel: Efficiency[] = [
          {

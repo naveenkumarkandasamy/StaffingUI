@@ -135,14 +135,14 @@ export class JobformComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.check = false;
+   
+    if (this.reset != true ) {
     this.physicianMinCount = this.formVal.model[0].minCount;
     this.physicianMaxCount = this.formVal.model[0].maxCount;
     this.appMinCount = this.formVal.model[1].minCount;
     this.appMaxCount = this.formVal.model[1].maxCount;
     this.scribeMinCount = this.formVal.model[2].minCount;
     this.scribeMaxCount = this.formVal.model[2].maxCount;
-    if (this.reset != true ) {
-
       this.exp = [];
       for (let index1 = 0; index1 < this.expData.length; index1++) {
         for (let j = 0; j < this.expData.length; j++) {

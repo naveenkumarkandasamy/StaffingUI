@@ -12,6 +12,7 @@ import { FormGroup, FormControl, FormArray, FormBuilder } from '@angular/forms';
 import { ExcelService } from '../services/excel.service';
 import * as XLSX from 'xlsx';
 
+
 @Component({
   selector: 'mainForm',
   templateUrl: './form.component.html',
@@ -431,7 +432,12 @@ export class MainFormComponent implements OnInit {
     this.requestBody.patientHourWait = this.patientHourWait;
     this.requestBody.preferredOption = this.preferredOption;
     this.requestBody.inputFormat = this.inputFormat;
-    if (this.inputFormat == "File Upload") {
+    if(this.requestBody.clinician[0].maxCount < this.requestBody.clinician[0].minCount || 
+      this.requestBody.clinician[1].maxCount < this.requestBody.clinician[1].minCount ||
+      this.requestBody.clinician[2].maxCount < this.requestBody.clinician[2].minCount ){
+      this.toastr.error("minCount should be less than maxCount");
+    }
+    else if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
     }
     else {
