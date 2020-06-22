@@ -32,8 +32,5 @@ export class LoginComponent implements OnInit {
       }
     )
     );
-    if(this.invalidLogin == true){
-      this.toastr.error("Invalid Credentials");
-    }
   }
 }
