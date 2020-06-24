@@ -1,7 +1,7 @@
 <form class="form-horizontal" (ngSubmit)="heroForm.form.valid" #heroForm="ngForm">
-    <label class="col-sm-12">Algorithm Configuration</label>
-    <hr>
     <div class="form-group">
+        <label class="control-label col-sm-4">Algorithm Configuration:</label>
+        <br><br>
         <label class="control-label col-sm-4">Job Name:</label>
         <div class="col-sm-3">
             <input type="text" class="form-control" [(ngModel)]="formVal.jobName" name="jobName" placeholder="Test Job"
@@ -167,12 +167,13 @@
         </div>
     </div>
     <i class="center">If Max count of clinician is given then there can be a patient loss even if toggle is off.</i>
-    <i class="center">If Min count given is too less then utilzation can be compromised.</i><br>
+    <i class="center">If Min count given is too less then utilzation can be compromised.</i>
     <hr>
-    <label class="col-sm-12">Clinician Cost:</label>
-    <br>
+
     <div class="form-group">
-        <label class="control-label col-sm-2"></label>
+        <label class="control-label col-sm-4">Clinician Cost:</label>
+        <br><br>
+        <label class="control-label col-sm-4"></label>
         <div class="col-sm-4">
             <ag-grid-angular domLayout="autoHeight" style="width: 28.1vw; height: 20vh;" class="ag-theme-balham"
                 [rowData]="formVal.model" [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef"
@@ -183,10 +184,10 @@
     </div>
     <hr>
 
-    <label class="col-sm-12">Clinician Performance:</label>
-    <br>
     <div class="form-group">
-        <label class="control-label col-sm-2"></label>
+        <label class="control-label col-sm-4">Clinician Performance:</label>
+        <br><br>
+        <label class="control-label col-sm-4"></label>
         <div class="col-sm-4">
             <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham"
                 [rowData]="formVal.efficiencyModel" [columnDefs]="formVal.efficiencyColumnDefs"
@@ -196,8 +197,9 @@
         <br><br><br><br>
     </div>
     <hr>
-    <label class="col-sm-12">Input/Output Data Format</label>
     <div class="form-group">
+        <label class="control-label col-sm-4">Input/Output Data Format:</label>
+        <br><br>
         <label class="control-label col-sm-4">Arrival Data format:</label>
         <div class="col-sm-3">
             <select class="form-control" required id="inputType" name="inputFormat" #input_Format
@@ -259,11 +261,11 @@
             </div>
         </div>
         <div *ngIf="chooseFile">
-            <label class="col-sm-12">Hourly Workload:</label>
-            <br>
             <div class="form-group">
-                <label class="control-label col-sm-2"></label>
-                <div class="col-sm-10">
+                <label class="control-label col-sm-4">Hourly Workload:</label>
+                <br><br>
+                <label class="control-label col-sm-4"></label>
+                <div class="col-sm-8">
                     <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="fileData"
                         [columnDefs]="transposedFileColumnDef" [defaultColDef]="defaultColDef">
                     </ag-grid-angular>

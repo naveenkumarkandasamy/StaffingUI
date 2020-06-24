@@ -2,6 +2,8 @@
     <br>
     <form class="form-horizontal" (ngSubmit)="onSubmit()" #heroForm="ngForm" ngNativeValidate>
         <div class="form-group">
+            <label class="control-label col-sm-4">Algorithm Configuration:</label>
+            <br><br>
             <label class="control-label col-sm-4">Enter comma seperted shift preferences:</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control" [(ngModel)]="shiftLength" placeholder="12, 8, 10, 4"
@@ -91,7 +93,6 @@
 
             <label class="control-label col-sm-4">Clinician Relationship:</label>
             <div class="col-sm-3">
-
                 <select class="dropDown" required [disabled]="priorClinicianDropDown"
                     [(ngModel)]="selectedPriorClinician" name="clinicianSelection"
                     (change)="afterSelectedPriorClinician(selectedPriorClinician)" required>
@@ -138,13 +139,14 @@
             </div>
         </div>
         <i class="center">If Max count of clinician is given then there can be a patient loss even if toggle is off.</i>
-        <i class="center">If Min count given is too less then utilzation can be compromised.</i><br>
+        <i class="center">If Min count given is too less then utilzation can be compromised.</i>
         <hr>
-        <label class="col-sm-12">Clinician Cost:</label>
-        <br>
-        <br>
+
         <div class="form-group">
-            <label class="control-label col-sm-2"></label>
+            <label class="control-label col-sm-4">Clinician Cost:</label>
+            <br>
+            <br>
+            <label class="control-label col-sm-4"></label>
             <div class="col-sm-4">
                 <ag-grid-angular domLayout="autoHeight" style="width: 28.1vw; height: 20vh;" class="ag-theme-balham"
                     [rowData]="model" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
@@ -154,11 +156,11 @@
         <br>
         <hr>
 
-        <label class="col-sm-12">Clinician Performance:</label>
-        <br>
-        <br>
         <div class="form-group">
-            <label class="control-label col-sm-2"></label>
+            <label class="control-label col-sm-4">Clinician Performance:</label>
+            <br>
+            <br>
+            <label class="control-label col-sm-4"></label>
             <div class="col-sm-4">
                 <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham"
                     [rowData]="efficiencyModel" [columnDefs]="columnDefs1" [defaultColDef]="defaultColDef">
@@ -182,11 +184,12 @@
         </div>
         <hr>
         <div *ngIf="inputFormat == 'Provide Online'">
-            <label class="col-sm-12">Hourly Workload:</label>
-            <br>
             <div class="form-group">
-                <label class="control-label col-sm-2"></label>
-                <div class="col-sm-10">
+                <label class="control-label col-sm-4">Hourly Workload:</label>
+                <br>
+                <br>
+                <label class="control-label col-sm-4"></label>
+                <div class="col-sm-8">
                     <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="data"
                         [columnDefs]="transposedColumnDef" [defaultColDef]="defaultColDef">
                     </ag-grid-angular>
@@ -208,11 +211,12 @@
                 </div>
             </div>
             <div *ngIf="chooseFile">
-                <label class="col-sm-12">Hourly Workload:</label>
-                <br>
                 <div class="form-group">
-                    <label class="control-label col-sm-2"></label>
-                    <div class="col-sm-10">
+                    <label class="control-label col-sm-4">Hourly Workload:</label>
+                    <br>
+                    <br>
+                    <label class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
                         <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="fileData"
                             [columnDefs]="transposedFileColumnDef" [defaultColDef]="defaultColDef">
                         </ag-grid-angular>
