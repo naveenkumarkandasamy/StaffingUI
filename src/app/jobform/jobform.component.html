@@ -1,170 +1,183 @@
 <form class="form-horizontal" (ngSubmit)="heroForm.form.valid" #heroForm="ngForm">
-    <label class="col-sm-12">Sub Heading to be decided!!</label>
+    <label class="col-sm-12">Algorithm Configuration</label>
     <hr>
     <div class="form-group">
         <label class="control-label col-sm-4">Job Name:</label>
         <div class="col-sm-3">
-            <input type="text" class="form-control" [(ngModel)]="formVal.jobName" name="jobName" placeholder="Test Job" (blur)="sendresponse()" [formControl]="jobName" required/>
+            <input type="text" class="form-control" [(ngModel)]="formVal.jobName" name="jobName" placeholder="Test Job"
+                (blur)="sendresponse()" [formControl]="jobName" required />
         </div>
-        <mat-error *ngIf="jobName.hasError('required')">Enter a Valid Name {{getFlagStatus()}}</mat-error> 
+        <mat-error *ngIf="jobName.hasError('required')">Enter a Valid Name {{getFlagStatus()}}</mat-error>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-4">Enter comma seperted shift preferences:</label>
         <div class="col-sm-3">
-            <input class="form-control" type="text" title="Enter comma separated numbers" [(ngModel)]="formVal.shiftLength"
-            pattern="^[1-9][0-9]?(,[1-9][0-9]?)*$" name="shiftLength" (blur)="sendresponse()"
-                [formControl]="shiftLength" />
-        </div> 
+            <input class="form-control" type="text" title="Enter comma separated numbers"
+                [(ngModel)]="formVal.shiftLength" pattern="^[1-9][0-9]?(,[1-9][0-9]?)*$" name="shiftLength"
+                (blur)="sendresponse()" [formControl]="shiftLength" />
+        </div>
         <mat-error *ngIf="shiftLength.hasError('pattern')">Enter comma separated numbers</mat-error>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-4">Enter lower limit for utilization:</label>
         <div class="col-sm-3">
-            <input class="form-control" type="number" [(ngModel)]="formVal.lowerUtilization" placeholder="0.85" step="0.05"
-            min="0.5" max="1.1" name="lowerUtilization" (blur)="sendresponse()" [formControl]="lowerUtilization"/>
+            <input class="form-control" type="number" [(ngModel)]="formVal.lowerUtilization" placeholder="0.85"
+                step="0.05" min="0.5" max="1.1" name="lowerUtilization" (blur)="sendresponse()"
+                [formControl]="lowerUtilization" />
         </div>
         <mat-error *ngIf="lowerUtilization.hasError('min') || lowerUtilization.hasError('max')">Enter value in range
-            (0.5-1.1) {{getFlagStatus()}}</mat-error> 
+            (0.5-1.1) {{getFlagStatus()}}</mat-error>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-4">Enter upper limit for utilization:</label>
         <div class="col-sm-3">
-            <input class="form-control" type="number" [(ngModel)]="formVal.upperUtilization" placeholder="1.10" step="0.05"
-            min="0.8" max="1.5" name="upperUtilization" (blur)="sendresponse()" [formControl]="upperUtilization"/>
+            <input class="form-control" type="number" [(ngModel)]="formVal.upperUtilization" placeholder="1.10"
+                step="0.05" min="0.8" max="1.5" name="upperUtilization" (blur)="sendresponse()"
+                [formControl]="upperUtilization" />
         </div>
         <mat-error *ngIf="upperUtilization.hasError('min') || upperUtilization.hasError('max')">Enter value in range
-            (0.8-1.5) {{getFlagStatus()}}</mat-error> 
+            (0.8-1.5) {{getFlagStatus()}}</mat-error>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-4">Enter Restriction Start Time:</label>
         <div class="col-sm-3">
-            <input class="form-control" type="number" [(ngModel)]="formVal.notAllocatedStartTime" placeholder="1" step="1"
-             min="0" max="23" name="notAllocatedStartTime" (blur)="sendresponse()" [formControl]="notAllocatedStartTime"/>
+            <input class="form-control" type="number" [(ngModel)]="formVal.notAllocatedStartTime" placeholder="1"
+                step="1" min="0" max="23" name="notAllocatedStartTime" (blur)="sendresponse()"
+                [formControl]="notAllocatedStartTime" />
         </div>
-        <mat-error *ngIf="notAllocatedStartTime.hasError('min') || notAllocatedStartTime.hasError('max')">Enter value in range
-            (0-23) {{getFlagStatus()}}</mat-error> 
+        <mat-error *ngIf="notAllocatedStartTime.hasError('min') || notAllocatedStartTime.hasError('max')">Enter value in
+            range
+            (0-23) {{getFlagStatus()}}</mat-error>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-4">Enter Restriction End Time:</label>
         <div class="col-sm-3">
             <input class="form-control" type="number" [(ngModel)]="formVal.notAllocatedEndTime" placeholder="6" step="1"
-             min="0" max="23" name="notAllocatedEndTime" (blur)="sendresponse()" [formControl]="notAllocatedEndTime"/>
+                min="0" max="23" name="notAllocatedEndTime" (blur)="sendresponse()"
+                [formControl]="notAllocatedEndTime" />
         </div>
-        <mat-error *ngIf="notAllocatedEndTime.hasError('min') || notAllocatedEndTime.hasError('max')">Enter value in range
-            (0-23) {{getFlagStatus()}}</mat-error> 
+        <mat-error *ngIf="notAllocatedEndTime.hasError('min') || notAllocatedEndTime.hasError('max')">Enter value in
+            range
+            (0-23) {{getFlagStatus()}}</mat-error>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-4">Enter Patient Hour Wait:</label>
         <div class="col-sm-3">
             <input class="form-control" type="number" [(ngModel)]="formVal.patientHourWait" placeholder="2" step="1"
-             min="0" max="167" name="patientHourWait" (blur)="sendresponse()" [formControl]="patientHourWait"/>
+                min="0" max="167" name="patientHourWait" (blur)="sendresponse()" [formControl]="patientHourWait" />
         </div>
         <mat-error *ngIf="patientHourWait.hasError('min') || patientHourWait.hasError('max')">Enter value in range
-            (0-167){{getFlagStatus()}}</mat-error> 
+            (0-167){{getFlagStatus()}}</mat-error>
     </div>
     <div class="form-group">
-        <label class="control-label col-sm-4">Choose Preference:</label>
+        <label class="control-label col-sm-4">Patient Loss:</label>
         <div class="col-sm-3">
-            <mat-button-toggle-group name="formVal.preferredOption" aria-label="Font Style" [(ngModel)]= "formVal.preferredOption" #group = "matButtonToggleGroup" (click)="sendresponse()">
-                <mat-button-toggle value="utilization">Utilization</mat-button-toggle>
-                <mat-button-toggle value="noPatientLoss">No Patient Loss</mat-button-toggle>
-            </mat-button-toggle-group>
+            <mat-slide-toggle color="primary" [(ngModel)]="formVal.isChecked" name="formVal.isChecked"
+                (click)="setPreferedOption()"></mat-slide-toggle>
         </div>
     </div>
     <hr>
-    <label class="col-sm-12">Clinician Count:</label>
+
+    <div class="form-group">
+        <label class="control-label col-sm-4">Clinician Configuartion:</label>
         <br><br>
         <label class="control-label col-sm-4">Physician's Min Count:</label>
-            <div class="col-sm-2">
-                <input type="number" class="form-control" [(ngModel)]="physicianMinCount"
-                step="1" min="0" max="50" required placeholder="1" (blur)="sendresponse()" name="physicianMinCount"/>
-            </div>
+        <div class="col-sm-2">
+            <input type="number" class="form-control" [(ngModel)]="physicianMinCount" step="1" min="0" max="50" required
+                placeholder="1" (blur)="sendresponse()" name="physicianMinCount" />
+        </div>
         <label class="control-label col-sm-2">Physician's Max Count:</label>
-            <div class="col-sm-2">
-                <input type="number" class="form-control" [(ngModel)]="physicianMaxCount"
-                step="1" min="0" max="50" required (blur)="sendresponse()" placeholder="2" name="physicianMaxCount"/>
-            </div>
+        <div class="col-sm-2">
+            <input type="number" class="form-control" [(ngModel)]="physicianMaxCount" step="1" min="0" max="50" required
+                (blur)="sendresponse()" placeholder="2" name="physicianMaxCount" />
+        </div>
         <br><br>
         <label class="control-label col-sm-4">App's Min Count:</label>
-            <div class="col-sm-2">
-                <input type="number" class="form-control" [(ngModel)]="appMinCount"
-                step="1" min="0" max="50" required placeholder="1" (blur)="sendresponse()" name="appMinCount"/>
-            </div>
+        <div class="col-sm-2">
+            <input type="number" class="form-control" [(ngModel)]="appMinCount" step="1" min="0" max="50" required
+                placeholder="1" (blur)="sendresponse()" name="appMinCount" />
+        </div>
         <label class="control-label col-sm-2">App's Max Count:</label>
-            <div class="col-sm-2">
-                <input type="number" class="form-control" [(ngModel)]="appMaxCount"
-                step="1" min="0" max="50" required (blur)="sendresponse()" placeholder="2" name="appMaxCount"/>
-            </div>
+        <div class="col-sm-2">
+            <input type="number" class="form-control" [(ngModel)]="appMaxCount" step="1" min="0" max="50" required
+                (blur)="sendresponse()" placeholder="2" name="appMaxCount" />
+        </div>
         <br><br>
         <label class="control-label col-sm-4">Scribe's Min Count:</label>
-            <div class="col-sm-2">
-                <input type="number" class="form-control" [(ngModel)]="scribeMinCount"
-                step="1" min="0" max="50" required placeholder="1" (blur)="sendresponse()" name="scribeMinCount"/>
-            </div>
+        <div class="col-sm-2">
+            <input type="number" class="form-control" [(ngModel)]="scribeMinCount" step="1" min="0" max="50" required
+                placeholder="1" (blur)="sendresponse()" name="scribeMinCount" />
+        </div>
         <label class="control-label col-sm-2">Scribe's Max Count:</label>
-            <div class="col-sm-2">
-                <input type="number" class="form-control" [(ngModel)]="scribeMaxCount"
-                step="1" min="0" max="50" required (blur)="sendresponse()" placeholder="2" name="scribeMaxCount"/>
-            </div>
-        <br><br>
-     <hr>
-     <div class="form-group">
-     <label class="control-label col-sm-4">Clinician Relationship:</label>
-     <div class="col-sm-3">
-     <select name="clinicianId" [(ngModel)]="formVal.selectedPriorClinician" [disabled]="formVal.priorClinicianDropDown"
-        (change)="afterSelectedPriorClinician(formVal.selectedPriorClinician)">
-        <option value="" hidden>Select</option>
-        <option *ngFor="let a of formVal.clinicianData" [ngValue]="a">{{a}}</option>
-    </select>
-    </div>
+        <div class="col-sm-2">
+            <input type="number" class="form-control" [(ngModel)]="scribeMaxCount" step="1" min="0" max="50" required
+                (blur)="sendresponse()" placeholder="2" name="scribeMaxCount" />
+        </div>
+        <br><br><br>
+
+        <label class="control-label col-sm-4">Clinician Relationship:</label>
+        <div class="col-sm-3">
+            <select name="clinicianId" [(ngModel)]="formVal.selectedPriorClinician"
+                [disabled]="formVal.priorClinicianDropDown"
+                (change)="afterSelectedPriorClinician(formVal.selectedPriorClinician)">
+                <option value="" hidden>Select</option>
+                <option *ngFor="let a of formVal.clinicianData" [ngValue]="a">{{a}}</option>
+            </select>
+        </div>
     </div>
     <div class="form-group">
-     <label class="control-label col-sm-4"></label>
-     <div class="col-sm-6">
-     <form *ngIf="formVal.selected" [formGroup]="formVal.expressionFormGroup">
+        <label class="control-label col-sm-4"></label>
+        <div class="col-sm-6">
+            <form *ngIf="formVal.selected" [formGroup]="formVal.expressionFormGroup">
 
-        <div formArrayName="expressionForm"
-            *ngFor="let itr of formVal.expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
-            <div [formGroupName]="i">
+                <div formArrayName="expressionForm"
+                    *ngFor="let itr of formVal.expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
+                    <div [formGroupName]="i">
 
-                <select class="dropDown" [value]="selectedClinician[i].cliniciansDropDown" formControlName="cliniciansDropDown">
-                    <option [value]="" hidden>Select</option>
-                    <option *ngFor="let a of formVal.clinicianRemaining[i]">{{a}}</option>
-                </select>&nbsp;
-                <input class="dropDown" [value]="selectedNumOfClinician[i].numberOfClinician" type="number" placeholder="1" step="1"
-                    min="0" max="100" formControlName="numberOfClinician">
-                <select class="dropDown" [value]="selectedOperator[i].operatorChosen" formControlName="operatorChosen">
-                    <option [value]="" hidden>Select</option>
-                    <option *ngFor="let a of formVal.operator ; let i = index">{{a}}</option>
-                </select>
-                <select class="dropDown" [value]="selectedCinincianForExp[i].selectedClinicianDropDown"
-                    name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
-                    <option [value]="" hidden>Select</option>
-                    <option *ngFor="let a of formVal.alreadySelectedClinician[i] ; let i = index">{{a}}</option>
-                </select>&nbsp;
+                        <select class="dropDown" [value]="selectedClinician[i].cliniciansDropDown"
+                            formControlName="cliniciansDropDown">
+                            <option [value]="" hidden>Select</option>
+                            <option *ngFor="let a of formVal.clinicianRemaining[i]">{{a}}</option>
+                        </select>&nbsp;
+                        <input class="dropDown" [value]="selectedNumOfClinician[i].numberOfClinician" type="number"
+                            placeholder="1" step="1" min="0" max="100" formControlName="numberOfClinician">
+                        <select class="dropDown" [value]="selectedOperator[i].operatorChosen"
+                            formControlName="operatorChosen">
+                            <option [value]="" hidden>Select</option>
+                            <option *ngFor="let a of formVal.operator ; let i = index">{{a}}</option>
+                        </select>
+                        <select class="dropDown" [value]="selectedCinincianForExp[i].selectedClinicianDropDown"
+                            name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
+                            <option [value]="" hidden>Select</option>
+                            <option *ngFor="let a of formVal.alreadySelectedClinician[i] ; let i = index">{{a}}</option>
+                        </select>&nbsp;
 
-                <button type="button" [disabled]="formVal.disableToReadData[i]" (click)="readingData(i)">OK</button>&nbsp;
-                <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
-                    (click)="addingExpressionForm(i)">ADD</button>&nbsp;
-                <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
-                    (click)="notAddingExpressionForm(i)">No</button>
-            </div><br>
+                        <button type="button" [disabled]="formVal.disableToReadData[i]"
+                            (click)="readingData(i)">OK</button>&nbsp;
+                        <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
+                            (click)="addingExpressionForm(i)">ADD</button>&nbsp;
+                        <button type="button" [disabled]="formVal.isRequiredToAddExpForm[i]" *ngIf="addMoreRequired[i]"
+                            (click)="notAddingExpressionForm(i)">No</button>
+                    </div><br>
+                </div>
+            </form>
+            <button type="button" *ngIf="formVal.isRequiredToDelete"
+                (click)="removingExpression()">Delete</button>&nbsp;
+            <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
         </div>
-     </form>
-     <button type="button" *ngIf="formVal.isRequiredToDelete" (click)="removingExpression()">Delete</button>&nbsp;
-     <button type="button" *ngIf="toAddExp" (click)="addingExpression()">AddExp</button>
     </div>
-    </div>
-    <br />
+    <i class="center">If Max count of clinician is given then there can be a patient loss even if toggle is off.</i>
+    <i class="center">If Min count given is too less then utilzation can be compromised.</i><br>
     <hr>
-   
     <label class="col-sm-12">Clinician Cost:</label>
     <br>
     <div class="form-group">
         <label class="control-label col-sm-2"></label>
         <div class="col-sm-4">
-            <ag-grid-angular domLayout="autoHeight" style="width: 28.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="formVal.model"  [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef" (cellMouseOut)="sendresponse()">
-            </ag-grid-angular>     
+            <ag-grid-angular domLayout="autoHeight" style="width: 28.1vw; height: 20vh;" class="ag-theme-balham"
+                [rowData]="formVal.model" [columnDefs]="formVal.columnDefs" [defaultColDef]="defaultColDef"
+                (cellMouseOut)="sendresponse()">
+            </ag-grid-angular>
         </div>
         <br><br><br><br>
     </div>
@@ -175,24 +188,26 @@
     <div class="form-group">
         <label class="control-label col-sm-2"></label>
         <div class="col-sm-4">
-            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham" [rowData]="formVal.efficiencyModel"  [columnDefs]="formVal.efficiencyColumnDefs" [defaultColDef]="defaultColDef" (cellMouseOut)="sendresponse()">
-            </ag-grid-angular>     
+            <ag-grid-angular domLayout="autoHeight" style="width: 47.1vw; height: 20vh;" class="ag-theme-balham"
+                [rowData]="formVal.efficiencyModel" [columnDefs]="formVal.efficiencyColumnDefs"
+                [defaultColDef]="defaultColDef" (cellMouseOut)="sendresponse()">
+            </ag-grid-angular>
         </div>
         <br><br><br><br>
     </div>
     <hr>
-    <label class="col-sm-12">Sub Heading to be decided!!</label>
+    <label class="col-sm-12">Input/Output Data Format</label>
     <div class="form-group">
         <label class="control-label col-sm-4">Arrival Data format:</label>
         <div class="col-sm-3">
             <select class="form-control" required id="inputType" name="inputFormat" #input_Format
-            [(ngModel)]="formVal.inputFormat" (blur)="sendresponse()">
-                <option value="-1" >Select Input Format</option>
+                [(ngModel)]="formVal.inputFormat" (blur)="sendresponse()">
+                <option value="-1">Select Input Format</option>
                 <option [value]="type" *ngFor="let type of inputTypes">
                     {{ type }}
                 </option>
             </select>
-        </div> 
+        </div>
     </div>
     <div *ngIf="formVal.inputFormat == 'FTP_URL'">
 
@@ -200,39 +215,44 @@
             <label class="control-label col-sm-4">FTP URL:</label>
             <div class="col-sm-3">
                 <input class="form-control" required type="text" [(ngModel)]="formVal.inputFtpUrl" id="inputFtpUrl"
-                placeholder="ftp://myname@host.dom/2Fetc" name="inputFtpUrl" (blur)="sendresponse()" [formControl]="inputFtpUrl"/>
+                    placeholder="ftp://myname@host.dom/2Fetc" name="inputFtpUrl" (blur)="sendresponse()"
+                    [formControl]="inputFtpUrl" />
             </div>
             <mat-error *ngIf="inputFtpUrl.hasError('required')">Enter valid FTP URL {{getFlagStatus()}}</mat-error>
         </div>
         <div class="form-group">
             <label class="control-label col-sm-4">FTP Username:</label>
             <div class="col-sm-3">
-                <input class="form-control" required type="text" [(ngModel)]="formVal.inputFtpUsername" id="inputFtpUsername"
-                placeholder="" name="inputFtpUsername" (blur)="sendresponse()" [formControl]="inputFtpUsername"/>
+                <input class="form-control" required type="text" [(ngModel)]="formVal.inputFtpUsername"
+                    id="inputFtpUsername" placeholder="" name="inputFtpUsername" (blur)="sendresponse()"
+                    [formControl]="inputFtpUsername" />
             </div>
-            <mat-error *ngIf="inputFtpUsername.hasError('required')">Enter valid FTP Username {{getFlagStatus()}}</mat-error>
+            <mat-error *ngIf="inputFtpUsername.hasError('required')">Enter valid FTP Username {{getFlagStatus()}}
+            </mat-error>
         </div>
         <div class="form-group">
             <label class="control-label col-sm-4">FTP Password:</label>
             <div class="col-sm-3">
-                <input class="form-control" required type="text" [(ngModel)]="formVal.inputFtpPassword" id="inputFtpPassword"
-                placeholder="" name="inputFtpPassword" (blur)="sendresponse()" [formControl]="inputFtpPassword"/>
+                <input class="form-control" required type="text" [(ngModel)]="formVal.inputFtpPassword"
+                    id="inputFtpPassword" placeholder="" name="inputFtpPassword" (blur)="sendresponse()"
+                    [formControl]="inputFtpPassword" />
             </div>
-            <mat-error *ngIf="inputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+            <mat-error *ngIf="inputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}
+            </mat-error>
         </div>
     </div>
     <div *ngIf="formVal.inputFormat == 'DATA_FILE'">
-            <div class="form-group">
-                <label class="control-label col-sm-4">Download Sample File:</label>
-                <div class="col-sm-3">
-                    <button mat-raised-button (click)="exportAsXLSX()" style="width: 100%">Download</button>
-                </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Download Sample File:</label>
+            <div class="col-sm-3">
+                <button mat-raised-button (click)="exportAsXLSX()" style="width: 100%">Download</button>
             </div>
+        </div>
         <div class="form-group">
             <label class="control-label col-sm-4">Choose File:</label>
             <div class="col-sm-3">
                 <input class="form-control" type="file" required id="file" #fileInput (change)="handleFileInput($event)"
-                (blur)="sendFile()" [formControl]="inputVFile"/>
+                    (blur)="sendFile()" [formControl]="inputVFile" />
             </div>
             <div *ngIf="inputVFile.hasError('required')" class="error" style="color:red;">
                 Choose File {{getFlagStatus()}}
@@ -245,7 +265,7 @@
                 <label class="control-label col-sm-2"></label>
                 <div class="col-sm-10">
                     <ag-grid-angular domLayout='autoHeight' class="ag-theme-balham" [rowData]="fileData"
-                    [columnDefs]="transposedFileColumnDef" [defaultColDef]="defaultColDef">
+                        [columnDefs]="transposedFileColumnDef" [defaultColDef]="defaultColDef">
                     </ag-grid-angular>
                 </div>
                 <br><br><br><br>
@@ -256,39 +276,45 @@
         <label class="control-label col-sm-4">Output Data format:</label>
         <div class="col-sm-3">
             <select class="form-control" id="outputType" name="outputFormat" #output_Format
-            [(ngModel)]="formVal.outputFormat" (blur)="sendresponse()">
-            (change)="outputformatChanged(outputFormat.value)">
+                [(ngModel)]="formVal.outputFormat" (blur)="sendresponse()">
+                (change)="outputformatChanged(outputFormat.value)">
                 <option value="-1">Select Output Format</option>
                 <option [value]="type" *ngFor="let type of outputTypes">
                     {{ type }}
                 </option>
             </select>
-        </div> 
+        </div>
     </div>
     <div *ngIf="formVal.outputFormat == 'FTP_URL'">
         <div class="form-group">
             <label class="control-label col-sm-4">FTP URL:</label>
             <div class="col-sm-3">
                 <input class="form-control" required type="text" [(ngModel)]="formVal.outputFtpUrl" id="outputFtpUrl"
-                placeholder="ftp://myname@host.dom/2Fetc" name="outputFtpUrl" (blur)="sendresponse()" [formControl]="outputFtpUrl"/>
+                    placeholder="ftp://myname@host.dom/2Fetc" name="outputFtpUrl" (blur)="sendresponse()"
+                    [formControl]="outputFtpUrl" />
             </div>
-            <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+            <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}
+            </mat-error>
         </div>
         <div class="form-group">
             <label class="control-label col-sm-4">FTP Username:</label>
             <div class="col-sm-3">
                 <input class="form-control" required type="text" [(ngModel)]="formVal.outputFtpUsername"
-                id="outputFtpUsername" placeholder="" name="outputFtpUsername" (blur)="sendresponse()" [formControl]="outputFtpUsername"/>
+                    id="outputFtpUsername" placeholder="" name="outputFtpUsername" (blur)="sendresponse()"
+                    [formControl]="outputFtpUsername" />
             </div>
-            <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+            <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}
+            </mat-error>
         </div>
         <div class="form-group">
             <label class="control-label col-sm-4">FTP Password:</label>
             <div class="col-sm-3">
                 <input class="form-control" required type="text" [(ngModel)]="formVal.outputFtpPassword"
-                id="outputFtpPassword" placeholder="" name="outputFtpPassword" (blur)="sendresponse()" [formControl]="outputFtpPassword"/>
+                    id="outputFtpPassword" placeholder="" name="outputFtpPassword" (blur)="sendresponse()"
+                    [formControl]="outputFtpPassword" />
             </div>
-            <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}</mat-error>
+            <mat-error *ngIf="outputFtpPassword.hasError('required')">Enter valid FTP Password {{getFlagStatus()}}
+            </mat-error>
         </div>
     </div>
 
@@ -296,21 +322,21 @@
         <div class="form-group">
             <label class="control-label col-sm-4">Email ID:</label>
             <div class="col-sm-3">
-                <input class="form-control" required type="email" [(ngModel)]="formVal.emailId" id="emailId" placeholder=""
-                name="emailId" (blur)="sendresponse()" [formControl]="outputEmail"/>
+                <input class="form-control" required type="email" [(ngModel)]="formVal.emailId" id="emailId"
+                    placeholder="" name="emailId" (blur)="sendresponse()" [formControl]="outputEmail" />
             </div>
-            <mat-error *ngIf="outputEmail.hasError('required') || outputEmail.hasError('email')">Enter valid Email {{getFlagStatus()}}</mat-error>
+            <mat-error *ngIf="outputEmail.hasError('required') || outputEmail.hasError('email')">Enter valid Email
+                {{getFlagStatus()}}</mat-error>
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-4">Cron expression:</label>
         <div class="col-sm-3">
             <input class="form-control" type="text" required [(ngModel)]="formVal.cronExpression" name="cronExpression"
-            placeholder="0 0 12 ? * SAT *" (blur)="sendresponse()" [formControl]="cronExp" />
+                placeholder="0 0 12 ? * SAT *" (blur)="sendresponse()" [formControl]="cronExp" />
         </div>
-        <span><img src="assets\clock.png" (click)="openDialog()"></span> 
+        <span><img src="assets\clock.png" (click)="openDialog()"></span>
         <mat-error *ngIf="cronExp.hasError('required')">Enter Cron Expression {{getFlagStatus()}}</mat-error>
     </div>
 </form>
 <br><br>
-

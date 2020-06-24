@@ -14,7 +14,6 @@ export class HttpClientService {
   }
 
   getGraphDetailsUsingTableData(requestBody) {
-    console.log(environment.environment)
     const apiLink = this.apiUrl + '/Staffing/api/request/shiftPlan';
     return this.http.post<response>(apiLink, requestBody);
   }
