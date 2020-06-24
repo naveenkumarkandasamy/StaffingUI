@@ -12,6 +12,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
 import { CronEditorModule } from 'ngx-cron-editor';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -75,6 +77,7 @@ import { ExcelService } from './services/excel.service';
     MatIconModule,
     MatSidenavModule,
     MatButtonToggleModule,
+    MatSlideToggleModule,
     MatCheckboxModule,
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),

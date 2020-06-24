@@ -21,6 +21,7 @@ import * as XLSX from 'xlsx';
 
 export class MainFormComponent implements OnInit {
 
+  isChecked = false;
   savedBody : any;
   priorClinicianDropDown: boolean = false;
   expressionFormGroup: FormGroup;
@@ -168,7 +169,7 @@ export class MainFormComponent implements OnInit {
         this.appMaxCount = this.model[1].maxCount;
         this.scribeMinCount = this.model[2].minCount;
         this.scribeMaxCount = this.model[2].maxCount;
-        this.preferredOption = "utilization"
+        this.preferredOption = "noPatientLoss"
     }
     else{
       this.shiftLength = this.savedBody.shiftLength.toString();
@@ -186,6 +187,12 @@ export class MainFormComponent implements OnInit {
       this.scribeMaxCount = this.savedBody.clinician[2].maxCount;
       this.preferredOption = this.savedBody.preferredOption;
     }
+    if(this.preferredOption == "utilization"){
+      this.isChecked = true;
+    }
+    else if(this.preferredOption == "noPatientLoss"){
+      this.isChecked = false;
+    }
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
     this.clinicianData = ['physician', 'app', 'scribe'];
@@ -201,6 +208,16 @@ export class MainFormComponent implements OnInit {
       ])
     });
     this.chooseFile = false;
+  }
+
+
+  setPreferedOption(){
+    if(this.isChecked == true){
+      this.preferredOption = "noPatientLoss";
+    }
+    else{
+      this.preferredOption = "utilization";
+    }
   }
 
   trackByForm(index: number, data: any) {
