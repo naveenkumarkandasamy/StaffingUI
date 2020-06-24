@@ -111,17 +111,17 @@
               *ngFor="let itr of expressionFormGroup.controls.expressionForm?.value; let i = index; trackBy:trackByForm">
               <div [formGroupName]="i">
 
-                    <select class="dropDown" name="cliniciansDropDownId" formControlName="cliniciansDropDown">
+                    <select class="dropDown" name="cliniciansDropDownId" [value]="selectedClinician[i].cliniciansDropDown" formControlName="cliniciansDropDown">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of clinicianRemaining[i]">{{a}}</option>
                     </select>&nbsp;
-                    <input class="dropDown" name="numberOfClinicianId" type="number" placeholder="1" step="1" min="0" max="100"
+                    <input class="dropDown" name="numberOfClinicianId" [value]="selectedNumOfClinician[i].numberOfClinician" type="number" placeholder="1" step="1" min="0" max="100"
                         formControlName="numberOfClinician">
-                    <select class="dropDown" name="operatorChosenId" formControlName="operatorChosen">
+                    <select class="dropDown" name="operatorChosenId" [value]="selectedOperator[i].operatorChosen" formControlName="operatorChosen">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of operator ; let i = index">{{a}}</option>
                     </select>
-                    <select class="dropDown" name="selectedClinicianDropDownId" formControlName="selectedClinicianDropDown">
+                    <select class="dropDown" name="selectedClinicianDropDownId" [value]="selectedCinincianForExp[i].selectedClinicianDropDown" formControlName="selectedClinicianDropDown">
                         <option value="" hidden>Select</option>
                         <option *ngFor="let a of alreadySelectedClinician[i] ; let i = index">{{a}}</option>
                     </select>&nbsp;

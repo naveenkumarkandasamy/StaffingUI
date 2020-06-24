@@ -39,12 +39,12 @@ export class JobformComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.itr = 1;
     this.chooseFile = false;
-    this.physicianMinCount = this.formVal.model[0].minCount;
-    this.physicianMaxCount = this.formVal.model[0].maxCount;
-    this.appMinCount = this.formVal.model[1].minCount;
-    this.appMaxCount = this.formVal.model[1].maxCount;
-    this.scribeMinCount = this.formVal.model[2].minCount;
-    this.scribeMaxCount = this.formVal.model[2].maxCount;
+    this.physicianMinCount = this.model[0].minCount;
+    this.physicianMaxCount = this.model[0].maxCount;
+    this.appMinCount = this.model[1].minCount;
+    this.appMaxCount = this.model[1].maxCount;
+    this.scribeMinCount = this.model[2].minCount;
+    this.scribeMaxCount = this.model[2].maxCount;
   }
   
   @Input() expData: any;
@@ -88,6 +88,7 @@ export class JobformComponent implements OnInit, OnChanges {
     "alreadySelectedClinician": "",
     "operator": "",
     "expressionRowData": "",
+    "model":"",
   };
 
   inputFile: File;
@@ -135,17 +136,18 @@ export class JobformComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.check = false;
-   
     if (this.reset != true ) {
-    this.physicianMinCount = this.formVal.model[0].minCount;
-    this.physicianMaxCount = this.formVal.model[0].maxCount;
-    this.appMinCount = this.formVal.model[1].minCount;
-    this.appMaxCount = this.formVal.model[1].maxCount;
-    this.scribeMinCount = this.formVal.model[2].minCount;
-    this.scribeMaxCount = this.formVal.model[2].maxCount;
+    for (let j = 0; j < this.expData.length; j++) {
+      this.physicianMinCount= this.expData[0].minCount;
+      this.physicianMaxCount= this.expData[0].maxCount;
+      this.appMinCount = this.expData[1].minCount;
+      this.appMaxCount = this.expData[1].maxCount;
+      this.scribeMinCount = this.expData[2].minCount;
+      this.scribeMaxCount = this.expData[2].maxCount;  
+     }
       this.exp = [];
       for (let index1 = 0; index1 < this.expData.length; index1++) {
-        for (let j = 0; j < this.expData.length; j++) {
+        for (let j = 0; j < this.expData.length; j++) { 
           if (index1 == this.expData[j].expressions[0]) {
             if (this.expData[j].expressions.length == 1) {
               this.exp.push(this.expData[j].name);
@@ -222,10 +224,13 @@ export class JobformComponent implements OnInit, OnChanges {
       this.notAllocatedStartTime.hasError('min')||this.notAllocatedStartTime.hasError('max')||
       this.notAllocatedEndTime.hasError('min')||this.notAllocatedEndTime.hasError('max')||
       this.patientHourWait.hasError('min')|| this.patientHourWait.hasError('max')||
-      this.cronExp.hasError('required')) {
+      this.cronExp.hasError('required') || this.physicianMinCount==null ||
+      this.physicianMaxCount==null || this.appMinCount==null || this.appMaxCount==null ||
+      this.scribeMinCount==null || this.scribeMaxCount==null ) {
       this.flagForValidation = 1;
       this.checkFlag = 1;
     }
+    if(this)
     if (this.formVal.inputFormat == 'FTP_URL' && (this.inputFtpUrl.hasError('required') ||
       this.inputFtpUsername.hasError('required') || this.inputFtpPassword.hasError('required'))) {
       this.flagForValidation = 1;
@@ -360,6 +365,19 @@ export class JobformComponent implements OnInit, OnChanges {
     }
     this.check = false;
     this.numOfForm = this.formVal.expressionFormGroup.controls.expressionForm.length - 1;
+    if (this.numOfForm == -1) {//after Every Expression are deleted  
+      for (let i = 0; i < this.model.length; i++) {
+        this.model[i].expressions = [];
+        this.itr = 0;
+      }
+      this.formVal.clinicianRemaining = [['physician', 'app', 'scribe']]
+      this.formVal.alreadySelectedClinician = [[]];
+      this.formVal.selectedClinicianDropDown = [[]];
+      this.formVal.priorClinicianDropDown = false;
+      this.formVal.selectedPriorClinician = "";
+      this.formVal.isRequiredToDelete = false;
+      return;
+    }
     for (let i = 0; i < this.model.length; i++) {//Deleting the Assigned Expression from Model
       if (this.model[i].name == (this.formVal.expressionFormGroup.value.expressionForm[this.numOfForm].cliniciansDropDown)) {
         if (this.model[i].expressions.length == 2) {
@@ -388,18 +406,6 @@ export class JobformComponent implements OnInit, OnChanges {
       if (this.addMoreRequired[this.numOfForm] != true && this.formVal.clinicianRemaining[this.numOfForm + 1].length != 0) {
         this.toAddExp = true;
       }
-    }
-    if (this.numOfForm == -1) {//after Every Expression are deleted  
-      for (let i = 0; i < this.model.length; i++) {
-        this.model[i].expressions = [];
-        this.itr = 0;
-      }
-      this.formVal.clinicianRemaining = [['physician', 'app', 'scribe']]
-      this.formVal.alreadySelectedClinician = [[]];
-      this.formVal.selectedClinicianDropDown = [[]];
-      this.formVal.priorClinicianDropDown = false;
-      this.formVal.selectedPriorClinician = "";
-      this.formVal.isRequiredToDelete = false;
     }
   }
 

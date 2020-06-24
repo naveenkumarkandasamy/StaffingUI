@@ -57,8 +57,7 @@ export class AutorunComponent implements OnInit {
   jobDetails: any;
 
   createCliniciansData(data: any) {
-    for (let i=0; i < this.clinicianModel.length; i++)
-    {
+    for (let i=0; i < this.clinicianModel.length; i++){
     for (let index = 0; index < data.length; index++) {
       if(this.clinicianModel[i].name==data[index].name){
       this.cliniciansDataFromDb.push({ 'name': data[index].name, 'cost': data[index].cost, 'minCount': data[index].minCount, 'maxCount': data[index].maxCount });
@@ -67,8 +66,7 @@ export class AutorunComponent implements OnInit {
     }
   }
   createEfficiencyData(data: any) {
-    for (let i=0; i < this.clinicianModel.length; i++)
-    {
+    for (let i=0; i < this.clinicianModel.length; i++){
     for (let index = 0; index < data.length; index++) {
       if(this.clinicianModel[i].name==data[index].name){
       this.cliniciansEfficiencyDataFromDb.push({ 'name': data[index].name, 'firstHour': data[index].capacity[0], 'midHour': data[index].capacity[1], 'lastHour': data[index].capacity[2] });
@@ -206,6 +204,7 @@ export class AutorunComponent implements OnInit {
       this.jobDetails.selected = true;
       this.jobDetails.priorClinicianDropDown = true;
       this.jobDetails.selectedPriorClinician = this.mostPriorClinician;
+
     }
     this.jobDetails.expressionFormGroup = this.fb.group({
       expressionForm: this.fb.array([
