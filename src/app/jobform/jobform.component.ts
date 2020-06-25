@@ -64,7 +64,8 @@ export class JobformComponent implements OnInit, OnChanges {
     "notAllocatedStartTime": 1,
     "notAllocatedEndTime": 6,
     "patientHourWait": 2,
-    "preferredOption": "utilization",
+    "preferredOption": "noPatientloss",
+    "isChecked": false,
     "cronExpression": "",
     "inputFormat": "",
     "inputFtpUrl": "",
@@ -259,6 +260,16 @@ export class JobformComponent implements OnInit, OnChanges {
     }
 
   }
+
+  setPreferedOption(){
+    if(this.formVal.isChecked == true){
+      this.formVal.preferredOption = "noPatientLoss";
+    }
+    else{
+      this.formVal.preferredOption = "utilization";
+    }
+  }
+
   trackByForm(index: number, data: any) {
     return data.trackingId;
   }
@@ -521,7 +532,7 @@ export class JobformComponent implements OnInit, OnChanges {
       "notAllocatedStartTime": 1,
       "notAllocatedEndTime": 6,
       "patientHourWait": 2,
-      "preferredOption" : "utilization",
+      "preferredOption" : "noPatientLoss",
       "clinicians": null,
       "cronExpression": "",
       "inputFormat": "",

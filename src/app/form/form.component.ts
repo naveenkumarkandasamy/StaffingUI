@@ -20,6 +20,7 @@ import * as XLSX from 'xlsx';
 
 export class MainFormComponent implements OnInit {
 
+  isChecked = false;
   savedBody : any;
   priorClinicianDropDown: boolean = false;
   expressionFormGroup: FormGroup;
@@ -287,9 +288,24 @@ export class MainFormComponent implements OnInit {
         this.expressionFormGroup.value.expressionForm[i - 1].selectedClinicianDropDown = splittedDataBySpace[2];
       }
     }
+    if(this.preferredOption == "utilization"){
+      this.isChecked = true;
+    }
+    else if(this.preferredOption == "noPatientLoss"){
+      this.isChecked = false;
+    }
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
     this.chooseFile = false;
+  }
+
+  setPreferedOption(){
+    if(this.isChecked == true){
+      this.preferredOption = "noPatientLoss";
+    }
+    else{
+      this.preferredOption = "utilization";
+    }
   }
 
   trackByForm(index: number, data: any) {
@@ -561,7 +577,7 @@ export class MainFormComponent implements OnInit {
     if(this.requestBody.clinician[0].maxCount < this.requestBody.clinician[0].minCount || 
       this.requestBody.clinician[1].maxCount < this.requestBody.clinician[1].minCount ||
       this.requestBody.clinician[2].maxCount < this.requestBody.clinician[2].minCount ){
-      this.toastr.error("minCount should be less than maxCount");
+      this.toastr.error("MinCount should be less than MaxCount");
     }
     else if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();

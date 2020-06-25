@@ -189,10 +189,16 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.notAllocatedStartTime = (this.jobId == null || resetFlag == 0) ? 1 : editData.notAllocatedStartTime;
     this.jobDetails.notAllocatedEndTime = (this.jobId == null || resetFlag == 0) ? 6 : editData.notAllocatedEndTime;
     this.jobDetails.patientHourWait = (this.jobId == null || resetFlag == 0) ? 2 : editData.patientHourWait;
-    this.jobDetails.preferredOption = (this.jobId == null || resetFlag == 0) ? "utilization" : editData.preferredOption;
+    this.jobDetails.preferredOption = (this.jobId == null || resetFlag == 0) ? "noPatientLoss" : editData.preferredOption;
     this.jobDetails.model = (this.jobId == null || resetFlag == 0 || this.reset == true) ? JSON.parse(JSON.stringify(this.constantsService.model)) : this.cliniciansDataFromDb;
     this.jobDetails.efficiencyModel = (this.jobId == null || resetFlag == 0 || this.reset == true) ? JSON.parse(JSON.stringify(this.constantsService.efficiencyModel)) : this.cliniciansEfficiencyDataFromDb;
 
+    if(this.jobDetails.preferredOption == "noPatientLoss"){
+      this.jobDetails.isChecked = false;
+    }
+    else{
+      this.jobDetails.isChecked = true;
+    }
     if (this.jobId == null || resetFlag == 0 || this.reset == true) {
       this.jobDetails.isRequiredToDelete = false;
       this.jobDetails.selected = false;
@@ -330,7 +336,6 @@ export class AutorunComponent implements OnInit {
   }
 
   createAndPostJob() {
-   
     if (this.requestBody.status == "SCHEDULED" && this.requestBody.inputFormat == -1) {
       this.toastr.error("Please select a valid input format");
     }
