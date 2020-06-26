@@ -6,7 +6,6 @@ import { MatDialog } from '@angular/material';
 import { AuthenticationService } from '../services/authentication.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormControl, Validators, FormBuilder, FormArray, FormGroup } from '@angular/forms';
-import { NgForm } from '@angular/forms';
 import { ExcelService } from '../services/excel.service';
 import * as XLSX from 'xlsx';
 
@@ -26,12 +25,12 @@ export class JobformComponent implements OnInit, OnChanges {
   addMoreRequired = [];
   checking: boolean = false;
   expression: String;
-  physicianMinCount :any;
-  physicianMaxCount :any;
-  appMinCount :any;
-  appMaxCount :any;
-  scribeMinCount :any;
-  scribeMaxCount :any;
+  physicianMinCount: any;
+  physicianMaxCount: any;
+  appMinCount: any;
+  appMaxCount: any;
+  scribeMinCount: any;
+  scribeMaxCount: any;
 
   constructor(private fb: FormBuilder, private constantsService: ConstantsService, public dialog: MatDialog, private authService: AuthenticationService, private toastr: ToastrService, private excelService: ExcelService) {
   }
@@ -39,14 +38,14 @@ export class JobformComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.itr = 1;
     this.chooseFile = false;
-    this.physicianMinCount = this.formVal.model[0].minCount;
-    this.physicianMaxCount = this.formVal.model[0].maxCount;
-    this.appMinCount = this.formVal.model[1].minCount;
-    this.appMaxCount = this.formVal.model[1].maxCount;
-    this.scribeMinCount = this.formVal.model[2].minCount;
-    this.scribeMaxCount = this.formVal.model[2].maxCount;
+    this.physicianMinCount = this.model[0].minCount;
+    this.physicianMaxCount = this.model[0].maxCount;
+    this.appMinCount = this.model[1].minCount;
+    this.appMaxCount = this.model[1].maxCount;
+    this.scribeMinCount = this.model[2].minCount;
+    this.scribeMaxCount = this.model[2].maxCount;
   }
-  
+
   @Input() expData: any;
   @Input() reset: any;
   @Output() requestBodyToSend = new EventEmitter();
@@ -89,6 +88,7 @@ export class JobformComponent implements OnInit, OnChanges {
     "alreadySelectedClinician": "",
     "operator": "",
     "expressionRowData": "",
+    "model": "",
   };
 
   inputFile: File;
@@ -113,8 +113,8 @@ export class JobformComponent implements OnInit, OnChanges {
   requestBody: any;
   flagForValidation = 0;
   toAddExp: boolean;
-  checkFlag=0;
-  cronValid =0;
+  checkFlag = 0;
+  cronValid = 0;
 
   //FORM VALIDATION
   jobName = new FormControl('', [Validators.required]);
@@ -136,14 +136,15 @@ export class JobformComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.check = false;
-   
-    if (this.reset != true ) {
-    this.physicianMinCount = this.formVal.model[0].minCount;
-    this.physicianMaxCount = this.formVal.model[0].maxCount;
-    this.appMinCount = this.formVal.model[1].minCount;
-    this.appMaxCount = this.formVal.model[1].maxCount;
-    this.scribeMinCount = this.formVal.model[2].minCount;
-    this.scribeMaxCount = this.formVal.model[2].maxCount;
+    if (this.reset != true) {
+      for (let j = 0; j < this.expData.length; j++) {
+        this.physicianMinCount = this.expData[0].minCount;
+        this.physicianMaxCount = this.expData[0].maxCount;
+        this.appMinCount = this.expData[1].minCount;
+        this.appMaxCount = this.expData[1].maxCount;
+        this.scribeMinCount = this.expData[2].minCount;
+        this.scribeMaxCount = this.expData[2].maxCount;
+      }
       this.exp = [];
       for (let index1 = 0; index1 < this.expData.length; index1++) {
         for (let j = 0; j < this.expData.length; j++) {
@@ -220,33 +221,36 @@ export class JobformComponent implements OnInit, OnChanges {
     if (this.jobName.hasError('required') || this.shiftLength.hasError('pattern') ||
       this.lowerUtilization.hasError('min') || this.lowerUtilization.hasError('max') ||
       this.upperUtilization.hasError('min') || this.upperUtilization.hasError('max') ||
-      this.notAllocatedStartTime.hasError('min')||this.notAllocatedStartTime.hasError('max')||
-      this.notAllocatedEndTime.hasError('min')||this.notAllocatedEndTime.hasError('max')||
-      this.patientHourWait.hasError('min')|| this.patientHourWait.hasError('max')||
-      this.cronExp.hasError('required')) {
+      this.notAllocatedStartTime.hasError('min') || this.notAllocatedStartTime.hasError('max') ||
+      this.notAllocatedEndTime.hasError('min') || this.notAllocatedEndTime.hasError('max') ||
+      this.patientHourWait.hasError('min') || this.patientHourWait.hasError('max') ||
+      this.cronExp.hasError('required') || this.physicianMinCount == null ||
+      this.physicianMaxCount == null || this.appMinCount == null || this.appMaxCount == null ||
+      this.scribeMinCount == null || this.scribeMaxCount == null) {
       this.flagForValidation = 1;
       this.checkFlag = 1;
     }
-    if (this.formVal.inputFormat == 'FTP_URL' && (this.inputFtpUrl.hasError('required') ||
-      this.inputFtpUsername.hasError('required') || this.inputFtpPassword.hasError('required'))) {
-      this.flagForValidation = 1;
-      this.checkFlag = 1;
-    }
-    else if (this.formVal.inputFormat == 'DATA_FILE' && this.inputVFile.hasError('required')) {
-      this.flagForValidation = 1;
-      this.checkFlag = 1;
-    }
+    if (this)
+      if (this.formVal.inputFormat == 'FTP_URL' && (this.inputFtpUrl.hasError('required') ||
+        this.inputFtpUsername.hasError('required') || this.inputFtpPassword.hasError('required'))) {
+        this.flagForValidation = 1;
+        this.checkFlag = 1;
+      }
+      else if (this.formVal.inputFormat == 'DATA_FILE' && this.inputVFile.hasError('required')) {
+        this.flagForValidation = 1;
+        this.checkFlag = 1;
+      }
     if (this.formVal.outputFormat == 'FTP_URL' && (this.outputFtpUrl.hasError('required') ||
       this.outputFtpUsername.hasError('required') || this.outputFtpPassword.hasError('required'))) {
       this.flagForValidation = 1;
       this.checkFlag = 1;
     }
-    else if (this.formVal.outputFormat == 'EMAIL' && (this.outputEmail.hasError('email') || 
-    this.outputEmail.hasError('required'))) {
+    else if (this.formVal.outputFormat == 'EMAIL' && (this.outputEmail.hasError('email') ||
+      this.outputEmail.hasError('required'))) {
       this.flagForValidation = 1
-      this.checkFlag=1;
+      this.checkFlag = 1;
     }
-    else if (this.cronValid == 0 && this.cronExp.hasError('required')){
+    else if (this.cronValid == 0 && this.cronExp.hasError('required')) {
       this.flagForValidation = 1
       this.checkFlag = 1;
     }
@@ -256,11 +260,11 @@ export class JobformComponent implements OnInit, OnChanges {
 
   }
 
-  setPreferedOption(){
-    if(this.formVal.isChecked == true){
+  setPreferedOption() {
+    if (this.formVal.isChecked == true) {
       this.formVal.preferredOption = "noPatientLoss";
     }
-    else{
+    else {
       this.formVal.preferredOption = "utilization";
     }
   }
@@ -371,6 +375,19 @@ export class JobformComponent implements OnInit, OnChanges {
     }
     this.check = false;
     this.numOfForm = this.formVal.expressionFormGroup.controls.expressionForm.length - 1;
+    if (this.numOfForm == -1) {//after Every Expression are deleted  
+      for (let i = 0; i < this.model.length; i++) {
+        this.model[i].expressions = [];
+        this.itr = 0;
+      }
+      this.formVal.clinicianRemaining = [['physician', 'app', 'scribe']]
+      this.formVal.alreadySelectedClinician = [[]];
+      this.formVal.selectedClinicianDropDown = [[]];
+      this.formVal.priorClinicianDropDown = false;
+      this.formVal.selectedPriorClinician = "";
+      this.formVal.isRequiredToDelete = false;
+      return;
+    }
     for (let i = 0; i < this.model.length; i++) {//Deleting the Assigned Expression from Model
       if (this.model[i].name == (this.formVal.expressionFormGroup.value.expressionForm[this.numOfForm].cliniciansDropDown)) {
         if (this.model[i].expressions.length == 2) {
@@ -399,18 +416,6 @@ export class JobformComponent implements OnInit, OnChanges {
       if (this.addMoreRequired[this.numOfForm] != true && this.formVal.clinicianRemaining[this.numOfForm + 1].length != 0) {
         this.toAddExp = true;
       }
-    }
-    if (this.numOfForm == -1) {//after Every Expression are deleted  
-      for (let i = 0; i < this.model.length; i++) {
-        this.model[i].expressions = [];
-        this.itr = 0;
-      }
-      this.formVal.clinicianRemaining = [['physician', 'app', 'scribe']]
-      this.formVal.alreadySelectedClinician = [[]];
-      this.formVal.selectedClinicianDropDown = [[]];
-      this.formVal.priorClinicianDropDown = false;
-      this.formVal.selectedPriorClinician = "";
-      this.formVal.isRequiredToDelete = false;
     }
   }
 
@@ -495,10 +500,10 @@ export class JobformComponent implements OnInit, OnChanges {
     this.validateFlagToSend.emit(this.flagForValidation);
   }
   calculateCapacity() {
-    if (this.model[0].expressions.length == 0 && this.model[1].expressions.length == 0 && this.model[2].expressions.length == 0 ){
-     this.model[0].expressions = ["0"];
-     this.model[1].expressions = ["1","1 * physician"];
-     this.model[2].expressions = ["2","1 * physician","1 * app"];
+    if (this.model[0].expressions.length == 0 && this.model[1].expressions.length == 0 && this.model[2].expressions.length == 0) {
+      this.model[0].expressions = ["0"];
+      this.model[1].expressions = ["1", "1 * physician"];
+      this.model[2].expressions = ["2", "1 * physician", "1 * app"];
     }
     for (let i = 0; i < this.model.length; i++) {
       this.model[i].cost = this.formVal.model[i].cost;
@@ -526,7 +531,7 @@ export class JobformComponent implements OnInit, OnChanges {
       "notAllocatedStartTime": 1,
       "notAllocatedEndTime": 6,
       "patientHourWait": 2,
-      "preferredOption" : "noPatientLoss",
+      "preferredOption": "noPatientLoss",
       "clinicians": null,
       "cronExpression": "",
       "inputFormat": "",
@@ -574,11 +579,11 @@ export class JobformComponent implements OnInit, OnChanges {
       this.requestBody.inputFtpDetails = null;
       this.requestBody.inputFileDetails.fileExtension = 'xlsx';  //*** */
     }
-    else{
+    else {
       this.requestBody.inputFileDetails = null;
       this.requestBody.inputFtpDetails = null;
     }
-    
+
     this.requestBody.outputFormat = this.formVal.outputFormat;
     if (this.formVal.outputFormat == "FTP_URL") {
       this.requestBody.outputFtpDetails.fileUrl = this.formVal.outputFtpUrl;
@@ -647,7 +652,7 @@ export class JobformComponent implements OnInit, OnChanges {
 
   inputformatChanged(value) {
     this.formVal.inputFormat = value;
-    this.chooseFile =  false;
+    this.chooseFile = false;
   }
 
   outputformatChanged(value) {
@@ -667,7 +672,7 @@ export class JobformComponent implements OnInit, OnChanges {
     });
   }
 
-  exportAsXLSX():void {
+  exportAsXLSX(): void {
     this.excelService.exportAsExcelFile(this.sampleFileData, 'sample');
   }
 }

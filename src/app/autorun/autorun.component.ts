@@ -57,24 +57,22 @@ export class AutorunComponent implements OnInit {
   jobDetails: any;
 
   createCliniciansData(data: any) {
-    for (let i=0; i < this.clinicianModel.length; i++)
-    {
-    for (let index = 0; index < data.length; index++) {
-      if(this.clinicianModel[i].name==data[index].name){
-      this.cliniciansDataFromDb.push({ 'name': data[index].name, 'cost': data[index].cost, 'minCount': data[index].minCount, 'maxCount': data[index].maxCount });
-     }
-    }
+    for (let i = 0; i < this.clinicianModel.length; i++) {
+      for (let index = 0; index < data.length; index++) {
+        if (this.clinicianModel[i].name == data[index].name) {
+          this.cliniciansDataFromDb.push({ 'name': data[index].name, 'cost': data[index].cost, 'minCount': data[index].minCount, 'maxCount': data[index].maxCount });
+        }
+      }
     }
   }
   createEfficiencyData(data: any) {
-    for (let i=0; i < this.clinicianModel.length; i++)
-    {
-    for (let index = 0; index < data.length; index++) {
-      if(this.clinicianModel[i].name==data[index].name){
-      this.cliniciansEfficiencyDataFromDb.push({ 'name': data[index].name, 'firstHour': data[index].capacity[0], 'midHour': data[index].capacity[1], 'lastHour': data[index].capacity[2] });
+    for (let i = 0; i < this.clinicianModel.length; i++) {
+      for (let index = 0; index < data.length; index++) {
+        if (this.clinicianModel[i].name == data[index].name) {
+          this.cliniciansEfficiencyDataFromDb.push({ 'name': data[index].name, 'firstHour': data[index].capacity[0], 'midHour': data[index].capacity[1], 'lastHour': data[index].capacity[2] });
+        }
       }
     }
-    }  
   }
   createExpressionsData(data: any) {
     for (let index1 = 0; index1 < data.length; index1++) {
@@ -195,10 +193,10 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.model = (this.jobId == null || resetFlag == 0 || this.reset == true) ? JSON.parse(JSON.stringify(this.constantsService.model)) : this.cliniciansDataFromDb;
     this.jobDetails.efficiencyModel = (this.jobId == null || resetFlag == 0 || this.reset == true) ? JSON.parse(JSON.stringify(this.constantsService.efficiencyModel)) : this.cliniciansEfficiencyDataFromDb;
 
-    if(this.jobDetails.preferredOption == "noPatientLoss"){
+    if (this.jobDetails.preferredOption == "noPatientLoss") {
       this.jobDetails.isChecked = false;
     }
-    else{
+    else {
       this.jobDetails.isChecked = true;
     }
     if (this.jobId == null || resetFlag == 0 || this.reset == true) {
@@ -212,6 +210,7 @@ export class AutorunComponent implements OnInit {
       this.jobDetails.selected = true;
       this.jobDetails.priorClinicianDropDown = true;
       this.jobDetails.selectedPriorClinician = this.mostPriorClinician;
+
     }
     this.jobDetails.expressionFormGroup = this.fb.group({
       expressionForm: this.fb.array([
@@ -243,14 +242,14 @@ export class AutorunComponent implements OnInit {
     this.jobDetails.jobStatus = (this.jobId == null || resetFlag == 0) ? "SCHEDULED" : editData.status;
 
     this.jobDetails.columnDefs = [
-      { headerName: 'name', field: 'name', editable: true ,lockPosition: true},
+      { headerName: 'name', field: 'name', editable: true, lockPosition: true },
       {
-        headerName: 'cost',lockPosition: true,
+        headerName: 'cost', lockPosition: true,
         valueGetter: function (params) {
           return params.data.cost;
         },
         valueSetter: function (params) {
-          if (params.data.cost !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
+          if (params.data.cost !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !== '') {
             params.data.cost = params.newValue;
             return true;
           } else {
@@ -259,14 +258,14 @@ export class AutorunComponent implements OnInit {
         },
       }
     ];
-    this.jobDetails.efficiencyColumnDefs =  [
+    this.jobDetails.efficiencyColumnDefs = [
       { headerName: 'name', field: 'name', editable: true },
       {
         headerName: 'firstHour', valueGetter: function (params) {
           return params.data.firstHour;
         },
         valueSetter: function (params) {
-          if (params.data.firstHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
+          if (params.data.firstHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !== '') {
             params.data.firstHour = params.newValue;
             return true;
           } else {
@@ -280,7 +279,7 @@ export class AutorunComponent implements OnInit {
           return params.data.midHour;
         },
         valueSetter: function (params) {
-          if (params.data.midHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
+          if (params.data.midHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !== '') {
             params.data.midHour = params.newValue;
             return true;
           } else {
@@ -294,7 +293,7 @@ export class AutorunComponent implements OnInit {
           return params.data.lastHour;
         },
         valueSetter: function (params) {
-          if (params.data.lastHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
+          if (params.data.lastHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !== '') {
             params.data.lastHour = params.newValue;
             return true;
           } else {
@@ -302,7 +301,7 @@ export class AutorunComponent implements OnInit {
           }
         },
       }
-    ] ;
+    ];
 
   }
   onReset() {
@@ -316,9 +315,9 @@ export class AutorunComponent implements OnInit {
   onSubmit() {
     if (this.validateFlag == 0) {
       this.requestBody.status = "SCHEDULED";
-       if(this.editData.status && this.requestBody.status == this.editData.status){
+      if (this.editData.status && this.requestBody.status == this.editData.status) {
         this.requestBody['id'] = this.jobId;
-        this.jobId=null;
+        this.jobId = null;
       }
       this.createAndPostJob();
     }
@@ -329,10 +328,10 @@ export class AutorunComponent implements OnInit {
 
   onSaveDraft() {
     this.requestBody.status = "DRAFT";
-    if(this.editData.status && this.requestBody.status == this.editData.status){
-        this.requestBody['id'] = this.jobId;
-        this.jobId=null;
-      }
+    if (this.editData.status && this.requestBody.status == this.editData.status) {
+      this.requestBody['id'] = this.jobId;
+      this.jobId = null;
+    }
     this.createAndPostJob();
   }
 
@@ -343,9 +342,9 @@ export class AutorunComponent implements OnInit {
     else if (this.requestBody.status == "SCHEDULED" && this.requestBody.outputFormat == -1) {
       this.toastr.error("Please select a valid output format");
     }
-    else if (this.requestBody.clinicians[0].maxCount < this.requestBody.clinicians[0].minCount || 
+    else if (this.requestBody.clinicians[0].maxCount < this.requestBody.clinicians[0].minCount ||
       this.requestBody.clinicians[1].maxCount < this.requestBody.clinicians[1].minCount ||
-      this.requestBody.clinicians[2].maxCount < this.requestBody.clinicians[2].minCount ){
+      this.requestBody.clinicians[2].maxCount < this.requestBody.clinicians[2].minCount) {
       this.toastr.error("minCount should be less than maxCount");
     }
 

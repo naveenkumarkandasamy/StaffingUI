@@ -12,7 +12,6 @@ import { FormGroup, FormControl, FormArray, FormBuilder } from '@angular/forms';
 import { ExcelService } from '../services/excel.service';
 import * as XLSX from 'xlsx';
 
-
 @Component({
   selector: 'mainForm',
   templateUrl: './form.component.html',
@@ -22,7 +21,7 @@ import * as XLSX from 'xlsx';
 export class MainFormComponent implements OnInit {
 
   isChecked = false;
-  savedBody : any;
+  savedBody: any;
   priorClinicianDropDown: boolean = false;
   expressionFormGroup: FormGroup;
   clinicianData = [];
@@ -39,30 +38,37 @@ export class MainFormComponent implements OnInit {
   expression: String;
   numOfForm: any;
   itr: any;
+  exp: any;
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
+  selectedClinician: any[] = [];
+  selectedNumOfClinician: any[] = [];
+  selectedOperator: any[] = [];
+  selectedCinincianForExp: any[] = [];
+  expData: any;
   message: string;
   apiData: response;
   transposedColumnDef: Array<any>
   data: any = this.constantsService.data;
 
+  check: any;
   sampleFileData: any = this.constantsService.sampleFileData;
   shiftLength: string;
   inputTypes: Array<string> = ["Provide Online", "File Upload"];
   inputFormat: string;
   fileToUpload: File = null;
-  utilization : any;
-  upperUtilization : any;
+  utilization: any;
+  upperUtilization: any;
   notAllocatedStartTime: any;
-  notAllocatedEndTime : any;
-  patientHourWait : any;
-  physicianMinCount :any;
-  physicianMaxCount :any;
-  appMinCount :any;
-  appMaxCount :any;
-  scribeMinCount :any;
-  scribeMaxCount :any;
+  notAllocatedEndTime: any;
+  patientHourWait: any;
+  physicianMinCount: any;
+  physicianMaxCount: any;
+  appMinCount: any;
+  appMaxCount: any;
+  scribeMinCount: any;
+  scribeMaxCount: any;
   model: Model[] = this.constantsService.model;
   isRequiredToDelete: boolean;
   toAddExp: boolean;
@@ -70,7 +76,6 @@ export class MainFormComponent implements OnInit {
   fileData: any;
   transposedFileColumnDef: Array<any>
   preferredOption: any;
-
   efficiencyModel: Efficiency[] = this.constantsService.efficiencyModel;
 
   requestBody: any = {
@@ -79,7 +84,7 @@ export class MainFormComponent implements OnInit {
     "upperLimitFactor": 1.10,
     "patientHourWait": 2,
     "clinician": this.model,
-    "dayWorkload": this.data,    
+    "dayWorkload": this.data,
   }
 
   columnDefs = [
@@ -90,7 +95,7 @@ export class MainFormComponent implements OnInit {
         return params.data.cost;
       },
       valueSetter: function (params) {
-        if (params.data.cost !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
+        if (params.data.cost !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !== '') {
           params.data.cost = params.newValue;
           return true;
         } else {
@@ -107,7 +112,7 @@ export class MainFormComponent implements OnInit {
         return params.data.firstHour;
       },
       valueSetter: function (params) {
-        if (params.data.firstHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
+        if (params.data.firstHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !== '') {
           params.data.firstHour = params.newValue;
           return true;
         } else {
@@ -121,7 +126,7 @@ export class MainFormComponent implements OnInit {
         return params.data.midHour;
       },
       valueSetter: function (params) {
-        if (params.data.midHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
+        if (params.data.midHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !== '') {
           params.data.midHour = params.newValue;
           return true;
         } else {
@@ -135,7 +140,7 @@ export class MainFormComponent implements OnInit {
         return params.data.lastHour;
       },
       valueSetter: function (params) {
-        if (params.data.lastHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !=='') {
+        if (params.data.lastHour !== params.newValue && !(/[a-zA-Z*&^%$#@!]+/.test(params.newValue)) && params.newValue !== '') {
           params.data.lastHour = params.newValue;
           return true;
         } else {
@@ -155,23 +160,41 @@ export class MainFormComponent implements OnInit {
 
   ngOnInit() {
     this.savedBody = this.dataService.getRequestBody();
-    if(this.savedBody == null){
-        this.shiftLength = this.constantsService.shiftLength;
-        this.utilization = 1.1;
-        this.upperUtilization = 0.85;
-        this.notAllocatedStartTime = 1;
-        this.notAllocatedEndTime = 6;
-        this.patientHourWait = 2;
-        this.inputFormat = "Provide Online";
-        this.physicianMinCount = this.model[0].minCount;
-        this.physicianMaxCount = this.model[0].maxCount;
-        this.appMinCount = this.model[1].minCount;
-        this.appMaxCount = this.model[1].maxCount;
-        this.scribeMinCount = this.model[2].minCount;
-        this.scribeMaxCount = this.model[2].maxCount;
-        this.preferredOption = "noPatientLoss"
+    this.expData = this.dataService.getExpData();
+    if (this.savedBody == null) {
+      this.shiftLength = this.constantsService.shiftLength;
+      this.utilization = 1.1;
+      this.upperUtilization = 0.85;
+      this.notAllocatedStartTime = 1;
+      this.notAllocatedEndTime = 6;
+      this.patientHourWait = 2;
+      this.inputFormat = "Provide Online";
+      this.physicianMinCount = this.model[0].minCount;
+      this.physicianMaxCount = this.model[0].maxCount;
+      this.appMinCount = this.model[1].minCount;
+      this.appMaxCount = this.model[1].maxCount;
+      this.scribeMinCount = this.model[2].minCount;
+      this.scribeMaxCount = this.model[2].maxCount;
+      this.preferredOption = "noPatientLoss";
+      this.clinicianData = ['physician', 'app', 'scribe'];
+      for (var i = 0; i < this.model.length; i++) {
+        this.model[i].expressions = [];
+      }
+      this.clinicianRemaining = [['physician', 'app', 'scribe']];
+      this.alreadySelectedClinician = [[]];
+      this.operator = ['*'];
+      this.expressionFormGroup = this.fb.group({
+        expressionForm: this.fb.array([
+        ])
+      });
     }
-    else{
+    else {
+      this.selected = true;
+      this.expressionFormGroup = this.fb.group({
+        expressionForm: this.fb.array([
+        ])
+      });
+      this.check = false;
       this.shiftLength = this.savedBody.shiftLength.toString();
       this.utilization = this.savedBody.upperLimitFactor;
       this.upperUtilization = this.savedBody.lowerLimitFactor;
@@ -186,36 +209,101 @@ export class MainFormComponent implements OnInit {
       this.scribeMinCount = this.savedBody.clinician[2].minCount;
       this.scribeMaxCount = this.savedBody.clinician[2].maxCount;
       this.preferredOption = this.savedBody.preferredOption;
+      this.exp = [];
+      this.operator = ['*'];
+      this.clinicianData = ['physician', 'app', 'scribe'];
+      this.isRequiredToDelete = true;
+      this.priorClinicianDropDown = true;
+      this.disableToReadData = [[]];
+      this.isRequiredToAddExpForm = [];
+      for (let index1 = 0; index1 < this.expData.length; index1++) {
+        for (let j = 0; j < this.expData.length; j++) {
+          if (index1 == this.expData[j].expressions[0]) {
+            if (this.expData[j].expressions.length == 1) {
+              this.exp.push(this.expData[j].name);
+              this.selectedPriorClinician = this.expData[j].name;
+            }
+            for (let index2 = 1; index2 < this.expData[j].expressions.length; index2++) {
+              this.exp.push(this.expData[j].name + "," + this.expData[j].expressions[index2]);
+            }
+          }
+        }
+      }
+      for (let index1 = 0; index1 < this.expData.length; index1++) {//storing the expData into model
+        for (let i = 0; i < this.model.length; i++) {
+          if (this.model[i].name == this.expData[index1].name) {
+            this.model[i].expressions = this.expData[index1].expressions;
+          }
+        }
+      }
+      this.itr = this.model.length - 1;
+      this.clinicianRemaining = [[]];
+      this.alreadySelectedClinician = [[]];
+      for (let i = 1; i < this.exp.length; i++) {//creating the expression form using data from db
+        this.check = true;
+        this.clinicianRemaining[i - 1] = ['physician', 'app', 'scribe'];
+        this.alreadySelectedClinician[i - 1] = [];
+        var splittedData = this.exp[i].split(",");
+        this.exp[i] = [];
+        this.exp[i].push(splittedData[0]);
+        this.exp[i].push(splittedData[1]);
+        var splittedDataBySpace = splittedData[1].split(" ");
+
+        if (this.exp[i][0] == this.exp[i - 1][0]) { //setting values for clinicianRemaining
+          this.clinicianRemaining[i - 1] = [];
+          this.clinicianRemaining[i - 1].push(this.exp[i - 1][0]);
+        }
+        else {
+          for (let j = i - 1; j >= 1; j--) {
+            var index1 = this.clinicianRemaining[i - 1].indexOf(this.exp[j][0]);
+            this.clinicianRemaining[i - 1].splice(index1, 1);
+          }
+          var index1 = this.clinicianRemaining[i - 1].indexOf(this.selectedPriorClinician);
+          this.clinicianRemaining[i - 1].splice(index1, 1);
+        }
+
+        if (this.exp[i][0] == this.exp[i - 1][0] && i >= 2) {//setting values for already selected clincian
+          this.alreadySelectedClinician[i - 1] = this.alreadySelectedClinician[i - 2].slice();
+          var splitted1 = this.exp[i - 1][1].split(" ");
+          var index1 = this.alreadySelectedClinician[i - 1].indexOf(splitted1[2]);
+          this.alreadySelectedClinician[i - 1].splice(index1, 1);
+        }
+        else {
+          for (let j = i - 1; j >= 1; j--) {
+            this.alreadySelectedClinician[i - 1].push(this.exp[j][0]);
+          }
+          this.alreadySelectedClinician[i - 1].push(this.selectedPriorClinician);
+        }
+        this.alreadySelectedClinician[i - 1] = this.removeDuplicate(this.alreadySelectedClinician[i - 1]);
+
+        const control = <FormArray>this.expressionFormGroup.controls['expressionForm'];//creating a expression Form
+        control.push(this.initialization());
+        this.selectedClinician.push({ cliniciansDropDown: splittedData[0] });
+        this.selectedNumOfClinician.push({ numberOfClinician: splittedDataBySpace[0] });
+        this.selectedOperator.push({ operatorChosen: splittedDataBySpace[1] });
+        this.selectedCinincianForExp.push({ selectedClinicianDropDown: splittedDataBySpace[2] });
+        this.expressionFormGroup.value.expressionForm[i - 1].cliniciansDropDown = splittedData[0];
+        this.expressionFormGroup.value.expressionForm[i - 1].numberOfClinician = splittedDataBySpace[0];
+        this.expressionFormGroup.value.expressionForm[i - 1].operatorChosen = splittedDataBySpace[1];
+        this.expressionFormGroup.value.expressionForm[i - 1].selectedClinicianDropDown = splittedDataBySpace[2];
+      }
     }
-    if(this.preferredOption == "utilization"){
+    if (this.preferredOption == "utilization") {
       this.isChecked = true;
     }
-    else if(this.preferredOption == "noPatientLoss"){
+    else if (this.preferredOption == "noPatientLoss") {
       this.isChecked = false;
     }
     this.dataService.apiData$.subscribe(apiData => this.apiData = apiData);
     this.createColumnData();
-    this.clinicianData = ['physician', 'app', 'scribe'];
-    for (var i = 0; i < this.model.length; i++) {
-      this.model[i].expressions = [];
-    }
-    this.clinicianRemaining = [['physician', 'app', 'scribe']];
-    this.alreadySelectedClinician = [[]];
-    this.operator = ['*'];
-    this.expressionFormGroup = this.fb.group({
-      expressionForm: this.fb.array([
-
-      ])
-    });
     this.chooseFile = false;
   }
 
-
-  setPreferedOption(){
-    if(this.isChecked == true){
+  setPreferedOption() {
+    if (this.isChecked == true) {
       this.preferredOption = "noPatientLoss";
     }
-    else{
+    else {
       this.preferredOption = "utilization";
     }
   }
@@ -263,10 +351,20 @@ export class MainFormComponent implements OnInit {
         this.model[i].expressions.push(this.itr);
       }
     }
+    for (let i = 0; i < this.selectedClinician.length; i++) {
+      this.selectedClinician[i].cliniciansDropDown = '';
+      this.selectedNumOfClinician[i].numberOfClinician = '';
+      this.selectedOperator[i].operatorChosen = '';
+      this.selectedCinincianForExp[i].selectedClinicianDropDown = '';
+    }
     this.isRequiredToDelete = true;
     if (this.expressionFormGroup.value.expressionForm.length - 1 == -1) { //Creating a Expression Form
       const control = <FormArray>this.expressionFormGroup.controls['expressionForm'];
       control.push(this.initialization());
+      this.selectedClinician.push({ cliniciansDropDown: '' });
+      this.selectedNumOfClinician.push({ numberOfClinician: '' });
+      this.selectedOperator.push({ operatorChosen: '' });
+      this.selectedCinincianForExp.push({ selectedClinicianDropDown: '' });
     }
   }
   readingData(index) {
@@ -297,6 +395,10 @@ export class MainFormComponent implements OnInit {
       const control = <FormArray>this.expressionFormGroup.controls['expressionForm'];
       if (!this.addMoreRequired[index] && this.clinicianRemaining[index + 1].length !== 0) { //Creating a Expression Form
         control.push(this.initialization());
+        this.selectedClinician.push({ cliniciansDropDown: '' });
+        this.selectedNumOfClinician.push({ numberOfClinician: '' });
+        this.selectedOperator.push({ operatorChosen: '' });
+        this.selectedCinincianForExp.push({ selectedClinicianDropDown: '' });
         this.addMoreRequired[index + 1] = false;
       }
     }
@@ -324,6 +426,10 @@ export class MainFormComponent implements OnInit {
     const control = <FormArray>this.expressionFormGroup.controls['expressionForm'];
     if (this.clinicianRemaining[index + 1].length !== 0) {
       control.push(this.initialization());
+      this.selectedClinician.push({ cliniciansDropDown: '' });
+      this.selectedNumOfClinician.push({ numberOfClinician: '' });
+      this.selectedOperator.push({ operatorChosen: '' });
+      this.selectedCinincianForExp.push({ selectedClinicianDropDown: '' });
     }
     this.isRequiredToAddExpForm[index] = true;
     this.addMoreRequired[index + 1] = false;
@@ -357,7 +463,28 @@ export class MainFormComponent implements OnInit {
 
   removingExpression() {
     this.toAddExp = false;
+    for (let j = 0; j < this.expressionFormGroup.value.expressionForm.length && this.check; j++) {
+      this.expressionFormGroup.value.expressionForm[j].cliniciansDropDown = this.exp[j + 1][0];
+      var splittedValue = this.exp[j + 1][1].split(" ");
+      this.expressionFormGroup.value.expressionForm[j].numberOfClinician = splittedValue[0];
+      this.expressionFormGroup.value.expressionForm[j].operatorChosen = splittedValue[1];
+      this.expressionFormGroup.value.expressionForm[j].selectedClinicianDropDown = splittedValue[2];
+    }
+    this.check = false;
     this.numOfForm = this.expressionFormGroup.value.expressionForm.length - 1;
+    if (this.numOfForm == -1) {//after Every Expression are deleted  
+      for (let i = 0; i < this.model.length; i++) {
+        this.model[i].expressions = [];
+        this.itr = 0;
+      }
+      this.clinicianData = ['physician', 'app', 'scribe'];
+      this.clinicianRemaining = [['physician', 'app', 'scribe']]
+      this.alreadySelectedClinician = [[]];
+      this.priorClinicianDropDown = false;
+      this.selectedPriorClinician = "";
+      this.isRequiredToDelete = false;
+      return;
+    }
     for (let i = 0; i < this.model.length; i++) { //Deleting the Assigned Expression from Model
       if (this.model[i].name == (this.expressionFormGroup.value.expressionForm[this.numOfForm].cliniciansDropDown)) {
         if (this.model[i].expressions.length == 2) {
@@ -372,7 +499,12 @@ export class MainFormComponent implements OnInit {
     this.expressionFormGroup.controls.expressionForm.value.pop() //Deleting the Last Form
     const control = <FormArray>this.expressionFormGroup.controls.expressionForm;
     control.removeAt(this.numOfForm);
+    this.selectedClinician[this.numOfForm].cliniciansDropDown = '';
+    this.selectedNumOfClinician[this.numOfForm].numberOfClinician = '';
+    this.selectedOperator[this.numOfForm].operatorChosen = '';
+    this.selectedCinincianForExp[this.numOfForm].selectedClinicianDropDown = '';
     this.numOfForm = this.numOfForm - 1;
+
     if (this.numOfForm >= 0) {
       if (this.alreadySelectedClinician[this.numOfForm].length > 1) {
         this.addMoreRequired[this.numOfForm] = true;
@@ -383,21 +515,14 @@ export class MainFormComponent implements OnInit {
         this.toAddExp = true;
       }
     }
-    if (this.numOfForm == -1) {//after Every Expression are deleted  
-      for (let i = 0; i < this.model.length; i++) {
-        this.model[i].expressions = [];
-        this.itr = 0;
-      }
-      this.clinicianRemaining = [['physician', 'app', 'scribe']]
-      this.alreadySelectedClinician = [[]];
-      this.priorClinicianDropDown = false;
-      this.selectedPriorClinician = "";
-      this.isRequiredToDelete = false;
-    }
   }
   addingExpression() {
     const control = <FormArray>this.expressionFormGroup.controls['expressionForm'];
     control.push(this.initialization());
+    this.selectedClinician.push({ cliniciansDropDown: '' });
+    this.selectedNumOfClinician.push({ numberOfClinician: '' });
+    this.selectedOperator.push({ operatorChosen: '' });
+    this.selectedCinincianForExp.push({ selectedClinicianDropDown: '' });
     this.numOfForm = this.expressionFormGroup.value.expressionForm.length - 1;
     this.disableToReadData[this.numOfForm] = false;
     this.addMoreRequired[this.numOfForm] = false;
@@ -449,10 +574,10 @@ export class MainFormComponent implements OnInit {
     this.requestBody.patientHourWait = this.patientHourWait;
     this.requestBody.preferredOption = this.preferredOption;
     this.requestBody.inputFormat = this.inputFormat;
-    if(this.requestBody.clinician[0].maxCount < this.requestBody.clinician[0].minCount || 
+    if (this.requestBody.clinician[0].maxCount < this.requestBody.clinician[0].minCount ||
       this.requestBody.clinician[1].maxCount < this.requestBody.clinician[1].minCount ||
-      this.requestBody.clinician[2].maxCount < this.requestBody.clinician[2].minCount ){
-      this.toastr.error("minCount should be less than maxCount");
+      this.requestBody.clinician[2].maxCount < this.requestBody.clinician[2].minCount) {
+      this.toastr.error("MinCount should be less than MaxCount");
     }
     else if (this.inputFormat == "File Upload") {
       this.apiRequestwithFileData();
@@ -466,6 +591,7 @@ export class MainFormComponent implements OnInit {
     const formData = new FormData();
     formData.append('workloadExcel', this.fileToUpload);
     formData.append('inputData', JSON.stringify(this.requestBody));
+    this.dataService.setExpData(this.model);
     this.dataService.setRequestBody(this.requestBody)
     this.httpClientService.getGraphDetailsUsingFileData(formData).pipe(first()).subscribe(data => {
       this.dataService.setData(data);
@@ -476,7 +602,8 @@ export class MainFormComponent implements OnInit {
   }
 
   private apiRequestwithTableData() {
-    this.dataService.setRequestBody(this.requestBody)
+    this.dataService.setExpData(this.model);
+    this.dataService.setRequestBody(this.requestBody);
     this.httpClientService.getGraphDetailsUsingTableData(this.requestBody).pipe(first()).subscribe(data => {
       this.dataService.setData(data);
       this.router.navigateByUrl('/graph');
@@ -533,10 +660,10 @@ export class MainFormComponent implements OnInit {
     }
   }
 
-  exportAsXLSX():void {
+  exportAsXLSX(): void {
     this.excelService.exportAsExcelFile(this.sampleFileData, 'sample');
   }
-  
+
   createFileColumnData() {
     this.transposedFileColumnDef = [
       {
