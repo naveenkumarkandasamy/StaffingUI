@@ -10,6 +10,7 @@ import { JobListComponent } from './job-list/job-list.component';
 import { Role } from './Models/Role';
 import { CronGeneratorComponent } from './cron-generator/cron-generator.component';
 import { JobformComponent } from './jobform/jobform.component';
+import { GanttComponent } from './gantt/gantt.component';
 
 
 const routes: Routes = [
@@ -53,7 +54,11 @@ const routes: Routes = [
     component: JobformComponent,
     canActivate:[AuthGuardService]
   },
-
+  {
+    path: 'gantt',
+    component: GanttComponent,
+    canActivate:[AuthGuardService]
+  }
 ];
 
 @NgModule({

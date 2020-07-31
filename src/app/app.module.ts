@@ -40,6 +40,7 @@ import { BasicAuthInterceptor, ErrorInterceptor } from './interceptor/index';
 import { CronGeneratorComponent } from './cron-generator/cron-generator.component';
 import { JobformComponent } from './jobform/jobform.component';
 import { ExcelService } from './services/excel.service';
+import { GanttComponent } from './gantt/gantt.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { ExcelService } from './services/excel.service';
     JobListComponent,
     CronGeneratorComponent,
     JobformComponent,
-    JobListPopupComponent
+    JobListPopupComponent,
+    GanttComponent
   ],
   imports: [
     MatDialogModule,
