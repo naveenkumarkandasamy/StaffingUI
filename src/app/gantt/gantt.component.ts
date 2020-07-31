@@ -73,7 +73,7 @@ export class GanttComponent implements OnInit {
       .append("text")
       .attr("class", "axis-title")
       .attr("transform", "rotate(-90)")
-      .attr("y", -40)
+      .attr("y", -41)
       .attr("x", -200)
       .attr("dy", "0.71em")
       .text("Clinicians");
